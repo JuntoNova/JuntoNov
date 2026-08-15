@@ -1,25 +1,402 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Junto Nova</title>
-  <style>
-    body {
-      font-family: system-ui, -apple-system, sans-serif;
-      max-width: 800px;
-      margin: 80px auto;
-      padding: 0 20px;
-      line-height: 1.6;
-      color: #222;
-    }
-    h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
-    p { font-size: 1.15rem; color: #444; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Junto Nova — Making the cost of living fall</title>
+    <meta name="description" content="Junto Nova is a strategy firm focused on driving down the costs of living for American families through practical policy, new supply, and high-leverage execution.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600&display=swap');
+        
+        :root {
+            --navy: #0F172A;
+            --gold: #B45309;
+            --emerald: #059669;
+        }
+        
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            color: #0F172A;
+        }
+        
+        .serif {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+        }
+
+        .tab-btn {
+            transition: all 0.15s ease;
+        }
+        
+        .tab-btn.active {
+            border-bottom: 2px solid #0F172A;
+            color: #0F172A;
+            font-weight: 600;
+        }
+
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+    </style>
 </head>
-<body>
-  <h1>Junto Nova</h1>
-  <p>Strategy consulting focused on driving down the costs of living for American families.</p>
-  <p>Website coming soon.</p>
+<body class="bg-white">
+
+    <!-- Header -->
+    <header class="border-b border-slate-200">
+        <div class="max-w-5xl mx-auto px-6 py-5 flex items-center justify-between">
+            <div class="serif text-2xl tracking-tight font-semibold text-slate-900">
+                JUNTO NOVA
+            </div>
+            <nav class="hidden md:flex items-center gap-8 text-sm">
+                <button onclick="showTab('dashboard')" class="hover:text-slate-900 text-slate-600">Dashboard</button>
+                <button onclick="showTab('services')" class="hover:text-slate-900 text-slate-600">Services</button>
+                <button onclick="showTab('vision')" class="hover:text-slate-900 text-slate-600">Vision</button>
+                <a href="#contact" class="px-4 py-2 bg-slate-900 text-white rounded-lg hover:bg-slate-800 transition">Let’s talk</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero -->
+    <section class="max-w-5xl mx-auto px-6 pt-16 pb-12">
+        <div class="max-w-3xl">
+            <div class="text-xs font-medium tracking-widest text-slate-500 uppercase mb-4">Strategy • Policy • Execution</div>
+            <h1 class="serif text-5xl md:text-6xl font-semibold tracking-tight leading-none mb-6">
+                Making the cost of living fall
+            </h1>
+            <p class="text-xl text-slate-600 leading-relaxed mb-8">
+                Junto Nova works with philanthropists, foundations, and innovators to engineer practical breakthroughs that expand supply, increase choice, and lower the real cost of living for American families.
+            </p>
+            <div class="flex flex-wrap gap-3">
+                <button onclick="showTab('dashboard')" class="px-6 py-3 bg-slate-900 text-white rounded-xl font-medium hover:bg-slate-800 transition">
+                    See the numbers
+                </button>
+                <button onclick="showTab('services')" class="px-6 py-3 border border-slate-300 rounded-xl font-medium hover:bg-slate-50 transition">
+                    How we work
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tabs -->
+    <div class="border-b border-slate-200 sticky top-0 bg-white z-40">
+        <div class="max-w-5xl mx-auto px-6 flex gap-8 text-sm overflow-x-auto">
+            <button id="tab-dashboard" onclick="showTab('dashboard')" class="tab-btn active py-4 text-slate-900">Dashboard</button>
+            <button id="tab-services" onclick="showTab('services')" class="tab-btn py-4 text-slate-500">Services</button>
+            <button id="tab-vision" onclick="showTab('vision')" class="tab-btn py-4 text-slate-500">Vision</button>
+        </div>
+    </div>
+
+    <!-- TAB: Dashboard -->
+    <section id="content-dashboard" class="tab-content active max-w-5xl mx-auto px-6 py-12">
+        <div class="mb-10">
+            <h2 class="serif text-3xl font-semibold mb-2">See into the future of the American family</h2>
+            <p class="text-slate-600">National cost-of-living pressures for a typical family of four. The trajectory is not inevitable.</p>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-8 mb-12">
+            <div class="border border-slate-200 rounded-2xl p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <div class="font-medium">Today (2026)</div>
+                    <div class="text-xs text-slate-500">~ $78k–$92k / year</div>
+                </div>
+                <canvas id="pieToday" height="220"></canvas>
+            </div>
+            <div class="border border-slate-200 rounded-2xl p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <div class="font-medium">Projected 2050 (no intervention)</div>
+                    <div class="text-xs text-red-600">Housing share grows</div>
+                </div>
+                <canvas id="pie2050" height="220"></canvas>
+            </div>
+        </div>
+
+        <div class="border border-slate-200 rounded-2xl p-6 mb-10">
+            <div class="flex justify-between items-center mb-4">
+                <div>
+                    <div class="font-medium">Household cost trajectory</div>
+                    <div class="text-sm text-slate-500">Indexed to 2026 = 100</div>
+                </div>
+                <div class="flex gap-4 text-xs text-slate-500">
+                    <span class="flex items-center gap-1.5"><span class="w-3 h-0.5 bg-slate-900"></span> Current path</span>
+                    <span class="flex items-center gap-1.5"><span class="w-3 h-0.5 bg-emerald-600"></span> Abundance path</span>
+                </div>
+            </div>
+            <canvas id="lineChart" height="100"></canvas>
+        </div>
+
+        <div class="bg-slate-50 border border-slate-200 rounded-2xl p-8">
+            <div class="font-medium mb-1">What if we actually lowered costs?</div>
+            <p class="text-sm text-slate-600 mb-6">Slide the levers. See approximate annual savings for a family of four.</p>
+            
+            <div class="grid md:grid-cols-2 gap-x-10 gap-y-5 mb-8">
+                <div>
+                    <label class="text-xs font-medium text-slate-600">Housing supply reforms</label>
+                    <input type="range" id="housing" min="0" max="35" step="5" value="20" class="w-full accent-slate-900" oninput="updateSavings()">
+                    <div class="flex justify-between text-[11px] text-slate-500"><span>0%</span><span id="housingVal">20%</span></div>
+                </div>
+                <div>
+                    <label class="text-xs font-medium text-slate-600">Energy & utilities</label>
+                    <input type="range" id="energy" min="0" max="30" step="5" value="15" class="w-full accent-slate-900" oninput="updateSavings()">
+                    <div class="flex justify-between text-[11px] text-slate-500"><span>0%</span><span id="energyVal">15%</span></div>
+                </div>
+                <div>
+                    <label class="text-xs font-medium text-slate-600">Healthcare competition</label>
+                    <input type="range" id="health" min="0" max="25" step="5" value="12" class="w-full accent-slate-900" oninput="updateSavings()">
+                    <div class="flex justify-between text-[11px] text-slate-500"><span>0%</span><span id="healthVal">12%</span></div>
+                </div>
+                <div>
+                    <label class="text-xs font-medium text-slate-600">Education choice & new supply</label>
+                    <input type="range" id="edu" min="0" max="30" step="5" value="18" class="w-full accent-slate-900" oninput="updateSavings()">
+                    <div class="flex justify-between text-[11px] text-slate-500"><span>0%</span><span id="eduVal">18%</span></div>
+                </div>
+            </div>
+
+            <div class="pt-6 border-t border-slate-200 flex items-baseline justify-between">
+                <div>
+                    <div class="text-sm text-slate-600">Projected annual savings</div>
+                    <div id="savings" class="serif text-5xl font-semibold tracking-tight">$14,200</div>
+                </div>
+                <div class="text-right text-xs text-slate-500">
+                    Per family of 4 • every year<br>
+                    Illustrative ranges based on policy literature
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TAB: Services -->
+    <section id="content-services" class="tab-content max-w-5xl mx-auto px-6 py-12">
+        <div class="mb-10">
+            <h2 class="serif text-3xl font-semibold mb-2">What we offer</h2>
+            <p class="text-slate-600 max-w-2xl">High-leverage strategic partnerships for philanthropies, funders, and innovators who want to lower the cost of living at scale.</p>
+        </div>
+
+        <div class="border border-slate-200 rounded-2xl overflow-hidden mb-10">
+            <table class="w-full text-sm">
+                <thead class="bg-slate-50 text-left">
+                    <tr>
+                        <th class="py-4 px-6 font-medium text-slate-500">Service Model</th>
+                        <th class="py-4 px-6 font-medium text-slate-500">Rate</th>
+                        <th class="py-4 px-6 font-medium text-slate-500">Core Deliverables</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                    <tr>
+                        <td class="py-5 px-6 font-medium">Market Intelligence</td>
+                        <td class="py-5 px-6 font-mono text-slate-700">$20k / mo</td>
+                        <td class="py-5 px-6 text-slate-600">Auditing price signals & artificial scarcities • Research design • Strategic advising & board governance</td>
+                    </tr>
+                    <tr>
+                        <td class="py-5 px-6 font-medium">Investable Opportunities</td>
+                        <td class="py-5 px-6 font-mono text-slate-700">$20k / mo</td>
+                        <td class="py-5 px-6 text-slate-600">Sales narrative development • Investor mapping • “Big Win” protocols • System codification (SOPs)</td>
+                    </tr>
+                    <tr>
+                        <td class="py-5 px-6 font-medium">Deal Engineering</td>
+                        <td class="py-5 px-6 font-mono text-slate-700">$25k / mo</td>
+                        <td class="py-5 px-6 text-slate-600">Major gift leadership • Partner negotiations • Capital alignment • Performance bounty available</td>
+                    </tr>
+                    <tr class="bg-slate-50/60">
+                        <td class="py-5 px-6 font-medium">Venture Execution</td>
+                        <td class="py-5 px-6 font-mono text-slate-700">$35k / mo</td>
+                        <td class="py-5 px-6 text-slate-600">Interim leadership • Campaign management • Organization building • 3–5 state-level breakthroughs</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-6 mb-10">
+            <div class="border border-slate-200 rounded-2xl p-6">
+                <div class="font-medium mb-2">Capital Acquisition Bounty</div>
+                <p class="text-sm text-slate-600">5–10% success fee on gross capital secured or unlocked through Junto Nova architecture. Aligned incentives.</p>
+            </div>
+            <div class="border border-slate-200 rounded-2xl p-6">
+                <div class="font-medium mb-2">Sustain & Scale</div>
+                <p class="text-sm text-slate-600">After initial breakthroughs we remain embedded as strategic partners to protect the model from drift and continuously optimize as impact compounds.</p>
+            </div>
+        </div>
+
+        <div class="text-center">
+            <a href="#contact" class="inline-flex items-center gap-2 px-7 py-3.5 bg-slate-900 text-white rounded-xl font-medium hover:bg-slate-800 transition">
+                Discuss your goals
+                <i class="fa-solid fa-arrow-right text-sm"></i>
+            </a>
+        </div>
+    </section>
+
+    <!-- TAB: Vision -->
+    <section id="content-vision" class="tab-content max-w-5xl mx-auto px-6 py-12">
+        <div class="max-w-2xl">
+            <h2 class="serif text-3xl font-semibold mb-8">Let us explain</h2>
+            
+            <div class="space-y-10 text-[15px] leading-relaxed text-slate-700">
+                <div>
+                    <div class="font-semibold text-slate-900 mb-2">Who we serve</div>
+                    <p>Cause-motivated philanthropies, education innovators, and business leaders who believe the cost of living in America has become artificially high — and that choice, competition, and new supply are the most powerful levers to bring it down.</p>
+                </div>
+                
+                <div>
+                    <div class="font-semibold text-slate-900 mb-2">What’s with the name</div>
+                    <p><strong>Junto</strong> refers to Benjamin Franklin’s club for mutual improvement — practical people solving real problems together. <strong>Nova</strong> signals a new beginning and abundance. Together they capture the work: high-leverage, practical action that expands opportunity and lowers costs.</p>
+                </div>
+                
+                <div>
+                    <div class="font-semibold text-slate-900 mb-2">Our operating principle</div>
+                    <p>Education is the highest-leverage starting point. When families have real choice and new high-quality supply enters the market, costs fall and outcomes rise. The same logic applies to housing supply, energy permitting, and healthcare transparency. Lowering the cost of living is not zero-sum — it is engineering win-wins at scale.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact" class="border-t border-slate-200 bg-slate-50">
+        <div class="max-w-5xl mx-auto px-6 py-16">
+            <div class="max-w-lg">
+                <div class="text-xs font-medium tracking-widest text-slate-500 uppercase mb-3">Next step</div>
+                <h3 class="serif text-3xl font-semibold mb-4">Ready to lower costs at scale?</h3>
+                <p class="text-slate-600 mb-8">Whether you are a funder looking for high-ROI deployment or an innovator building new supply, we would like to explore how Junto Nova can help.</p>
+                
+                <a href="mailto:andrew@juntanova.com" class="inline-flex items-center gap-2 px-7 py-3.5 bg-slate-900 text-white rounded-xl font-medium hover:bg-slate-800 transition">
+                    Book a strategy conversation
+                    <i class="fa-solid fa-arrow-right text-sm"></i>
+                </a>
+                <div class="mt-4 text-sm text-slate-500">
+                    or reach out on X: <a href="https://x.com/jandrewclark" class="underline hover:text-slate-800">@jandrewclark</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-200">
+        <div class="max-w-5xl mx-auto px-6 py-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-slate-500">
+            <div class="serif font-medium text-slate-800">JUNTO NOVA</div>
+            <div>© 2026 Junto Nova. All rights reserved.</div>
+        </div>
+    </footer>
+
+    <script>
+        function showTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active', 'text-slate-900');
+                btn.classList.add('text-slate-500');
+            });
+            
+            document.getElementById('content-' + tab).classList.add('active');
+            const btn = document.getElementById('tab-' + tab);
+            btn.classList.add('active', 'text-slate-900');
+            btn.classList.remove('text-slate-500');
+            
+            if (tab === 'dashboard' && !window.chartsInitialized) {
+                initCharts();
+            }
+        }
+
+        function updateSavings() {
+            const housing = +document.getElementById('housing').value;
+            const energy = +document.getElementById('energy').value;
+            const health = +document.getElementById('health').value;
+            const edu = +document.getElementById('edu').value;
+
+            document.getElementById('housingVal').textContent = housing + '%';
+            document.getElementById('energyVal').textContent = energy + '%';
+            document.getElementById('healthVal').textContent = health + '%';
+            document.getElementById('eduVal').textContent = edu + '%';
+
+            const baseline = 85000;
+            const savings = Math.round(
+                (baseline * 0.33 * (housing / 100)) +
+                (baseline * 0.10 * (energy / 100)) +
+                (baseline * 0.18 * (health / 100)) +
+                (baseline * 0.12 * (edu / 100))
+            );
+            document.getElementById('savings').textContent = '$' + savings.toLocaleString();
+        }
+
+        function initCharts() {
+            new Chart(document.getElementById('pieToday'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['Housing', 'Medical', 'Food', 'Energy', 'Taxes', 'Other'],
+                    datasets: [{
+                        data: [34, 18, 13, 11, 9, 15],
+                        backgroundColor: ['#0F172A', '#334155', '#475569', '#64748B', '#94A3B8', '#CBD5E1'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    cutout: '65%',
+                    plugins: {
+                        legend: { position: 'bottom', labels: { boxWidth: 10, padding: 12, font: { size: 11 } } }
+                    }
+                }
+            });
+
+            new Chart(document.getElementById('pie2050'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['Housing', 'Medical', 'Food', 'Energy', 'Taxes', 'Other'],
+                    datasets: [{
+                        data: [42, 17, 11, 10, 8, 12],
+                        backgroundColor: ['#0F172A', '#334155', '#475569', '#64748B', '#94A3B8', '#CBD5E1'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    cutout: '65%',
+                    plugins: {
+                        legend: { position: 'bottom', labels: { boxWidth: 10, padding: 12, font: { size: 11 } } }
+                    }
+                }
+            });
+
+            new Chart(document.getElementById('lineChart'), {
+                type: 'line',
+                data: {
+                    labels: ['2026', '2030', '2035', '2040', '2045', '2050'],
+                    datasets: [
+                        {
+                            label: 'Current Path',
+                            data: [100, 112, 128, 142, 155, 168],
+                            borderColor: '#0F172A',
+                            borderWidth: 2.5,
+                            tension: 0.3,
+                            pointRadius: 0
+                        },
+                        {
+                            label: 'Abundance Path',
+                            data: [100, 105, 108, 110, 112, 114],
+                            borderColor: '#059669',
+                            borderWidth: 2.5,
+                            borderDash: [4, 3],
+                            tension: 0.3,
+                            pointRadius: 0
+                        }
+                    ]
+                },
+                options: {
+                    scales: {
+                        y: { beginAtZero: false, grid: { color: '#F1F5F9' } },
+                        x: { grid: { display: false } }
+                    },
+                    plugins: { legend: { display: false } }
+                }
+            });
+
+            window.chartsInitialized = true;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initCharts();
+            updateSavings();
+        });
+    </script>
 </body>
 </html>
