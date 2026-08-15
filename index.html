@@ -100,8 +100,8 @@
     <!-- TAB: Dashboard -->
     <section id="content-dashboard" class="tab-content active max-w-5xl mx-auto px-6 py-12">
         <div class="mb-10">
-            <h2 class="serif text-3xl font-semibold mb-2">See into the future of the American family</h2>
-            <p class="text-slate-600">National cost-of-living pressures for a typical family of four. The trajectory is not inevitable.</p>
+            <h2 class="serif text-3xl font-semibold mb-2">What high costs actually do to families</h2>
+            <p class="text-slate-600">When housing, education, energy, and healthcare keep rising, ownership becomes impossible for most people. The path is not fixed.</p>
         </div>
 
         <div class="grid md:grid-cols-2 gap-8 mb-12">
@@ -114,8 +114,8 @@
             </div>
             <div class="border border-slate-200 rounded-2xl p-6">
                 <div class="flex justify-between items-center mb-4">
-                    <div class="font-medium">Projected 2050 (no intervention)</div>
-                    <div class="text-xs text-red-600">Housing share grows</div>
+                    <div class="font-medium">Projected 2050 (no change)</div>
+                    <div class="text-xs text-red-600">Housing takes more</div>
                 </div>
                 <canvas id="pie2050" height="220"></canvas>
             </div>
@@ -129,15 +129,15 @@
                 </div>
                 <div class="flex gap-4 text-xs text-slate-500">
                     <span class="flex items-center gap-1.5"><span class="w-3 h-0.5 bg-slate-900"></span> Current path</span>
-                    <span class="flex items-center gap-1.5"><span class="w-3 h-0.5 bg-emerald-600"></span> Abundance path</span>
+                    <span class="flex items-center gap-1.5"><span class="w-3 h-0.5 bg-emerald-600"></span> Lower-cost path</span>
                 </div>
             </div>
             <canvas id="lineChart" height="100"></canvas>
         </div>
 
         <div class="bg-slate-50 border border-slate-200 rounded-2xl p-8">
-            <div class="font-medium mb-1">What if we actually lowered costs?</div>
-            <p class="text-sm text-slate-600 mb-6">Slide the levers. See approximate annual savings for a family of four.</p>
+            <div class="font-medium mb-1">What if costs actually came down?</div>
+            <p class="text-sm text-slate-600 mb-6">Move the levers. See rough annual savings for a family of four.</p>
             
             <div class="grid md:grid-cols-2 gap-x-10 gap-y-5 mb-8">
                 <div>
@@ -146,7 +146,7 @@
                     <div class="flex justify-between text-[11px] text-slate-500"><span>0%</span><span id="housingVal">20%</span></div>
                 </div>
                 <div>
-                    <label class="text-xs font-medium text-slate-600">Energy & utilities</label>
+                    <label class="text-xs font-medium text-slate-600">Energy and utilities</label>
                     <input type="range" id="energy" min="0" max="30" step="5" value="15" class="w-full accent-slate-900" oninput="updateSavings()">
                     <div class="flex justify-between text-[11px] text-slate-500"><span>0%</span><span id="energyVal">15%</span></div>
                 </div>
@@ -156,7 +156,7 @@
                     <div class="flex justify-between text-[11px] text-slate-500"><span>0%</span><span id="healthVal">12%</span></div>
                 </div>
                 <div>
-                    <label class="text-xs font-medium text-slate-600">Education choice & new supply</label>
+                    <label class="text-xs font-medium text-slate-600">Education choice and new supply</label>
                     <input type="range" id="edu" min="0" max="30" step="5" value="18" class="w-full accent-slate-900" oninput="updateSavings()">
                     <div class="flex justify-between text-[11px] text-slate-500"><span>0%</span><span id="eduVal">18%</span></div>
                 </div>
@@ -178,34 +178,34 @@
     <!-- TAB: Services -->
     <section id="content-services" class="tab-content max-w-5xl mx-auto px-6 py-12">
         <div class="mb-10">
-            <h2 class="serif text-3xl font-semibold mb-2">What we offer</h2>
-            <p class="text-slate-600 max-w-2xl">High-leverage strategic partnerships for philanthropies, funders, and innovators who want to lower the cost of living at scale.</p>
+            <h2 class="serif text-3xl font-semibold mb-2">How we work</h2>
+            <p class="text-slate-600 max-w-2xl">We partner with funders and builders who want to lower the real cost of living so more families can own a stake instead of renting their future.</p>
         </div>
 
         <div class="border border-slate-200 rounded-2xl overflow-hidden mb-10">
             <table class="w-full text-sm">
                 <thead class="bg-slate-50 text-left">
                     <tr>
-                        <th class="py-4 px-6 font-medium text-slate-500">Service Model</th>
-                        <th class="py-4 px-6 font-medium text-slate-500">Core Deliverables</th>
+                        <th class="py-4 px-6 font-medium text-slate-500">What we do</th>
+                        <th class="py-4 px-6 font-medium text-slate-500">What you get</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100">
                     <tr>
-                        <td class="py-5 px-6 font-medium">Market Intelligence</td>
-                        <td class="py-5 px-6 text-slate-600">Auditing price signals & artificial scarcities • Research design • Strategic advising & board governance</td>
+                        <td class="py-5 px-6 font-medium">Find the real barriers</td>
+                        <td class="py-5 px-6 text-slate-600">Clear diagnosis of the rules, incentives, and bottlenecks that keep costs high in housing, education, energy, or healthcare</td>
                     </tr>
                     <tr>
-                        <td class="py-5 px-6 font-medium">Investable Opportunities</td>
-                        <td class="py-5 px-6 text-slate-600">Sales narrative development • Investor mapping • "Big Win" protocols • System codification (SOPs)</td>
+                        <td class="py-5 px-6 font-medium">Turn barriers into investable plans</td>
+                        <td class="py-5 px-6 text-slate-600">Concrete strategies with numbers, targets, and a path to capital or political support</td>
                     </tr>
                     <tr>
-                        <td class="py-5 px-6 font-medium">Deal Engineering</td>
-                        <td class="py-5 px-6 text-slate-600">Major gift leadership • Partner negotiations • Capital alignment • Performance bounty available</td>
+                        <td class="py-5 px-6 font-medium">Structure the deals</td>
+                        <td class="py-5 px-6 text-slate-600">Partnership terms, capital alignment, and the agreements needed to move from idea to action</td>
                     </tr>
                     <tr class="bg-slate-50/60">
-                        <td class="py-5 px-6 font-medium">Venture Execution</td>
-                        <td class="py-5 px-6 text-slate-600">Interim leadership • Campaign management • Organization building • 3-5 state-level breakthroughs</td>
+                        <td class="py-5 px-6 font-medium">Build and prove it</td>
+                        <td class="py-5 px-6 text-slate-600">Hands-on execution in a few states until the model works and can be copied elsewhere</td>
                     </tr>
                 </tbody>
             </table>
@@ -213,18 +213,18 @@
 
         <div class="grid md:grid-cols-2 gap-6 mb-10">
             <div class="border border-slate-200 rounded-2xl p-6">
-                <div class="font-medium mb-2">Capital Acquisition Bounty</div>
-                <p class="text-sm text-slate-600">5-10% success fee on gross capital secured or unlocked through Junto Nova architecture. Aligned incentives.</p>
+                <div class="font-medium mb-2">Aligned incentives</div>
+                <p class="text-sm text-slate-600">Success fees available on capital we help secure or unlock. We get paid when the work produces real results.</p>
             </div>
             <div class="border border-slate-200 rounded-2xl p-6">
-                <div class="font-medium mb-2">Sustain & Scale</div>
-                <p class="text-sm text-slate-600">After initial breakthroughs we remain embedded as strategic partners to protect the model from drift and continuously optimize as impact compounds.</p>
+                <div class="font-medium mb-2">Stay through scale</div>
+                <p class="text-sm text-slate-600">After the first breakthroughs we stay involved so the model does not drift and the gains keep compounding.</p>
             </div>
         </div>
 
         <div class="text-center">
             <a href="#contact" class="inline-flex items-center gap-2 px-7 py-3.5 bg-slate-900 text-white rounded-xl font-medium hover:bg-slate-800 transition">
-                Discuss your goals
+                Talk about a project
                 <i class="fa-solid fa-arrow-right text-sm"></i>
             </a>
         </div>
@@ -233,22 +233,22 @@
     <!-- TAB: Vision -->
     <section id="content-vision" class="tab-content max-w-5xl mx-auto px-6 py-12">
         <div class="max-w-2xl">
-            <h2 class="serif text-3xl font-semibold mb-8">Let us explain</h2>
+            <h2 class="serif text-3xl font-semibold mb-8">Why this matters</h2>
             
             <div class="space-y-10 text-[15px] leading-relaxed text-slate-700">
                 <div>
-                    <div class="font-semibold text-slate-900 mb-2">Who we serve</div>
-                    <p>Cause-motivated philanthropies, education innovators, and business leaders who believe the cost of living in America has become artificially high, and that choice, competition, and new supply are the most powerful levers to bring it down.</p>
+                    <div class="font-semibold text-slate-900 mb-2">Who we work with</div>
+                    <p>Funders, builders, and operators who believe high costs of living are not inevitable, and that more competition and new supply are the most reliable ways to bring them down so ordinary families can own real stakes.</p>
                 </div>
                 
                 <div>
-                    <div class="font-semibold text-slate-900 mb-2">What's with the name</div>
-                    <p><strong>Junto</strong> refers to Benjamin Franklin's club for mutual improvement: practical people solving real problems together. <strong>Nova</strong> signals a new beginning and abundance. Together they capture the work: high-leverage, practical action that expands opportunity and lowers costs.</p>
+                    <div class="font-semibold text-slate-900 mb-2">The name</div>
+                    <p><strong>Junto</strong> comes from Benjamin Franklin’s club for mutual improvement: practical people solving real problems together. <strong>Nova</strong> points to a new start. The work is practical action that expands ownership and lowers costs.</p>
                 </div>
                 
                 <div>
-                    <div class="font-semibold text-slate-900 mb-2">Our operating principle</div>
-                    <p>Education is the highest-leverage starting point. When families have real choice and new high-quality supply enters the market, costs fall and outcomes rise. The same logic applies to housing supply, energy permitting, and healthcare transparency. Lowering the cost of living is not zero-sum; it is engineering win-wins at scale.</p>
+                    <div class="font-semibold text-slate-900 mb-2">How we think about it</div>
+                    <p>When families can own instead of rent their housing, skills, energy, and healthcare, their success and the country’s success become the same thing. We focus on the barriers that block that ownership and on the deals and organizations that remove them.</p>
                 </div>
             </div>
         </div>
@@ -259,11 +259,11 @@
         <div class="max-w-5xl mx-auto px-6 py-16">
             <div class="max-w-lg">
                 <div class="text-xs font-medium tracking-widest text-slate-500 uppercase mb-3">Next step</div>
-                <h3 class="serif text-3xl font-semibold mb-4">Ready to lower costs at scale?</h3>
-                <p class="text-slate-600 mb-8">Whether you are a funder looking for high-ROI deployment or an innovator building new supply, we would like to explore how Junto Nova can help.</p>
+                <h3 class="serif text-3xl font-semibold mb-4">Ready to lower costs so more people can own a stake?</h3>
+                <p class="text-slate-600 mb-8">If you are funding or building solutions that expand supply and ownership, we should talk.</p>
                 
                 <a href="mailto:andrew@juntanova.com" class="inline-flex items-center gap-2 px-7 py-3.5 bg-slate-900 text-white rounded-xl font-medium hover:bg-slate-800 transition">
-                    Book a strategy conversation
+                    Start a conversation
                     <i class="fa-solid fa-arrow-right text-sm"></i>
                 </a>
                 <div class="mt-4 text-sm text-slate-500">
@@ -371,7 +371,7 @@
                             pointRadius: 0
                         },
                         {
-                            label: 'Abundance Path',
+                            label: 'Lower-cost Path',
                             data: [100, 105, 108, 110, 112, 114],
                             borderColor: '#059669',
                             borderWidth: 2.5,
