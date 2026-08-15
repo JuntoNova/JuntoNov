@@ -68,6 +68,26 @@
         .btn-outline:hover {
             background-color: var(--surface);
         }
+
+        .service-card {
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 1.75rem 1.5rem;
+            background: #fff;
+            transition: border-color 0.15s ease, box-shadow 0.15s ease;
+        }
+        .service-card:hover {
+            border-color: #CBD5E1;
+            box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+        }
+        .service-num {
+            font-family: 'Montserrat', system-ui, sans-serif;
+            font-weight: 700;
+            font-size: 0.75rem;
+            letter-spacing: 0.08em;
+            color: var(--ember);
+            margin-bottom: 0.75rem;
+        }
     </style>
 </head>
 <body>
@@ -152,7 +172,7 @@
 
         <div class="text-xs space-y-1.5" style="color: var(--muted);">
             <div>Sources (last updated August 15, 2026):</div>
-            <div>• <a href="https://fiscaldata.treasury.gov/datasets/debt-to-the-penny/debt-to-the-penny" target="_blank" rel="noopener" class="underline hover:opacity-80">U.S. Treasury — Debt to the Penny</a> (total public debt outstanding)</div>
+            <div>• <a href="https://fiscaldata.treasury.gov/datasets/debt-to-the-penny/debt-to-the-penny" target="_blank" rel="noopener" class="underline hover:opacity-80">U.S. Treasury Debt to the Penny</a> (total public debt outstanding)</div>
             <div>• Household figure derived from total debt ÷ number of U.S. households (Census / JEC estimates). Exact daily values move; the order of magnitude does not.</div>
         </div>
     </section>
@@ -237,42 +257,56 @@
 
     <!-- OUR SERVICES -->
     <section id="content-services" class="tab-content max-w-5xl mx-auto px-6 py-12">
-        <div class="mb-10">
-            <h2 class="display text-3xl mb-2" style="color: var(--charcoal);">Our services</h2>
-            <p class="max-w-2xl" style="color: var(--muted);">We work with funders, operators, and boards that want lower costs of living — and more families who can own a stake instead of renting their future.</p>
+        <div class="mb-12 max-w-2xl">
+            <h2 class="display text-3xl mb-4" style="color: var(--charcoal);">Our services</h2>
+            <p class="text-lg leading-relaxed mb-4" style="color: var(--charcoal);">
+                You hire us if the cost of living is the constraint you actually care about.
+            </p>
+            <p class="leading-relaxed" style="color: var(--muted);">
+                That usually means philanthropy, trade associations, operators building new supply, or state-level reformers who need someone to dig into the real barriers and then build the machine that removes them. If you need a generic strategy deck, we are the wrong firm. If you need the work done, keep reading.
+            </p>
         </div>
 
-        <div class="border rounded-2xl overflow-hidden mb-10" style="border-color: var(--border);">
-            <table class="w-full text-sm">
-                <thead style="background: var(--surface);">
-                    <tr>
-                        <th class="py-4 px-6 font-medium text-left" style="color: var(--muted);">What we do</th>
-                        <th class="py-4 px-6 font-medium text-left" style="color: var(--muted);">What you get</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr class="border-t" style="border-color: var(--border);">
-                        <td class="py-5 px-6 font-medium" style="color: var(--charcoal);">Diagnose the cost drivers</td>
-                        <td class="py-5 px-6" style="color: var(--muted);">A clear map of the rules, incentives, and bottlenecks that keep prices high in housing, education, energy, healthcare, or taxes — not a generic brief</td>
-                    </tr>
-                    <tr class="border-t" style="border-color: var(--border);">
-                        <td class="py-5 px-6 font-medium" style="color: var(--charcoal);">Build the strategy</td>
-                        <td class="py-5 px-6" style="color: var(--muted);">A concrete plan with numbers, targets, and a path to capital or political support so the work can actually move</td>
-                    </tr>
-                    <tr class="border-t" style="border-color: var(--border);">
-                        <td class="py-5 px-6 font-medium" style="color: var(--charcoal);">Structure the deals</td>
-                        <td class="py-5 px-6" style="color: var(--muted);">Partnership terms, capital alignment, and the agreements needed to go from idea to action</td>
-                    </tr>
-                    <tr class="border-t" style="border-color: var(--border);">
-                        <td class="py-5 px-6 font-medium" style="color: var(--charcoal);">Prove it in a few places</td>
-                        <td class="py-5 px-6" style="color: var(--muted);">Hands-on execution in a limited set of states or markets until the model works and can be copied</td>
-                    </tr>
-                    <tr class="border-t" style="border-color: var(--border); background: var(--surface);">
-                        <td class="py-5 px-6 font-medium" style="color: var(--charcoal);">Govern the scale</td>
-                        <td class="py-5 px-6" style="color: var(--muted);">Ongoing consulting, board seats, and oversight so the model stays tight as it grows and the gains keep compounding</td>
-                    </tr>
-                </tbody>
-            </table>
+        <div class="grid md:grid-cols-2 gap-5 mb-12">
+            <div class="service-card">
+                <div class="service-num">01</div>
+                <h3 class="display text-xl mb-3" style="color: var(--charcoal);">Diagnose the cost drivers</h3>
+                <p class="text-[15px] leading-relaxed" style="color: var(--muted);">
+                    Independent analysis of what actually keeps prices high in housing, education, energy, healthcare, or taxes. Specific rules, incentives, and bottlenecks. Not a landscape brief that could apply to anyone.
+                </p>
+            </div>
+
+            <div class="service-card">
+                <div class="service-num">02</div>
+                <h3 class="display text-xl mb-3" style="color: var(--charcoal);">Build the strategy</h3>
+                <p class="text-[15px] leading-relaxed" style="color: var(--muted);">
+                    A plan with numbers, targets, and a clear path to capital or political support. Written so a funder, board, or legislature can act on it without another round of translation.
+                </p>
+            </div>
+
+            <div class="service-card">
+                <div class="service-num">03</div>
+                <h3 class="display text-xl mb-3" style="color: var(--charcoal);">Structure the capital and partnerships</h3>
+                <p class="text-[15px] leading-relaxed" style="color: var(--muted);">
+                    Term design, partnership terms, and the agreements that turn a strategy into funded action. Alignment between money, operators, and policy so the work does not stall at the handoff.
+                </p>
+            </div>
+
+            <div class="service-card">
+                <div class="service-num">04</div>
+                <h3 class="display text-xl mb-3" style="color: var(--charcoal);">Build the organization and run the work</h3>
+                <p class="text-[15px] leading-relaxed" style="color: var(--muted);">
+                    Stand up organizations from scratch. Hire and manage operators. Run campaigns. Draft and advance legislation. Whatever it takes to prove the model in a few states or markets until it works and can be copied.
+                </p>
+            </div>
+
+            <div class="service-card md:col-span-2">
+                <div class="service-num">05</div>
+                <h3 class="display text-xl mb-3" style="color: var(--charcoal);">Govern the scale</h3>
+                <p class="text-[15px] leading-relaxed max-w-3xl" style="color: var(--muted);">
+                    Board seats, ongoing strategy, and oversight after the first wins. Keep the model tight as it grows so the gains compound instead of drifting back into process and drift.
+                </p>
+            </div>
         </div>
 
         <div class="text-center">
