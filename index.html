@@ -26,16 +26,6 @@
             font-family: 'Cormorant Garamond', Georgia, serif;
         }
 
-        .tab-btn {
-            transition: all 0.15s ease;
-        }
-        
-        .tab-btn.active {
-            border-bottom: 2px solid #0F172A;
-            color: #0F172A;
-            font-weight: 600;
-        }
-
         .tab-content {
             display: none;
         }
@@ -76,11 +66,10 @@
         <!-- Dropdown menu -->
         <div id="mobile-menu" class="absolute top-full left-0 right-0 bg-white border-b border-slate-200 shadow-sm z-50">
             <div class="max-w-5xl mx-auto px-6 py-4 flex flex-col gap-1">
-                <button onclick="showTab('dashboard'); closeMenu();" class="text-left py-3 px-2 text-slate-700 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition">Dashboard</button>
-                <button onclick="showTab('services'); closeMenu();" class="text-left py-3 px-2 text-slate-700 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition">Services</button>
+                <button onclick="showTab('dashboard'); closeMenu();" class="text-left py-3 px-2 text-slate-700 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition">See the numbers</button>
+                <button onclick="showTab('services'); closeMenu();" class="text-left py-3 px-2 text-slate-700 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition">How we work</button>
                 <button onclick="showTab('vision'); closeMenu();" class="text-left py-3 px-2 text-slate-700 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition">Vision</button>
-                <a href="#contact" onclick="closeMenu();" class="py-3 px-2 text-slate-700 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition">Contact</a>
-                <a href="#contact" onclick="closeMenu();" class="mt-2 inline-block text-center px-4 py-2.5 bg-slate-900 text-white rounded-lg hover:bg-slate-800 transition">Let's talk</a>
+                <a href="mailto:andrew@juntanova.com" onclick="closeMenu();" class="mt-2 inline-block text-center px-4 py-2.5 bg-slate-900 text-white rounded-lg hover:bg-slate-800 transition">Let's talk</a>
             </div>
         </div>
     </header>
@@ -110,15 +99,6 @@
             </div>
         </div>
     </section>
-
-    <!-- Tabs -->
-    <div class="border-b border-slate-200 sticky top-0 bg-white z-40">
-        <div class="max-w-5xl mx-auto px-6 flex gap-8 text-sm overflow-x-auto">
-            <button id="tab-dashboard" onclick="showTab('dashboard')" class="tab-btn active py-4 text-slate-900">Dashboard</button>
-            <button id="tab-services" onclick="showTab('services')" class="tab-btn py-4 text-slate-500">Services</button>
-            <button id="tab-vision" onclick="showTab('vision')" class="tab-btn py-4 text-slate-500">Vision</button>
-        </div>
-    </div>
 
     <!-- TAB: Dashboard -->
     <section id="content-dashboard" class="tab-content active max-w-5xl mx-auto px-6 py-12">
@@ -246,7 +226,7 @@
         </div>
 
         <div class="text-center">
-            <a href="#contact" class="inline-flex items-center gap-2 px-7 py-3.5 bg-slate-900 text-white rounded-xl font-medium hover:bg-slate-800 transition">
+            <a href="mailto:andrew@juntanova.com" class="inline-flex items-center gap-2 px-7 py-3.5 bg-slate-900 text-white rounded-xl font-medium hover:bg-slate-800 transition">
                 Talk about a project
                 <i class="fa-solid fa-arrow-right text-sm"></i>
             </a>
@@ -299,25 +279,6 @@
         </div>
     </section>
 
-    <!-- Contact -->
-    <section id="contact" class="border-t border-slate-200 bg-slate-50">
-        <div class="max-w-5xl mx-auto px-6 py-16">
-            <div class="max-w-lg">
-                <div class="text-xs font-medium tracking-widest text-slate-500 uppercase mb-3">Next step</div>
-                <h3 class="serif text-3xl font-semibold mb-4">Ready to lower costs so more people can own a stake?</h3>
-                <p class="text-slate-600 mb-8">If you are funding or building solutions that expand supply and ownership, we should talk.</p>
-                
-                <a href="mailto:andrew@juntanova.com" class="inline-flex items-center gap-2 px-7 py-3.5 bg-slate-900 text-white rounded-xl font-medium hover:bg-slate-800 transition">
-                    Start a conversation
-                    <i class="fa-solid fa-arrow-right text-sm"></i>
-                </a>
-                <div class="mt-4 text-sm text-slate-500">
-                    or reach out on X: <a href="https://x.com/jandrewclark" class="underline hover:text-slate-800">@jandrewclark</a>
-                </div>
-            </div>
-        </div>
-    </section>
-
     <!-- Footer -->
     <footer class="border-t border-slate-200">
         <div class="max-w-5xl mx-auto px-6 py-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-slate-500">
@@ -331,6 +292,9 @@
                 </a>
                 <a href="https://x.com/jandrewclark" target="_blank" rel="noopener" class="hover:text-slate-800" aria-label="X">
                     <i class="fa-brands fa-x-twitter text-base"></i>
+                </a>
+                <a href="https://juntonova.substack.com" target="_blank" rel="noopener" class="hover:text-slate-800" aria-label="Substack">
+                    <i class="fa-solid fa-bookmark text-base"></i>
                 </a>
                 <a href="/privacy.html" class="hover:text-slate-800">Privacy</a>
                 <span>© 2026</span>
@@ -365,20 +329,16 @@
 
         function showTab(tab) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.classList.remove('active', 'text-slate-900');
-                btn.classList.add('text-slate-500');
-            });
-            
             document.getElementById('content-' + tab).classList.add('active');
-            const btn = document.getElementById('tab-' + tab);
-            if (btn) {
-                btn.classList.add('active', 'text-slate-900');
-                btn.classList.remove('text-slate-500');
-            }
             
             if (tab === 'dashboard' && !window.chartsInitialized) {
                 initCharts();
+            }
+
+            // Smooth scroll to the content area
+            const el = document.getElementById('content-' + tab);
+            if (el) {
+                el.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
         }
 
