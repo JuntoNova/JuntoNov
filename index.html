@@ -88,6 +88,26 @@
             color: var(--ember);
             margin-bottom: 0.75rem;
         }
+
+        .debt-card {
+            background: var(--charcoal);
+            color: #fff;
+            border-radius: 1.25rem;
+            padding: 3rem 2.5rem;
+            max-width: 28rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .debt-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at 20% 0%, rgba(196,92,38,0.18), transparent 55%);
+            pointer-events: none;
+        }
+        .debt-card > * {
+            position: relative;
+        }
     </style>
 </head>
 <body>
@@ -163,10 +183,9 @@
         </div>
 
         <div class="mb-10">
-            <div class="rounded-2xl p-10 max-w-md" style="background-color: var(--charcoal); color: #fff;">
-                <div class="text-xs font-medium tracking-widest uppercase mb-4" style="color: rgba(255,255,255,0.5);">Average household share of federal debt</div>
-                <div class="stat-scary display text-5xl md:text-6xl tracking-tight mb-2" style="color: var(--ember);">–$295,000</div>
-                <div class="text-sm" style="color: rgba(255,255,255,0.5);">As of August 2026</div>
+            <div class="debt-card">
+                <div class="text-xs font-medium tracking-widest uppercase mb-6" style="color: rgba(255,255,255,0.45);">Your household’s share of federal debt</div>
+                <div class="stat-scary display text-6xl md:text-7xl tracking-tight leading-none" style="color: var(--ember);">–$295,000</div>
             </div>
         </div>
 
