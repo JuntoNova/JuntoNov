@@ -12,14 +12,17 @@
         @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600&display=swap');
         
         :root {
-            --navy: #0F172A;
-            --gold: #B45309;
-            --emerald: #059669;
+            --charcoal: #1A1A1A;
+            --paper: #F0E6D3;
+            --ember: #C45C26;
+            --oxidized: #2A3A4A;
+            --leather: #5C4033;
         }
         
         body {
             font-family: 'Inter', system-ui, sans-serif;
-            color: #0F172A;
+            color: var(--charcoal);
+            background-color: var(--paper);
         }
         
         .serif {
@@ -44,18 +47,42 @@
         .stat-scary {
             font-variant-numeric: tabular-nums;
         }
+
+        .btn-primary {
+            background-color: var(--charcoal);
+            color: var(--paper);
+        }
+        .btn-primary:hover {
+            background-color: #000;
+        }
+
+        .btn-ember {
+            background-color: var(--ember);
+            color: #fff;
+        }
+        .btn-ember:hover {
+            background-color: #a84c1f;
+        }
+
+        .border-brand {
+            border-color: rgba(42, 58, 74, 0.25);
+        }
+
+        .text-muted {
+            color: var(--oxidized);
+        }
     </style>
 </head>
-<body class="bg-white">
+<body>
 
     <!-- Header -->
-    <header class="border-b border-slate-200 relative">
+    <header class="border-b border-brand relative" style="background-color: var(--paper);">
         <div class="max-w-5xl mx-auto px-6 py-5 flex items-center justify-between">
-            <a href="#" onclick="goHome(); return false;" class="serif text-3xl tracking-tight font-semibold text-slate-900 hover:text-slate-700 transition">
+            <a href="#" onclick="goHome(); return false;" class="serif text-3xl tracking-tight font-semibold hover:opacity-80 transition" style="color: var(--charcoal);">
                 JUNTO NOVA
             </a>
 
-            <button id="menu-toggle" onclick="toggleMenu()" class="p-2 -mr-2 text-slate-700 hover:text-slate-900 focus:outline-none" aria-label="Open menu">
+            <button id="menu-toggle" onclick="toggleMenu()" class="p-2 -mr-2 focus:outline-none" style="color: var(--oxidized);" aria-label="Open menu">
                 <svg id="menu-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
                 </svg>
@@ -65,13 +92,13 @@
             </button>
         </div>
 
-        <div id="mobile-menu" class="absolute top-full left-0 right-0 bg-white border-b border-slate-200 shadow-sm z-50">
+        <div id="mobile-menu" class="absolute top-full left-0 right-0 border-b border-brand shadow-sm z-50" style="background-color: var(--paper);">
             <div class="max-w-5xl mx-auto px-6 py-4 flex flex-col gap-1">
-                <button onclick="showTab('share'); closeMenu();" class="text-left py-3 px-2 text-slate-700 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition">Your Share</button>
-                <button onclick="showTab('costs'); closeMenu();" class="text-left py-3 px-2 text-slate-700 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition">Cost Drivers</button>
-                <button onclick="showTab('services'); closeMenu();" class="text-left py-3 px-2 text-slate-700 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition">Our Services</button>
-                <button onclick="showTab('about'); closeMenu();" class="text-left py-3 px-2 text-slate-700 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition">About Us</button>
-                <a href="mailto:andrew@juntanova.com" onclick="closeMenu();" class="mt-2 inline-block text-center px-4 py-2.5 bg-slate-900 text-white rounded-lg hover:bg-slate-800 transition">Let's talk</a>
+                <button onclick="showTab('share'); closeMenu();" class="text-left py-3 px-2 rounded-lg transition hover:opacity-80" style="color: var(--charcoal);">Your Share</button>
+                <button onclick="showTab('costs'); closeMenu();" class="text-left py-3 px-2 rounded-lg transition hover:opacity-80" style="color: var(--charcoal);">Cost Drivers</button>
+                <button onclick="showTab('services'); closeMenu();" class="text-left py-3 px-2 rounded-lg transition hover:opacity-80" style="color: var(--charcoal);">Our Services</button>
+                <button onclick="showTab('about'); closeMenu();" class="text-left py-3 px-2 rounded-lg transition hover:opacity-80" style="color: var(--charcoal);">About Us</button>
+                <a href="mailto:andrew@juntanova.com" onclick="closeMenu();" class="mt-2 inline-block text-center px-4 py-2.5 rounded-lg transition btn-primary">Let's talk</a>
             </div>
         </div>
     </header>
@@ -79,11 +106,11 @@
     <!-- Hero -->
     <section class="max-w-5xl mx-auto px-6 pt-16 pb-8">
         <div class="max-w-3xl">
-            <div class="text-xs font-medium tracking-widest text-slate-500 uppercase mb-4">A stake in the dream</div>
-            <h1 class="serif text-4xl md:text-5xl font-semibold tracking-tight leading-tight mb-6">
+            <div class="text-xs font-medium tracking-widest uppercase mb-4" style="color: var(--oxidized);">A stake in the dream</div>
+            <h1 class="serif text-4xl md:text-5xl font-semibold tracking-tight leading-tight mb-6" style="color: var(--charcoal);">
                 The American Dream works best when every citizen owns a real stake in the country’s future.
             </h1>
-            <div class="text-lg text-slate-600 leading-relaxed space-y-5">
+            <div class="text-lg leading-relaxed space-y-5" style="color: var(--oxidized);">
                 <p>
                     When the costs of housing, education, energy, healthcare, and taxes stay too high, ownership slips out of reach. People stop building and start renting just to survive. Trust fades.
                 </p>
@@ -97,16 +124,16 @@
     <!-- Navigation Buttons -->
     <section class="max-w-5xl mx-auto px-6 pt-10 pb-4">
         <div class="flex flex-wrap gap-3">
-            <button onclick="showTab('share')" class="px-5 py-2.5 bg-slate-900 text-white rounded-xl text-sm font-medium hover:bg-slate-800 transition">
+            <button onclick="showTab('share')" class="px-5 py-2.5 rounded-xl text-sm font-medium transition btn-primary">
                 Your Share
             </button>
-            <button onclick="showTab('costs')" class="px-5 py-2.5 border border-slate-300 rounded-xl text-sm font-medium hover:bg-slate-50 transition">
+            <button onclick="showTab('costs')" class="px-5 py-2.5 rounded-xl text-sm font-medium transition border border-brand hover:opacity-80" style="color: var(--charcoal); background: transparent;">
                 Cost Drivers
             </button>
-            <button onclick="showTab('services')" class="px-5 py-2.5 border border-slate-300 rounded-xl text-sm font-medium hover:bg-slate-50 transition">
+            <button onclick="showTab('services')" class="px-5 py-2.5 rounded-xl text-sm font-medium transition border border-brand hover:opacity-80" style="color: var(--charcoal); background: transparent;">
                 Our Services
             </button>
-            <button onclick="showTab('about')" class="px-5 py-2.5 border border-slate-300 rounded-xl text-sm font-medium hover:bg-slate-50 transition">
+            <button onclick="showTab('about')" class="px-5 py-2.5 rounded-xl text-sm font-medium transition border border-brand hover:opacity-80" style="color: var(--charcoal); background: transparent;">
                 About Us
             </button>
         </div>
@@ -115,22 +142,22 @@
     <!-- YOUR SHARE -->
     <section id="content-share" class="tab-content active max-w-5xl mx-auto px-6 py-12">
         <div class="mb-10">
-            <h2 class="serif text-3xl font-semibold mb-3">Your share of America</h2>
-            <p class="text-slate-600 max-w-2xl">We live in the richest country in history, at the best time in the world’s history. Yet the average American household’s share of just the federal debt is nearly negative $300,000.</p>
+            <h2 class="serif text-3xl font-semibold mb-3" style="color: var(--charcoal);">Your share of America</h2>
+            <p class="max-w-2xl" style="color: var(--oxidized);">We live in the richest country in history, at the best time in the world’s history. Yet the average American household’s share of just the federal debt is nearly negative $300,000.</p>
         </div>
 
         <!-- Big scary number -->
         <div class="mb-10">
-            <div class="bg-slate-900 text-white rounded-2xl p-10 max-w-md">
-                <div class="text-xs font-medium tracking-widest text-slate-400 uppercase mb-4">Average household share of federal debt</div>
-                <div class="stat-scary serif text-5xl md:text-6xl font-semibold tracking-tight mb-2">–$295,000</div>
-                <div class="text-sm text-slate-400">As of August 2026</div>
+            <div class="rounded-2xl p-10 max-w-md" style="background-color: var(--charcoal); color: var(--paper);">
+                <div class="text-xs font-medium tracking-widest uppercase mb-4" style="color: rgba(240,230,211,0.55);">Average household share of federal debt</div>
+                <div class="stat-scary serif text-5xl md:text-6xl font-semibold tracking-tight mb-2" style="color: var(--ember);">–$295,000</div>
+                <div class="text-sm" style="color: rgba(240,230,211,0.55);">As of August 2026</div>
             </div>
         </div>
 
-        <div class="text-xs text-slate-500 space-y-1.5">
+        <div class="text-xs space-y-1.5" style="color: var(--oxidized);">
             <div>Sources (last updated August 15, 2026):</div>
-            <div>• <a href="https://fiscaldata.treasury.gov/datasets/debt-to-the-penny/debt-to-the-penny" target="_blank" rel="noopener" class="underline hover:text-slate-700">U.S. Treasury — Debt to the Penny</a> (total public debt outstanding)</div>
+            <div>• <a href="https://fiscaldata.treasury.gov/datasets/debt-to-the-penny/debt-to-the-penny" target="_blank" rel="noopener" class="underline hover:opacity-80">U.S. Treasury — Debt to the Penny</a> (total public debt outstanding)</div>
             <div>• Household figure derived from total debt ÷ number of U.S. households (Census / JEC estimates). Exact daily values move; the order of magnitude does not.</div>
         </div>
     </section>
@@ -138,74 +165,74 @@
     <!-- COST DRIVERS -->
     <section id="content-costs" class="tab-content max-w-5xl mx-auto px-6 py-12">
         <div class="mb-10">
-            <h2 class="serif text-3xl font-semibold mb-2">Cost drivers</h2>
-            <p class="text-slate-600">When housing, education, energy, healthcare, and taxes keep rising, ownership becomes impossible for most people. The path is not fixed.</p>
+            <h2 class="serif text-3xl font-semibold mb-2" style="color: var(--charcoal);">Cost drivers</h2>
+            <p style="color: var(--oxidized);">When housing, education, energy, healthcare, and taxes keep rising, ownership becomes impossible for most people. The path is not fixed.</p>
         </div>
 
         <div class="grid md:grid-cols-2 gap-8 mb-12">
-            <div class="border border-slate-200 rounded-2xl p-6">
+            <div class="border border-brand rounded-2xl p-6" style="background: rgba(255,255,255,0.35);">
                 <div class="flex justify-between items-center mb-4">
-                    <div class="font-medium">Today (2026)</div>
-                    <div class="text-xs text-slate-500">~ $78k–$92k / year</div>
+                    <div class="font-medium" style="color: var(--charcoal);">Today (2026)</div>
+                    <div class="text-xs" style="color: var(--oxidized);">~ $78k–$92k / year</div>
                 </div>
                 <canvas id="pieToday" height="220"></canvas>
             </div>
-            <div class="border border-slate-200 rounded-2xl p-6">
+            <div class="border border-brand rounded-2xl p-6" style="background: rgba(255,255,255,0.35);">
                 <div class="flex justify-between items-center mb-4">
-                    <div class="font-medium">Projected 2050 (no change)</div>
-                    <div class="text-xs text-red-600">Housing takes more</div>
+                    <div class="font-medium" style="color: var(--charcoal);">Projected 2050 (no change)</div>
+                    <div class="text-xs" style="color: var(--ember);">Housing takes more</div>
                 </div>
                 <canvas id="pie2050" height="220"></canvas>
             </div>
         </div>
 
-        <div class="border border-slate-200 rounded-2xl p-6 mb-10">
+        <div class="border border-brand rounded-2xl p-6 mb-10" style="background: rgba(255,255,255,0.35);">
             <div class="flex justify-between items-center mb-4">
                 <div>
-                    <div class="font-medium">Household cost trajectory</div>
-                    <div class="text-sm text-slate-500">Indexed to 2026 = 100</div>
+                    <div class="font-medium" style="color: var(--charcoal);">Household cost trajectory</div>
+                    <div class="text-sm" style="color: var(--oxidized);">Indexed to 2026 = 100</div>
                 </div>
-                <div class="flex gap-4 text-xs text-slate-500">
-                    <span class="flex items-center gap-1.5"><span class="w-3 h-0.5 bg-slate-900"></span> Current path</span>
-                    <span class="flex items-center gap-1.5"><span class="w-3 h-0.5 bg-emerald-600"></span> Lower-cost path</span>
+                <div class="flex gap-4 text-xs" style="color: var(--oxidized);">
+                    <span class="flex items-center gap-1.5"><span class="w-3 h-0.5" style="background: var(--charcoal);"></span> Current path</span>
+                    <span class="flex items-center gap-1.5"><span class="w-3 h-0.5" style="background: var(--ember);"></span> Lower-cost path</span>
                 </div>
             </div>
             <canvas id="lineChart" height="100"></canvas>
         </div>
 
-        <div class="bg-slate-50 border border-slate-200 rounded-2xl p-8">
-            <div class="font-medium mb-1">What if costs actually came down?</div>
-            <p class="text-sm text-slate-600 mb-6">Move the levers. See rough annual savings for a family of four.</p>
+        <div class="border border-brand rounded-2xl p-8" style="background: rgba(255,255,255,0.45);">
+            <div class="font-medium mb-1" style="color: var(--charcoal);">What if costs actually came down?</div>
+            <p class="text-sm mb-6" style="color: var(--oxidized);">Move the levers. See rough annual savings for a family of four.</p>
             
             <div class="grid md:grid-cols-2 gap-x-10 gap-y-5 mb-8">
                 <div>
-                    <label class="text-xs font-medium text-slate-600">Housing supply reforms</label>
-                    <input type="range" id="housing" min="0" max="35" step="5" value="20" class="w-full accent-slate-900" oninput="updateSavings()">
-                    <div class="flex justify-between text-[11px] text-slate-500"><span>0%</span><span id="housingVal">20%</span></div>
+                    <label class="text-xs font-medium" style="color: var(--oxidized);">Housing supply reforms</label>
+                    <input type="range" id="housing" min="0" max="35" step="5" value="20" class="w-full" style="accent-color: var(--charcoal);" oninput="updateSavings()">
+                    <div class="flex justify-between text-[11px]" style="color: var(--oxidized);"><span>0%</span><span id="housingVal">20%</span></div>
                 </div>
                 <div>
-                    <label class="text-xs font-medium text-slate-600">Energy and utilities</label>
-                    <input type="range" id="energy" min="0" max="30" step="5" value="15" class="w-full accent-slate-900" oninput="updateSavings()">
-                    <div class="flex justify-between text-[11px] text-slate-500"><span>0%</span><span id="energyVal">15%</span></div>
+                    <label class="text-xs font-medium" style="color: var(--oxidized);">Energy and utilities</label>
+                    <input type="range" id="energy" min="0" max="30" step="5" value="15" class="w-full" style="accent-color: var(--charcoal);" oninput="updateSavings()">
+                    <div class="flex justify-between text-[11px]" style="color: var(--oxidized);"><span>0%</span><span id="energyVal">15%</span></div>
                 </div>
                 <div>
-                    <label class="text-xs font-medium text-slate-600">Healthcare competition</label>
-                    <input type="range" id="health" min="0" max="25" step="5" value="12" class="w-full accent-slate-900" oninput="updateSavings()">
-                    <div class="flex justify-between text-[11px] text-slate-500"><span>0%</span><span id="healthVal">12%</span></div>
+                    <label class="text-xs font-medium" style="color: var(--oxidized);">Healthcare competition</label>
+                    <input type="range" id="health" min="0" max="25" step="5" value="12" class="w-full" style="accent-color: var(--charcoal);" oninput="updateSavings()">
+                    <div class="flex justify-between text-[11px]" style="color: var(--oxidized);"><span>0%</span><span id="healthVal">12%</span></div>
                 </div>
                 <div>
-                    <label class="text-xs font-medium text-slate-600">Education choice and new supply</label>
-                    <input type="range" id="edu" min="0" max="30" step="5" value="18" class="w-full accent-slate-900" oninput="updateSavings()">
-                    <div class="flex justify-between text-[11px] text-slate-500"><span>0%</span><span id="eduVal">18%</span></div>
+                    <label class="text-xs font-medium" style="color: var(--oxidized);">Education choice and new supply</label>
+                    <input type="range" id="edu" min="0" max="30" step="5" value="18" class="w-full" style="accent-color: var(--charcoal);" oninput="updateSavings()">
+                    <div class="flex justify-between text-[11px]" style="color: var(--oxidized);"><span>0%</span><span id="eduVal">18%</span></div>
                 </div>
             </div>
 
-            <div class="pt-6 border-t border-slate-200 flex items-baseline justify-between">
+            <div class="pt-6 border-t border-brand flex items-baseline justify-between">
                 <div>
-                    <div class="text-sm text-slate-600">Projected annual savings</div>
-                    <div id="savings" class="serif text-5xl font-semibold tracking-tight">$14,200</div>
+                    <div class="text-sm" style="color: var(--oxidized);">Projected annual savings</div>
+                    <div id="savings" class="serif text-5xl font-semibold tracking-tight" style="color: var(--ember);">$14,200</div>
                 </div>
-                <div class="text-right text-xs text-slate-500">
+                <div class="text-right text-xs" style="color: var(--oxidized);">
                     Per family of 4 • every year<br>
                     Illustrative ranges based on policy literature
                 </div>
@@ -216,52 +243,52 @@
     <!-- OUR SERVICES -->
     <section id="content-services" class="tab-content max-w-5xl mx-auto px-6 py-12">
         <div class="mb-10">
-            <h2 class="serif text-3xl font-semibold mb-2">Our services</h2>
-            <p class="text-slate-600 max-w-2xl">We partner with funders and builders who want to lower the real cost of living so more families can own a stake instead of renting their future.</p>
+            <h2 class="serif text-3xl font-semibold mb-2" style="color: var(--charcoal);">Our services</h2>
+            <p class="max-w-2xl" style="color: var(--oxidized);">We partner with funders and builders who want to lower the real cost of living so more families can own a stake instead of renting their future.</p>
         </div>
 
-        <div class="border border-slate-200 rounded-2xl overflow-hidden mb-10">
+        <div class="border border-brand rounded-2xl overflow-hidden mb-10" style="background: rgba(255,255,255,0.35);">
             <table class="w-full text-sm">
-                <thead class="bg-slate-50 text-left">
+                <thead style="background: rgba(26,26,26,0.04);">
                     <tr>
-                        <th class="py-4 px-6 font-medium text-slate-500">What we do</th>
-                        <th class="py-4 px-6 font-medium text-slate-500">What you get</th>
+                        <th class="py-4 px-6 font-medium text-left" style="color: var(--oxidized);">What we do</th>
+                        <th class="py-4 px-6 font-medium text-left" style="color: var(--oxidized);">What you get</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-100">
-                    <tr>
-                        <td class="py-5 px-6 font-medium">Find the real barriers</td>
-                        <td class="py-5 px-6 text-slate-600">Clear diagnosis of the rules, incentives, and bottlenecks that keep costs high in housing, education, energy, healthcare, and taxes</td>
+                <tbody>
+                    <tr class="border-t border-brand">
+                        <td class="py-5 px-6 font-medium" style="color: var(--charcoal);">Find the real barriers</td>
+                        <td class="py-5 px-6" style="color: var(--oxidized);">Clear diagnosis of the rules, incentives, and bottlenecks that keep costs high in housing, education, energy, healthcare, and taxes</td>
                     </tr>
-                    <tr>
-                        <td class="py-5 px-6 font-medium">Turn barriers into investable plans</td>
-                        <td class="py-5 px-6 text-slate-600">Concrete strategies with numbers, targets, and a path to capital or political support</td>
+                    <tr class="border-t border-brand">
+                        <td class="py-5 px-6 font-medium" style="color: var(--charcoal);">Turn barriers into investable plans</td>
+                        <td class="py-5 px-6" style="color: var(--oxidized);">Concrete strategies with numbers, targets, and a path to capital or political support</td>
                     </tr>
-                    <tr>
-                        <td class="py-5 px-6 font-medium">Structure the deals</td>
-                        <td class="py-5 px-6 text-slate-600">Partnership terms, capital alignment, and the agreements needed to move from idea to action</td>
+                    <tr class="border-t border-brand">
+                        <td class="py-5 px-6 font-medium" style="color: var(--charcoal);">Structure the deals</td>
+                        <td class="py-5 px-6" style="color: var(--oxidized);">Partnership terms, capital alignment, and the agreements needed to move from idea to action</td>
                     </tr>
-                    <tr class="bg-slate-50/60">
-                        <td class="py-5 px-6 font-medium">Build and prove it</td>
-                        <td class="py-5 px-6 text-slate-600">Hands-on execution in a few states until the model works and can be copied elsewhere</td>
+                    <tr class="border-t border-brand" style="background: rgba(26,26,26,0.03);">
+                        <td class="py-5 px-6 font-medium" style="color: var(--charcoal);">Build and prove it</td>
+                        <td class="py-5 px-6" style="color: var(--oxidized);">Hands-on execution in a few states until the model works and can be copied elsewhere</td>
                     </tr>
                 </tbody>
             </table>
         </div>
 
         <div class="grid md:grid-cols-2 gap-6 mb-10">
-            <div class="border border-slate-200 rounded-2xl p-6">
-                <div class="font-medium mb-2">Aligned incentives</div>
-                <p class="text-sm text-slate-600">Success fees available on capital we help secure or unlock. We get paid when the work produces real results.</p>
+            <div class="border border-brand rounded-2xl p-6" style="background: rgba(255,255,255,0.35);">
+                <div class="font-medium mb-2" style="color: var(--charcoal);">Aligned incentives</div>
+                <p class="text-sm" style="color: var(--oxidized);">Success fees available on capital we help secure or unlock. We get paid when the work produces real results.</p>
             </div>
-            <div class="border border-slate-200 rounded-2xl p-6">
-                <div class="font-medium mb-2">Stay through scale</div>
-                <p class="text-sm text-slate-600">After the first breakthroughs we stay involved so the model does not drift and the gains keep compounding.</p>
+            <div class="border border-brand rounded-2xl p-6" style="background: rgba(255,255,255,0.35);">
+                <div class="font-medium mb-2" style="color: var(--charcoal);">Stay through scale</div>
+                <p class="text-sm" style="color: var(--oxidized);">After the first breakthroughs we stay involved so the model does not drift and the gains keep compounding.</p>
             </div>
         </div>
 
         <div class="text-center">
-            <a href="mailto:andrew@juntanova.com" class="inline-flex items-center gap-2 px-7 py-3.5 bg-slate-900 text-white rounded-xl font-medium hover:bg-slate-800 transition">
+            <a href="mailto:andrew@juntanova.com" class="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl font-medium transition btn-primary">
                 Talk about a project
                 <i class="fa-solid fa-arrow-right text-sm"></i>
             </a>
@@ -271,46 +298,46 @@
     <!-- ABOUT US -->
     <section id="content-about" class="tab-content max-w-5xl mx-auto px-6 py-12">
         <div class="max-w-2xl">
-            <h2 class="serif text-3xl font-semibold mb-8">About us</h2>
+            <h2 class="serif text-3xl font-semibold mb-8" style="color: var(--charcoal);">About us</h2>
             
-            <div class="space-y-10 text-[15px] leading-relaxed text-slate-700">
+            <div class="space-y-10 text-[15px] leading-relaxed" style="color: var(--oxidized);">
                 <div>
-                    <div class="font-semibold text-slate-900 mb-2">The name</div>
-                    <p><strong>Junto</strong> comes from Benjamin Franklin’s club for mutual improvement: practical people solving real problems together. <strong>Nova</strong> points to a new start. The work is practical action that expands ownership and lowers costs.</p>
+                    <div class="font-semibold mb-2" style="color: var(--charcoal);">The name</div>
+                    <p><strong style="color: var(--charcoal);">Junto</strong> comes from Benjamin Franklin’s club for mutual improvement: practical people solving real problems together. <strong style="color: var(--charcoal);">Nova</strong> points to a new start. The work is practical action that expands ownership and lowers costs.</p>
                 </div>
                 
                 <div>
-                    <div class="font-semibold text-slate-900 mb-2">Who we work with</div>
+                    <div class="font-semibold mb-2" style="color: var(--charcoal);">Who we work with</div>
                     <p>Funders, builders, and operators who believe high costs of living are not inevitable, and that more competition, better policy, and new supply are the most reliable ways to bring them down so ordinary families can own real stakes.</p>
                 </div>
                 
                 <div>
-                    <div class="font-semibold text-slate-900 mb-2">How we think about it</div>
+                    <div class="font-semibold mb-2" style="color: var(--charcoal);">How we think about it</div>
                     <p>When families can own instead of rent their housing, skills, energy, healthcare, and a larger share of what they earn, their success and the country’s success become the same thing. High explicit taxes, growing public debt, and the quiet tax of inflation all reduce that stake. We focus on the barriers that block ownership and on the deals and organizations that remove them.</p>
                 </div>
 
                 <div>
-                    <div class="font-semibold text-slate-900 mb-2">Writing</div>
-                    <p>Occasional notes on the barriers, the data, and the practical work of expanding ownership appear on <a href="https://juntonova.substack.com" target="_blank" rel="noopener" class="underline hover:text-slate-900">Substack</a>.</p>
+                    <div class="font-semibold mb-2" style="color: var(--charcoal);">Writing</div>
+                    <p>Occasional notes on the barriers, the data, and the practical work of expanding ownership appear on <a href="https://juntonova.substack.com" target="_blank" rel="noopener" class="underline hover:opacity-80" style="color: var(--charcoal);">Substack</a>.</p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Newsletter / Substack -->
-    <section class="border-t border-slate-200">
+    <section class="border-t border-brand">
         <div class="max-w-5xl mx-auto px-6 py-16">
             <div class="max-w-xl mx-auto text-center">
-                <div class="text-xs font-medium tracking-widest text-slate-500 uppercase mb-3">Writing</div>
-                <h3 class="serif text-3xl font-semibold mb-4">Ideas on ownership, costs, and the American stake</h3>
-                <p class="text-slate-600 mb-8">Occasional notes on the barriers that keep costs high and the practical work of expanding ownership. Free.</p>
+                <div class="text-xs font-medium tracking-widest uppercase mb-3" style="color: var(--oxidized);">Writing</div>
+                <h3 class="serif text-3xl font-semibold mb-4" style="color: var(--charcoal);">Ideas on ownership, costs, and the American stake</h3>
+                <p class="mb-8" style="color: var(--oxidized);">Occasional notes on the barriers that keep costs high and the practical work of expanding ownership. Free.</p>
                 
                 <div class="flex justify-center">
                     <iframe 
                         src="https://juntonova.substack.com/embed" 
                         width="100%" 
                         height="320" 
-                        style="border: 1px solid #e2e8f0; background: white; border-radius: 12px; max-width: 480px;" 
+                        style="border: 1px solid rgba(42,58,74,0.25); background: #fff; border-radius: 12px; max-width: 480px;" 
                         frameborder="0" 
                         scrolling="no">
                     </iframe>
@@ -320,23 +347,23 @@
     </section>
 
     <!-- Footer -->
-    <footer class="border-t border-slate-200">
-        <div class="max-w-5xl mx-auto px-6 py-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-slate-500">
+    <footer class="border-t border-brand">
+        <div class="max-w-5xl mx-auto px-6 py-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm" style="color: var(--oxidized);">
             <div>
-                <div class="serif font-medium text-slate-800 text-lg">JUNTO NOVA</div>
+                <div class="serif font-medium text-lg" style="color: var(--charcoal);">JUNTO NOVA</div>
                 <div class="text-xs mt-1">Junto Nova LLC · Dallas, TX</div>
             </div>
             <div class="flex items-center gap-5">
-                <a href="mailto:andrew@juntanova.com" class="hover:text-slate-800" aria-label="Email">
+                <a href="mailto:andrew@juntanova.com" class="hover:opacity-70" aria-label="Email">
                     <i class="fa-solid fa-envelope text-base"></i>
                 </a>
-                <a href="https://x.com/jandrewclark" target="_blank" rel="noopener" class="hover:text-slate-800" aria-label="X">
+                <a href="https://x.com/jandrewclark" target="_blank" rel="noopener" class="hover:opacity-70" aria-label="X">
                     <i class="fa-brands fa-x-twitter text-base"></i>
                 </a>
-                <a href="https://juntonova.substack.com" target="_blank" rel="noopener" class="hover:text-slate-800" aria-label="Substack">
+                <a href="https://juntonova.substack.com" target="_blank" rel="noopener" class="hover:opacity-70" aria-label="Substack">
                     <i class="fa-solid fa-bookmark text-base"></i>
                 </a>
-                <a href="/privacy.html" class="hover:text-slate-800">Privacy</a>
+                <a href="/privacy.html" class="hover:opacity-70">Privacy</a>
                 <span>© 2026</span>
             </div>
         </div>
@@ -403,20 +430,25 @@
         }
 
         function initCharts() {
+            const charcoal = '#1A1A1A';
+            const oxidized = '#2A3A4A';
+            const ember = '#C45C26';
+            const paper = '#F0E6D3';
+
             new Chart(document.getElementById('pieToday'), {
                 type: 'doughnut',
                 data: {
                     labels: ['Housing', 'Medical', 'Food', 'Energy', 'Taxes', 'Other'],
                     datasets: [{
                         data: [34, 18, 13, 11, 9, 15],
-                        backgroundColor: ['#0F172A', '#334155', '#475569', '#64748B', '#94A3B8', '#CBD5E1'],
+                        backgroundColor: [charcoal, '#3A3A3A', oxidized, '#4A5A6A', '#6A7A8A', '#9A9A9A'],
                         borderWidth: 0
                     }]
                 },
                 options: {
                     cutout: '65%',
                     plugins: {
-                        legend: { position: 'bottom', labels: { boxWidth: 10, padding: 12, font: { size: 11 } } }
+                        legend: { position: 'bottom', labels: { boxWidth: 10, padding: 12, font: { size: 11 }, color: oxidized } }
                     }
                 }
             });
@@ -427,14 +459,14 @@
                     labels: ['Housing', 'Medical', 'Food', 'Energy', 'Taxes', 'Other'],
                     datasets: [{
                         data: [42, 17, 11, 10, 8, 12],
-                        backgroundColor: ['#0F172A', '#334155', '#475569', '#64748B', '#94A3B8', '#CBD5E1'],
+                        backgroundColor: [charcoal, '#3A3A3A', oxidized, '#4A5A6A', '#6A7A8A', '#9A9A9A'],
                         borderWidth: 0
                     }]
                 },
                 options: {
                     cutout: '65%',
                     plugins: {
-                        legend: { position: 'bottom', labels: { boxWidth: 10, padding: 12, font: { size: 11 } } }
+                        legend: { position: 'bottom', labels: { boxWidth: 10, padding: 12, font: { size: 11 }, color: oxidized } }
                     }
                 }
             });
@@ -447,7 +479,7 @@
                         {
                             label: 'Current Path',
                             data: [100, 112, 128, 142, 155, 168],
-                            borderColor: '#0F172A',
+                            borderColor: charcoal,
                             borderWidth: 2.5,
                             tension: 0.3,
                             pointRadius: 0
@@ -455,7 +487,7 @@
                         {
                             label: 'Lower-cost Path',
                             data: [100, 105, 108, 110, 112, 114],
-                            borderColor: '#059669',
+                            borderColor: ember,
                             borderWidth: 2.5,
                             borderDash: [4, 3],
                             tension: 0.3,
@@ -465,8 +497,8 @@
                 },
                 options: {
                     scales: {
-                        y: { beginAtZero: false, grid: { color: '#F1F5F9' } },
-                        x: { grid: { display: false } }
+                        y: { beginAtZero: false, grid: { color: 'rgba(42,58,74,0.12)' }, ticks: { color: oxidized } },
+                        x: { grid: { display: false }, ticks: { color: oxidized } }
                     },
                     plugins: { legend: { display: false } }
                 }
