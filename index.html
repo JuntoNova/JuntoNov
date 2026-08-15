@@ -34,12 +34,15 @@
             display: block;
         }
 
-        /* Hamburger menu */
         #mobile-menu {
             display: none;
         }
         #mobile-menu.open {
             display: block;
+        }
+
+        .stat-scary {
+            font-variant-numeric: tabular-nums;
         }
     </style>
 </head>
@@ -52,7 +55,6 @@
                 JUNTO NOVA
             </a>
 
-            <!-- Hamburger button -->
             <button id="menu-toggle" onclick="toggleMenu()" class="p-2 -mr-2 text-slate-700 hover:text-slate-900 focus:outline-none" aria-label="Open menu">
                 <svg id="menu-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
@@ -63,47 +65,101 @@
             </button>
         </div>
 
-        <!-- Dropdown menu -->
         <div id="mobile-menu" class="absolute top-full left-0 right-0 bg-white border-b border-slate-200 shadow-sm z-50">
             <div class="max-w-5xl mx-auto px-6 py-4 flex flex-col gap-1">
-                <button onclick="showTab('dashboard'); closeMenu();" class="text-left py-3 px-2 text-slate-700 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition">See the numbers</button>
-                <button onclick="showTab('services'); closeMenu();" class="text-left py-3 px-2 text-slate-700 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition">How we work</button>
-                <button onclick="showTab('vision'); closeMenu();" class="text-left py-3 px-2 text-slate-700 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition">Vision</button>
+                <button onclick="showTab('share'); closeMenu();" class="text-left py-3 px-2 text-slate-700 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition">Your Share</button>
+                <button onclick="showTab('costs'); closeMenu();" class="text-left py-3 px-2 text-slate-700 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition">Cost Drivers</button>
+                <button onclick="showTab('services'); closeMenu();" class="text-left py-3 px-2 text-slate-700 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition">Our Services</button>
+                <button onclick="showTab('about'); closeMenu();" class="text-left py-3 px-2 text-slate-700 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition">About Us</button>
                 <a href="mailto:andrew@juntanova.com" onclick="closeMenu();" class="mt-2 inline-block text-center px-4 py-2.5 bg-slate-900 text-white rounded-lg hover:bg-slate-800 transition">Let's talk</a>
             </div>
         </div>
     </header>
 
     <!-- Hero -->
-    <section class="max-w-5xl mx-auto px-6 pt-16 pb-12">
+    <section class="max-w-5xl mx-auto px-6 pt-16 pb-8">
         <div class="max-w-3xl">
             <div class="text-xs font-medium tracking-widest text-slate-500 uppercase mb-4">A stake in the dream</div>
             <h1 class="serif text-4xl md:text-5xl font-semibold tracking-tight leading-tight mb-6">
                 The American Dream works best when every citizen owns a real stake in the country’s future.
             </h1>
-            <div class="text-lg text-slate-600 leading-relaxed space-y-5 mb-8">
+            <div class="text-lg text-slate-600 leading-relaxed space-y-5">
                 <p>
                     When the costs of housing, education, energy, healthcare, and taxes stay too high, ownership slips out of reach. People stop building and start renting just to survive. Trust fades.
                 </p>
                 <p>
-                    Junto Nova identifies the barriers that keep costs high, turns them into clear investable strategies, and builds the organizations and deals that actually lower them. We prove what works in a few states and then scale it. Our goal is straightforward: make it possible for every American family to buy and own a genuine stake in the dream.
+                    Junto Nova identifies the barriers that keep costs high, turns them into clear investable strategies, and builds the organizations and deals that actually lower them. We prove what works in a few states and then scale it.
                 </p>
-            </div>
-            <div class="flex flex-wrap gap-3">
-                <button onclick="showTab('dashboard')" class="px-6 py-3 bg-slate-900 text-white rounded-xl font-medium hover:bg-slate-800 transition">
-                    See the numbers
-                </button>
-                <button onclick="showTab('services')" class="px-6 py-3 border border-slate-300 rounded-xl font-medium hover:bg-slate-50 transition">
-                    How we work
-                </button>
             </div>
         </div>
     </section>
 
-    <!-- TAB: Dashboard -->
-    <section id="content-dashboard" class="tab-content active max-w-5xl mx-auto px-6 py-12">
+    <!-- Navigation Buttons -->
+    <section class="max-w-5xl mx-auto px-6 pt-10 pb-4">
+        <div class="flex flex-wrap gap-3">
+            <button onclick="showTab('share')" class="px-5 py-2.5 bg-slate-900 text-white rounded-xl text-sm font-medium hover:bg-slate-800 transition">
+                Your Share
+            </button>
+            <button onclick="showTab('costs')" class="px-5 py-2.5 border border-slate-300 rounded-xl text-sm font-medium hover:bg-slate-50 transition">
+                Cost Drivers
+            </button>
+            <button onclick="showTab('services')" class="px-5 py-2.5 border border-slate-300 rounded-xl text-sm font-medium hover:bg-slate-50 transition">
+                Our Services
+            </button>
+            <button onclick="showTab('about')" class="px-5 py-2.5 border border-slate-300 rounded-xl text-sm font-medium hover:bg-slate-50 transition">
+                About Us
+            </button>
+        </div>
+    </section>
+
+    <!-- YOUR SHARE -->
+    <section id="content-share" class="tab-content active max-w-5xl mx-auto px-6 py-12">
         <div class="mb-10">
-            <h2 class="serif text-3xl font-semibold mb-2">What high costs actually do to families</h2>
+            <h2 class="serif text-3xl font-semibold mb-3">Your share of America</h2>
+            <p class="text-slate-600 max-w-2xl">Every American already carries a large, growing claim against their future. The numbers below are not abstract. They are the bill that arrives whether you asked for it or not.</p>
+        </div>
+
+        <!-- Big scary numbers -->
+        <div class="grid md:grid-cols-3 gap-5 mb-10">
+            <div class="bg-slate-900 text-white rounded-2xl p-7">
+                <div class="text-xs font-medium tracking-widest text-slate-400 uppercase mb-3">National debt</div>
+                <div class="stat-scary serif text-4xl md:text-5xl font-semibold tracking-tight mb-1">$39.8T</div>
+                <div class="text-sm text-slate-400">Total public debt outstanding</div>
+            </div>
+            <div class="bg-slate-900 text-white rounded-2xl p-7">
+                <div class="text-xs font-medium tracking-widest text-slate-400 uppercase mb-3">Per person</div>
+                <div class="stat-scary serif text-4xl md:text-5xl font-semibold tracking-tight mb-1">~$118k</div>
+                <div class="text-sm text-slate-400">Share of the national debt</div>
+            </div>
+            <div class="bg-slate-900 text-white rounded-2xl p-7">
+                <div class="text-xs font-medium tracking-widest text-slate-400 uppercase mb-3">Per household</div>
+                <div class="stat-scary serif text-4xl md:text-5xl font-semibold tracking-tight mb-1">~$295k</div>
+                <div class="text-sm text-slate-400">Average household share</div>
+            </div>
+        </div>
+
+        <div class="border border-slate-200 rounded-2xl p-7 mb-8">
+            <div class="font-medium mb-2">This is only the explicit debt</div>
+            <p class="text-slate-600 text-[15px] leading-relaxed mb-4">
+                The quieter tax is higher still: housing that consumes a third or more of income, education costs that force long-term borrowing, energy and healthcare prices that rise faster than wages, and taxes that claim a growing share of what is left. Together they shrink the real ownership stake most families can actually hold.
+            </p>
+            <p class="text-slate-600 text-[15px] leading-relaxed">
+                When ownership becomes unreachable, people stop building. They rent their housing, their skills, their energy, and their future. The country loses the citizens who have the strongest reason to care what happens next.
+            </p>
+        </div>
+
+        <div class="text-xs text-slate-500 space-y-1">
+            <div>Sources (updated periodically):</div>
+            <div>• U.S. Treasury — Debt to the Penny / Monthly Statement of the Public Debt (total public debt outstanding, ~$39.5–40T as of Aug 2026)</div>
+            <div>• Joint Economic Committee & Treasury data → ~$116k–$120k per person and ~$295k per household using current population estimates</div>
+            <div>• Figures will be refreshed as new Treasury releases appear. Exact daily values move; the order of magnitude does not.</div>
+        </div>
+    </section>
+
+    <!-- COST DRIVERS -->
+    <section id="content-costs" class="tab-content max-w-5xl mx-auto px-6 py-12">
+        <div class="mb-10">
+            <h2 class="serif text-3xl font-semibold mb-2">Cost drivers</h2>
             <p class="text-slate-600">When housing, education, energy, healthcare, and taxes keep rising, ownership becomes impossible for most people. The path is not fixed.</p>
         </div>
 
@@ -111,7 +167,7 @@
             <div class="border border-slate-200 rounded-2xl p-6">
                 <div class="flex justify-between items-center mb-4">
                     <div class="font-medium">Today (2026)</div>
-                    <div class="text-xs text-slate-500">~ $78k-$92k / year</div>
+                    <div class="text-xs text-slate-500">~ $78k–$92k / year</div>
                 </div>
                 <canvas id="pieToday" height="220"></canvas>
             </div>
@@ -178,10 +234,10 @@
         </div>
     </section>
 
-    <!-- TAB: Services -->
+    <!-- OUR SERVICES -->
     <section id="content-services" class="tab-content max-w-5xl mx-auto px-6 py-12">
         <div class="mb-10">
-            <h2 class="serif text-3xl font-semibold mb-2">How we work</h2>
+            <h2 class="serif text-3xl font-semibold mb-2">Our services</h2>
             <p class="text-slate-600 max-w-2xl">We partner with funders and builders who want to lower the real cost of living so more families can own a stake instead of renting their future.</p>
         </div>
 
@@ -233,25 +289,30 @@
         </div>
     </section>
 
-    <!-- TAB: Vision -->
-    <section id="content-vision" class="tab-content max-w-5xl mx-auto px-6 py-12">
+    <!-- ABOUT US -->
+    <section id="content-about" class="tab-content max-w-5xl mx-auto px-6 py-12">
         <div class="max-w-2xl">
-            <h2 class="serif text-3xl font-semibold mb-8">Why this matters</h2>
+            <h2 class="serif text-3xl font-semibold mb-8">About us</h2>
             
             <div class="space-y-10 text-[15px] leading-relaxed text-slate-700">
-                <div>
-                    <div class="font-semibold text-slate-900 mb-2">Who we work with</div>
-                    <p>Funders, builders, and operators who believe high costs of living are not inevitable, and that more competition, better policy, and new supply are the most reliable ways to bring them down so ordinary families can own real stakes.</p>
-                </div>
-                
                 <div>
                     <div class="font-semibold text-slate-900 mb-2">The name</div>
                     <p><strong>Junto</strong> comes from Benjamin Franklin’s club for mutual improvement: practical people solving real problems together. <strong>Nova</strong> points to a new start. The work is practical action that expands ownership and lowers costs.</p>
                 </div>
                 
                 <div>
+                    <div class="font-semibold text-slate-900 mb-2">Who we work with</div>
+                    <p>Funders, builders, and operators who believe high costs of living are not inevitable, and that more competition, better policy, and new supply are the most reliable ways to bring them down so ordinary families can own real stakes.</p>
+                </div>
+                
+                <div>
                     <div class="font-semibold text-slate-900 mb-2">How we think about it</div>
                     <p>When families can own instead of rent their housing, skills, energy, healthcare, and a larger share of what they earn, their success and the country’s success become the same thing. High explicit taxes, growing public debt, and the quiet tax of inflation all reduce that stake. We focus on the barriers that block ownership and on the deals and organizations that remove them.</p>
+                </div>
+
+                <div>
+                    <div class="font-semibold text-slate-900 mb-2">Writing</div>
+                    <p>Occasional notes on the barriers, the data, and the practical work of expanding ownership appear on <a href="https://juntonova.substack.com" target="_blank" rel="noopener" class="underline hover:text-slate-900">Substack</a>.</p>
                 </div>
             </div>
         </div>
@@ -323,7 +384,7 @@
 
         function goHome() {
             closeMenu();
-            showTab('dashboard');
+            showTab('share');
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
@@ -331,11 +392,10 @@
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.getElementById('content-' + tab).classList.add('active');
             
-            if (tab === 'dashboard' && !window.chartsInitialized) {
+            if (tab === 'costs' && !window.chartsInitialized) {
                 initCharts();
             }
 
-            // Smooth scroll to the content area
             const el = document.getElementById('content-' + tab);
             if (el) {
                 el.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -437,8 +497,7 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            initCharts();
-            updateSavings();
+            // Charts only load when Cost Drivers is opened
         });
     </script>
 </body>
