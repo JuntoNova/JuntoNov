@@ -109,6 +109,63 @@
         .debt-card > * {
             position: relative;
         }
+
+        .faq-item {
+            border-bottom: 1px solid var(--border);
+        }
+        .faq-item:first-child {
+            border-top: 1px solid var(--border);
+        }
+        .faq-q {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: 1.25rem 0;
+            text-align: left;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-family: 'Montserrat', system-ui, sans-serif;
+            font-weight: 600;
+            font-size: 1.05rem;
+            color: var(--charcoal);
+            letter-spacing: -0.01em;
+        }
+        .faq-q:hover {
+            color: var(--ember);
+        }
+        .faq-icon {
+            flex-shrink: 0;
+            width: 1.75rem;
+            height: 1.75rem;
+            border-radius: 9999px;
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            line-height: 1;
+            color: var(--muted);
+            transition: transform 0.2s ease, border-color 0.15s ease, color 0.15s ease;
+        }
+        .faq-item.open .faq-icon {
+            transform: rotate(45deg);
+            border-color: var(--ember);
+            color: var(--ember);
+        }
+        .faq-a {
+            display: none;
+            padding: 0 0 1.35rem 0;
+            color: var(--muted);
+            font-size: 0.975rem;
+            line-height: 1.65;
+            max-width: 40rem;
+        }
+        .faq-item.open .faq-a {
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -345,26 +402,46 @@
     <section id="content-about" class="tab-content max-w-5xl mx-auto px-6 py-12">
         <div class="max-w-2xl">
             <h2 class="display text-3xl mb-8" style="color: var(--charcoal);">About us</h2>
-            
-            <div class="space-y-10 text-[15px] leading-relaxed" style="color: var(--muted);">
-                <div>
-                    <div class="font-semibold mb-2" style="color: var(--charcoal);">The name</div>
-                    <p><strong style="color: var(--charcoal);">Junto</strong> comes from Benjamin Franklin’s club for mutual improvement: practical people solving real problems together. <strong style="color: var(--charcoal);">Nova</strong> points to a new start. The work is practical action that expands ownership and lowers costs.</p>
-                </div>
-                
-                <div>
-                    <div class="font-semibold mb-2" style="color: var(--charcoal);">Who we work with</div>
-                    <p>Funders, builders, and operators who believe high costs of living are not inevitable, and that more competition, better policy, and new supply are the most reliable ways to bring them down so ordinary families can own real stakes.</p>
-                </div>
-                
-                <div>
-                    <div class="font-semibold mb-2" style="color: var(--charcoal);">How we think about it</div>
-                    <p>When families can own instead of rent their housing, skills, energy, healthcare, and a larger share of what they earn, their success and the country’s success become the same thing. High explicit taxes, growing public debt, and the quiet tax of inflation all reduce that stake. We focus on the barriers that block ownership and on the deals and organizations that remove them.</p>
+
+            <div class="faq-list">
+                <div class="faq-item">
+                    <button type="button" class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">
+                        <span>What’s the weird name all about?</span>
+                        <span class="faq-icon" aria-hidden="true">+</span>
+                    </button>
+                    <div class="faq-a">
+                        <p><strong style="color: var(--charcoal);">Junto</strong> comes from Benjamin Franklin’s club for mutual improvement: practical people solving real problems together, no titles required. <strong style="color: var(--charcoal);">Nova</strong> means a new start. Put together, it is a plain signal that the work is practical action to expand ownership and lower costs, not another layer of process.</p>
+                    </div>
                 </div>
 
-                <div>
-                    <div class="font-semibold mb-2" style="color: var(--charcoal);">Writing</div>
-                    <p>Occasional notes on the barriers, the data, and the practical work of expanding ownership appear on <a href="https://juntonova.substack.com" target="_blank" rel="noopener" class="underline hover:opacity-80" style="color: var(--charcoal);">Substack</a>.</p>
+                <div class="faq-item">
+                    <button type="button" class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">
+                        <span>Who do you work with?</span>
+                        <span class="faq-icon" aria-hidden="true">+</span>
+                    </button>
+                    <div class="faq-a">
+                        <p>Funders, builders, trade associations, and operators who treat high costs of living as a solvable constraint, not a permanent condition. People who believe more competition, better policy, and new supply are the most reliable ways to bring prices down so ordinary families can own real stakes. If your main product is a deck, we are probably not a fit.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button type="button" class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">
+                        <span>Why should I hire you?</span>
+                        <span class="faq-icon" aria-hidden="true">+</span>
+                    </button>
+                    <div class="faq-a">
+                        <p>Because the constraint you care about is cost, and you need someone who will dig into the actual barriers, build the strategy with numbers, and then stay long enough to stand up the organization, run the campaign, or move the legislation. We are not here to translate your problem into a landscape brief. We are here to make the proof real so scale can follow.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button type="button" class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">
+                        <span>Who are you?</span>
+                        <span class="faq-icon" aria-hidden="true">+</span>
+                    </button>
+                    <div class="faq-a">
+                        <p>Junto Nova is a strategy and operating firm focused on driving down the costs of housing, education, energy, healthcare, and taxes. Occasional notes on the barriers, the data, and the practical work of expanding ownership show up on <a href="https://juntonova.substack.com" target="_blank" rel="noopener" class="underline hover:opacity-80" style="color: var(--charcoal);">Substack</a>. If you want to talk about a project, the services page has a short form that routes straight to us.</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -439,6 +516,20 @@
             const el = document.getElementById('content-' + tab);
             if (el) {
                 el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+
+        function toggleFaq(btn) {
+            const item = btn.closest('.faq-item');
+            const isOpen = item.classList.contains('open');
+            document.querySelectorAll('.faq-item').forEach(el => {
+                el.classList.remove('open');
+                const q = el.querySelector('.faq-q');
+                if (q) q.setAttribute('aria-expanded', 'false');
+            });
+            if (!isOpen) {
+                item.classList.add('open');
+                btn.setAttribute('aria-expanded', 'true');
             }
         }
 
