@@ -51,17 +51,19 @@
         .btn-primary {
             background-color: var(--charcoal);
             color: var(--paper);
+            border: 1px solid var(--charcoal);
         }
         .btn-primary:hover {
             background-color: #000;
         }
 
-        .btn-ember {
-            background-color: var(--ember);
-            color: #fff;
+        .btn-outline {
+            background-color: transparent;
+            color: var(--charcoal);
+            border: 1px solid rgba(42, 58, 74, 0.25);
         }
-        .btn-ember:hover {
-            background-color: #a84c1f;
+        .btn-outline:hover {
+            opacity: 0.8;
         }
 
         .border-brand {
@@ -124,16 +126,16 @@
     <!-- Navigation Buttons -->
     <section class="max-w-5xl mx-auto px-6 pt-10 pb-4">
         <div class="flex flex-wrap gap-3">
-            <button onclick="showTab('share')" class="px-5 py-2.5 rounded-xl text-sm font-medium transition btn-primary">
+            <button id="btn-share" onclick="showTab('share')" class="nav-btn px-5 py-2.5 rounded-xl text-sm font-medium transition btn-primary">
                 Your Share
             </button>
-            <button onclick="showTab('costs')" class="px-5 py-2.5 rounded-xl text-sm font-medium transition border border-brand hover:opacity-80" style="color: var(--charcoal); background: transparent;">
+            <button id="btn-costs" onclick="showTab('costs')" class="nav-btn px-5 py-2.5 rounded-xl text-sm font-medium transition btn-outline">
                 Cost Drivers
             </button>
-            <button onclick="showTab('services')" class="px-5 py-2.5 rounded-xl text-sm font-medium transition border border-brand hover:opacity-80" style="color: var(--charcoal); background: transparent;">
+            <button id="btn-services" onclick="showTab('services')" class="nav-btn px-5 py-2.5 rounded-xl text-sm font-medium transition btn-outline">
                 Our Services
             </button>
-            <button onclick="showTab('about')" class="px-5 py-2.5 rounded-xl text-sm font-medium transition border border-brand hover:opacity-80" style="color: var(--charcoal); background: transparent;">
+            <button id="btn-about" onclick="showTab('about')" class="nav-btn px-5 py-2.5 rounded-xl text-sm font-medium transition btn-outline">
                 About Us
             </button>
         </div>
@@ -395,8 +397,20 @@
         }
 
         function showTab(tab) {
+            // Content
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.getElementById('content-' + tab).classList.add('active');
+
+            // Button states: active = filled charcoal, inactive = outline
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('btn-primary');
+                btn.classList.add('btn-outline');
+            });
+            const activeBtn = document.getElementById('btn-' + tab);
+            if (activeBtn) {
+                activeBtn.classList.remove('btn-outline');
+                activeBtn.classList.add('btn-primary');
+            }
             
             if (tab === 'costs' && !window.chartsInitialized) {
                 initCharts();
