@@ -166,6 +166,12 @@
         .faq-item.open .faq-a {
             display: block;
         }
+
+        .pie-hint {
+            font-size: 0.75rem;
+            color: var(--muted);
+            margin-top: 0.5rem;
+        }
     </style>
 </head>
 <body>
@@ -260,40 +266,46 @@
 
     <!-- COST DRIVERS -->
     <section id="content-costs" class="tab-content max-w-5xl mx-auto px-6 py-12">
-        <div class="mb-10">
-            <h2 class="display text-3xl mb-2" style="color: var(--charcoal);">Cost drivers</h2>
-            <p style="color: var(--muted);">When housing, education, energy, healthcare, and taxes keep rising, ownership becomes impossible for most people. The path is not fixed.</p>
+        <div class="mb-10 max-w-2xl">
+            <h2 class="display text-3xl mb-4" style="color: var(--charcoal);">Cost drivers</h2>
+            <div class="space-y-4 leading-relaxed" style="color: var(--muted);">
+                <p>Most of us do not feel the acute impact of our share of America nearly as much as we feel the impact of costs in daily life: rent or a mortgage, utilities, the doctor’s bill, tuition, the tank of gas, the grocery run.</p>
+                <p>If ownership is the goal, the work starts here. Identify the biggest cost drivers American households face, then drive the changes that actually lower them.</p>
+            </div>
         </div>
 
-        <div class="grid md:grid-cols-2 gap-8 mb-12">
+        <div class="grid md:grid-cols-2 gap-8 mb-4">
             <div class="border rounded-2xl p-6" style="border-color: var(--border); background: var(--surface);">
-                <div class="flex justify-between items-center mb-4">
-                    <div class="font-medium" style="color: var(--charcoal);">Today (2026)</div>
-                    <div class="text-xs" style="color: var(--muted);">~ $78k–$92k / year</div>
+                <div class="flex justify-between items-center mb-1">
+                    <div class="font-medium" style="color: var(--charcoal);">Average household spending, 2024</div>
+                    <div class="text-xs" style="color: var(--muted);">$78,535 / year</div>
                 </div>
-                <canvas id="pieToday" height="220"></canvas>
+                <p class="pie-hint mb-3">Click a slice to project that cost through 2050</p>
+                <canvas id="pieToday" height="240"></canvas>
             </div>
             <div class="border rounded-2xl p-6" style="border-color: var(--border); background: var(--surface);">
-                <div class="flex justify-between items-center mb-4">
-                    <div class="font-medium" style="color: var(--charcoal);">Projected 2050 (no change)</div>
-                    <div class="text-xs" style="color: var(--ember);">Housing takes more</div>
+                <div class="flex justify-between items-center mb-1">
+                    <div class="font-medium" style="color: var(--charcoal);">Projected household share, 2050</div>
+                    <div class="text-xs" style="color: var(--ember);">Current path</div>
                 </div>
-                <canvas id="pie2050" height="220"></canvas>
+                <p class="pie-hint mb-3">Selected category highlighted</p>
+                <canvas id="pie2050" height="240"></canvas>
             </div>
         </div>
 
         <div class="border rounded-2xl p-6 mb-10" style="border-color: var(--border); background: var(--surface);">
-            <div class="flex justify-between items-center mb-4">
+            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-4">
                 <div>
-                    <div class="font-medium" style="color: var(--charcoal);">Household cost trajectory</div>
-                    <div class="text-sm" style="color: var(--muted);">Indexed to 2026 = 100</div>
+                    <div class="font-medium" style="color: var(--charcoal);" id="trendTitle">Housing cost index, 2010–2050</div>
+                    <div class="text-sm" style="color: var(--muted);">Indexed to 2010 = 100 · illustrative high and low paths</div>
                 </div>
                 <div class="flex gap-4 text-xs" style="color: var(--muted);">
-                    <span class="flex items-center gap-1.5"><span class="w-3 h-0.5" style="background: var(--charcoal);"></span> Current path</span>
-                    <span class="flex items-center gap-1.5"><span class="w-3 h-0.5" style="background: var(--ember);"></span> Lower-cost path</span>
+                    <span class="flex items-center gap-1.5"><span class="w-3 h-0.5" style="background: var(--charcoal);"></span> High path</span>
+                    <span class="flex items-center gap-1.5"><span class="w-3 h-0.5" style="background: var(--ember);"></span> Low path</span>
                 </div>
             </div>
-            <canvas id="lineChart" height="100"></canvas>
+            <canvas id="lineChart" height="110"></canvas>
+            <p class="text-xs mt-4" style="color: var(--muted);">Projections are illustrative, not forecasts. High path assumes continued supply constraints and excess cost growth; low path assumes policy and market reforms that expand supply and competition. Energy is utilities plus motor fuel; it sits inside housing and transportation in the BLS totals above.</p>
         </div>
 
         <div class="border rounded-2xl p-8" style="border-color: var(--border); background: var(--surface);">
@@ -333,6 +345,13 @@
                     Illustrative ranges based on policy literature
                 </div>
             </div>
+        </div>
+
+        <div class="text-xs mt-8 space-y-1.5" style="color: var(--muted);">
+            <div>Sources (last updated August 15, 2026):</div>
+            <div>• <a href="https://www.bls.gov/cex/" target="_blank" rel="noopener" class="underline hover:opacity-80">BLS Consumer Expenditure Survey</a>, 2024 annual averages (published Dec 2025). Total average expenditures $78,535.</div>
+            <div>• Shares: housing 33.4%, transportation 17.0%, food 12.9%, healthcare 7.9%, education 2.0%. Remaining categories (insurance and pensions, entertainment, apparel, and other) grouped as Other.</div>
+            <div>• 2050 shares and category indexes are illustrative scenarios, not official forecasts. Energy trend uses utilities and motor fuel embedded in BLS housing and transportation totals.</div>
         </div>
     </section>
 
@@ -471,6 +490,56 @@
     </footer>
 
     <script>
+        const pieLabels = ['Housing', 'Transportation', 'Food', 'Healthcare', 'Education', 'Other'];
+        const pieTodayData = [33.4, 17.0, 12.9, 7.9, 2.0, 26.8];
+        const pie2050Data = [40, 15, 11, 12, 2.5, 19.5];
+        const pieColors = ['#1A1A1A', '#334155', '#475569', '#C45C26', '#64748B', '#CBD5E1'];
+        const pieColorsDim = ['#1A1A1A88', '#33415588', '#47556988', '#C45C2688', '#64748B88', '#CBD5E188'];
+
+        // Illustrative index series, 2010 = 100. High = constrained supply / excess cost growth. Low = reform path.
+        const categoryTrends = {
+            Housing: {
+                years: [2010, 2015, 2020, 2024, 2030, 2040, 2050],
+                high: [100, 112, 130, 155, 190, 250, 320],
+                low:  [100, 112, 130, 155, 170, 195, 220]
+            },
+            Transportation: {
+                years: [2010, 2015, 2020, 2024, 2030, 2040, 2050],
+                high: [100, 108, 115, 135, 155, 185, 220],
+                low:  [100, 108, 115, 135, 140, 150, 160]
+            },
+            Food: {
+                years: [2010, 2015, 2020, 2024, 2030, 2040, 2050],
+                high: [100, 110, 125, 145, 165, 195, 230],
+                low:  [100, 110, 125, 145, 155, 170, 185]
+            },
+            Healthcare: {
+                years: [2010, 2015, 2020, 2024, 2030, 2040, 2050],
+                high: [100, 120, 145, 165, 210, 290, 380],
+                low:  [100, 120, 145, 165, 185, 220, 255]
+            },
+            Education: {
+                years: [2010, 2015, 2020, 2024, 2030, 2040, 2050],
+                high: [100, 125, 150, 170, 210, 270, 340],
+                low:  [100, 125, 150, 170, 175, 185, 195]
+            },
+            Other: {
+                years: [2010, 2015, 2020, 2024, 2030, 2040, 2050],
+                high: [100, 110, 120, 140, 160, 190, 225],
+                low:  [100, 110, 120, 140, 150, 165, 180]
+            },
+            Energy: {
+                years: [2010, 2015, 2020, 2024, 2030, 2040, 2050],
+                high: [100, 95, 105, 140, 165, 210, 260],
+                low:  [100, 95, 105, 140, 135, 130, 125]
+            }
+        };
+
+        let selectedCategory = 'Housing';
+        let chartToday = null;
+        let chart2050 = null;
+        let chartLine = null;
+
         function toggleMenu() {
             const menu = document.getElementById('mobile-menu');
             const menuIcon = document.getElementById('menu-icon');
@@ -554,68 +623,112 @@
             document.getElementById('savings').textContent = '$' + savings.toLocaleString();
         }
 
+        function colorsForSelection(selected) {
+            return pieLabels.map((label, i) => {
+                if (!selected || label === selected) return pieColors[i];
+                return pieColorsDim[i];
+            });
+        }
+
+        function selectCategory(label) {
+            selectedCategory = label;
+            if (chartToday) {
+                chartToday.data.datasets[0].backgroundColor = colorsForSelection(label);
+                chartToday.update();
+            }
+            if (chart2050) {
+                chart2050.data.datasets[0].backgroundColor = colorsForSelection(label);
+                chart2050.update();
+            }
+            updateTrendChart(label);
+        }
+
+        function updateTrendChart(label) {
+            const key = categoryTrends[label] ? label : 'Housing';
+            const t = categoryTrends[key];
+            document.getElementById('trendTitle').textContent = key + ' cost index, 2010–2050';
+            if (!chartLine) return;
+            chartLine.data.labels = t.years;
+            chartLine.data.datasets[0].data = t.high;
+            chartLine.data.datasets[1].data = t.low;
+            chartLine.update();
+        }
+
         function initCharts() {
             const charcoal = '#1A1A1A';
             const muted = '#64748B';
             const ember = '#C45C26';
 
-            new Chart(document.getElementById('pieToday'), {
+            const pieOptions = {
+                cutout: '58%',
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { boxWidth: 10, padding: 10, font: { size: 11 }, color: muted }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: (ctx) => ctx.label + ': ' + ctx.parsed + '%'
+                        }
+                    }
+                },
+                onClick: (evt, elements, chart) => {
+                    if (!elements.length) return;
+                    const idx = elements[0].index;
+                    selectCategory(pieLabels[idx]);
+                }
+            };
+
+            chartToday = new Chart(document.getElementById('pieToday'), {
                 type: 'doughnut',
                 data: {
-                    labels: ['Housing', 'Medical', 'Food', 'Energy', 'Taxes', 'Other'],
+                    labels: pieLabels,
                     datasets: [{
-                        data: [34, 18, 13, 11, 9, 15],
-                        backgroundColor: [charcoal, '#334155', '#475569', '#64748B', '#94A3B8', '#CBD5E1'],
+                        data: pieTodayData,
+                        backgroundColor: colorsForSelection(selectedCategory),
                         borderWidth: 0
                     }]
                 },
-                options: {
-                    cutout: '65%',
-                    plugins: {
-                        legend: { position: 'bottom', labels: { boxWidth: 10, padding: 12, font: { size: 11 }, color: muted } }
-                    }
-                }
+                options: pieOptions
             });
 
-            new Chart(document.getElementById('pie2050'), {
+            chart2050 = new Chart(document.getElementById('pie2050'), {
                 type: 'doughnut',
                 data: {
-                    labels: ['Housing', 'Medical', 'Food', 'Energy', 'Taxes', 'Other'],
+                    labels: pieLabels,
                     datasets: [{
-                        data: [42, 17, 11, 10, 8, 12],
-                        backgroundColor: [charcoal, '#334155', '#475569', '#64748B', '#94A3B8', '#CBD5E1'],
+                        data: pie2050Data,
+                        backgroundColor: colorsForSelection(selectedCategory),
                         borderWidth: 0
                     }]
                 },
-                options: {
-                    cutout: '65%',
-                    plugins: {
-                        legend: { position: 'bottom', labels: { boxWidth: 10, padding: 12, font: { size: 11 }, color: muted } }
-                    }
-                }
+                options: pieOptions
             });
 
-            new Chart(document.getElementById('lineChart'), {
+            const t = categoryTrends[selectedCategory];
+            chartLine = new Chart(document.getElementById('lineChart'), {
                 type: 'line',
                 data: {
-                    labels: ['2026', '2030', '2035', '2040', '2045', '2050'],
+                    labels: t.years,
                     datasets: [
                         {
-                            label: 'Current Path',
-                            data: [100, 112, 128, 142, 155, 168],
+                            label: 'High path',
+                            data: t.high,
                             borderColor: charcoal,
                             borderWidth: 2.5,
                             tension: 0.3,
-                            pointRadius: 0
+                            pointRadius: 3,
+                            pointBackgroundColor: charcoal
                         },
                         {
-                            label: 'Lower-cost Path',
-                            data: [100, 105, 108, 110, 112, 114],
+                            label: 'Low path',
+                            data: t.low,
                             borderColor: ember,
                             borderWidth: 2.5,
-                            borderDash: [4, 3],
+                            borderDash: [5, 4],
                             tension: 0.3,
-                            pointRadius: 0
+                            pointRadius: 3,
+                            pointBackgroundColor: ember
                         }
                     ]
                 },
