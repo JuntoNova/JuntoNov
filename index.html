@@ -686,7 +686,7 @@
         function updateTrendChart(label) {
             const key = categoryTrends[label] ? label : 'Housing';
             const t = categoryTrends[key];
-            document.getElementById('trendTitle').textContent = key + ' cost index, 2010–2050';
+            document.getElementById('trendTitle').textContent = key + ' average annual spending, 2010–2050';
             if (!chartLine) return;
             chartLine.data.labels = t.years;
             chartLine.data.datasets[0].data = t.high;
