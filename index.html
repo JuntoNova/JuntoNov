@@ -774,7 +774,7 @@
                 },
                 options: {
                     scales: {
-                        y: { beginAtZero: false, grid: { color: '#F1F5F9' }, ticks: { color: muted } },
+                        y: { beginAtZero: false, grid: { color: '#F1F5F9' }, ticks: { color: muted, callback: function(value) { return '$' + value.toLocaleString(); } } },
                         x: { grid: { display: false }, ticks: { color: muted } }
                     },
                     plugins: { legend: { display: false } }
