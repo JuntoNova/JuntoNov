@@ -173,6 +173,36 @@
             color: var(--muted);
             margin-top: 0.5rem;
         }
+
+        /* Get Involved form */
+        .involved-form input,
+        .involved-form select,
+        .involved-form textarea {
+            width: 100%;
+            border: 1px solid var(--border);
+            border-radius: 0.75rem;
+            padding: 0.75rem 1rem;
+            font-size: 0.95rem;
+            background: #fff;
+            color: var(--charcoal);
+        }
+        .involved-form input:focus,
+        .involved-form select:focus,
+        .involved-form textarea:focus {
+            outline: 2px solid var(--charcoal);
+            outline-offset: 1px;
+        }
+        .check-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            padding: 0.55rem 0;
+        }
+        .check-row input[type="checkbox"] {
+            width: auto;
+            margin-top: 0.2rem;
+            accent-color: var(--charcoal);
+        }
     </style>
 </head>
 <body>
@@ -199,6 +229,7 @@
                 <button onclick="showTab('share'); closeMenu();" class="text-left py-3 px-2 rounded-lg transition hover:bg-slate-50" style="color: var(--charcoal);">Your Share</button>
                 <button onclick="showTab('costs'); closeMenu();" class="text-left py-3 px-2 rounded-lg transition hover:bg-slate-50" style="color: var(--charcoal);">Cost Drivers</button>
                 <button onclick="showTab('services'); closeMenu();" class="text-left py-3 px-2 rounded-lg transition hover:bg-slate-50" style="color: var(--charcoal);">Our Services</button>
+                <button onclick="showTab('involved'); closeMenu();" class="text-left py-3 px-2 rounded-lg transition hover:bg-slate-50" style="color: var(--charcoal);">Get Involved</button>
                 <button onclick="showTab('about'); closeMenu();" class="text-left py-3 px-2 rounded-lg transition hover:bg-slate-50" style="color: var(--charcoal);">About Us</button>
             </div>
         </div>
@@ -233,6 +264,9 @@
             </button>
             <button id="btn-services" onclick="showTab('services')" class="nav-btn px-5 py-2.5 rounded-xl text-sm font-medium transition btn-outline">
                 Our Services
+            </button>
+            <button id="btn-involved" onclick="showTab('involved')" class="nav-btn px-5 py-2.5 rounded-xl text-sm font-medium transition btn-outline">
+                Get Involved
             </button>
             <button id="btn-about" onclick="showTab('about')" class="nav-btn px-5 py-2.5 rounded-xl text-sm font-medium transition btn-outline">
                 About Us
@@ -416,6 +450,88 @@
                 <i class="fa-solid fa-arrow-right text-sm"></i>
             </a>
         </div>
+    </section>
+
+    <!-- GET INVOLVED -->
+    <section id="content-involved" class="tab-content max-w-5xl mx-auto px-6 py-12">
+        <div class="mb-10 max-w-2xl">
+            <h2 class="display text-3xl mb-4" style="color: var(--charcoal);">Get involved</h2>
+            <p class="text-lg leading-relaxed mb-4" style="color: var(--charcoal);">
+                You don’t have to be a client to help.
+            </p>
+            <p class="leading-relaxed mb-6" style="color: var(--muted);">
+                If you’re looking to hire us for a project, <a href="/project.html" class="underline hover:opacity-80" style="color: var(--charcoal);">talk about a project instead</a>.
+            </p>
+            <p class="leading-relaxed" style="color: var(--muted);">
+                Otherwise, use the form below. Tell us the area you know and how you can help. We’ll follow up when there’s a useful fit.
+            </p>
+        </div>
+
+        <form id="involved-form" class="involved-form max-w-xl space-y-6" onsubmit="return submitInvolved(event)">
+            <div>
+                <label class="block text-sm font-medium mb-2" style="color: var(--charcoal);">Your name</label>
+                <input type="text" id="inv-name" name="name" required placeholder="Jane Smith" autocomplete="name">
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium mb-2" style="color: var(--charcoal);">Email</label>
+                <input type="email" id="inv-email" name="email" required placeholder="jane@org.org" autocomplete="email">
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium mb-2" style="color: var(--charcoal);">Area you can help with</label>
+                <select id="inv-area" name="area" required>
+                    <option value="" disabled selected>Select one</option>
+                    <option value="All / cross-cutting">All / cross-cutting</option>
+                    <option value="Housing">Housing</option>
+                    <option value="Education">Education</option>
+                    <option value="Energy">Energy</option>
+                    <option value="Healthcare">Healthcare</option>
+                    <option value="Taxes">Taxes</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium mb-2" style="color: var(--charcoal);">How you can help</label>
+                <p class="text-xs mb-3" style="color: var(--muted);">Select all that apply</p>
+                <div class="border rounded-xl px-4 py-2" style="border-color: var(--border); background: var(--surface);">
+                    <label class="check-row">
+                        <input type="checkbox" name="help" value="Share expertise or research">
+                        <span>Share expertise or research</span>
+                    </label>
+                    <label class="check-row">
+                        <input type="checkbox" name="help" value="Offer capacity / volunteer time">
+                        <span>Offer capacity / volunteer time</span>
+                    </label>
+                    <label class="check-row">
+                        <input type="checkbox" name="help" value="Make introductions">
+                        <span>Make introductions</span>
+                    </label>
+                    <label class="check-row">
+                        <input type="checkbox" name="help" value="Stay in the loop">
+                        <span>Stay in the loop</span>
+                    </label>
+                    <label class="check-row">
+                        <input type="checkbox" name="help" value="Other">
+                        <span>Other</span>
+                    </label>
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium mb-2" style="color: var(--charcoal);">Anything else we should know? <span class="font-normal" style="color: var(--muted);">(optional)</span></label>
+                <textarea id="inv-notes" name="notes" rows="4" placeholder="Relevant experience, specific skills, geography, or a short note on how you’d like to help."></textarea>
+            </div>
+
+            <button type="submit" class="w-full py-3.5 rounded-xl font-medium transition btn-primary">
+                Open email to send
+            </button>
+
+            <p class="text-xs text-center" style="color: var(--muted);">
+                Opens your email client with a pre-filled message to andrew@juntanova.com. Nothing is stored on this site.
+            </p>
+        </form>
     </section>
 
     <!-- ABOUT US -->
@@ -782,6 +898,34 @@
             });
 
             window.chartsInitialized = true;
+        }
+
+        function submitInvolved(e) {
+            e.preventDefault();
+
+            const name = document.getElementById('inv-name').value.trim();
+            const email = document.getElementById('inv-email').value.trim();
+            const area = document.getElementById('inv-area').value;
+            const notes = document.getElementById('inv-notes').value.trim();
+
+            const help = Array.from(document.querySelectorAll('input[name="help"]:checked'))
+                .map(cb => cb.value);
+
+            if (help.length === 0) {
+                alert('Please select at least one way you can help.');
+                return false;
+            }
+
+            const subject = encodeURIComponent('Get Involved — ' + area + (name ? ' (' + name + ')' : ''));
+
+            let body = 'Name: ' + name + '\n';
+            body += 'Email: ' + email + '\n';
+            body += '\nArea: ' + area + '\n';
+            body += 'How I can help:\n' + help.map(h => '  - ' + h).join('\n') + '\n';
+            if (notes) body += '\nNotes:\n' + notes + '\n';
+
+            window.location.href = 'mailto:andrew@juntanova.com?subject=' + subject + '&body=' + encodeURIComponent(body);
+            return false;
         }
 
         document.addEventListener('DOMContentLoaded', () => {});
