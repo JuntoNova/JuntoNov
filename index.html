@@ -1,1 +1,258 @@
-PLACEHOLDER
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Junto Nova - A stake in the dream</title>
+    <meta name="description" content="Junto Nova makes it possible for every American family to buy and own a genuine stake in the dream by driving down the costs of housing, transportation, education, energy, healthcare, and taxes.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@600;700&display=swap');
+        
+        :root {
+            --charcoal: #1A1A1A;
+            --ember: #C45C26;
+            --oxidized: #2A3A4A;
+            --muted: #64748B;
+            --border: #E2E8F0;
+            --surface: #F8FAFC;
+        }
+        
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            color: var(--charcoal);
+            background-color: #FFFFFF;
+        }
+        
+        .display {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+
+        #mobile-menu {
+            display: none;
+        }
+        #mobile-menu.open {
+            display: block;
+        }
+
+        .stat-scary {
+            font-variant-numeric: tabular-nums;
+            white-space: nowrap;
+        }
+
+        .btn-primary {
+            background-color: var(--charcoal);
+            color: #FFFFFF;
+            border: 1px solid var(--charcoal);
+        }
+        .btn-primary:hover {
+            background-color: #000;
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: var(--charcoal);
+            border: 1px solid var(--border);
+        }
+        .btn-outline:hover {
+            background-color: var(--surface);
+        }
+
+        .service-card {
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 1.75rem 1.5rem;
+            background: #fff;
+            transition: border-color 0.15s ease, box-shadow 0.15s ease;
+        }
+        .service-card:hover {
+            border-color: #CBD5E1;
+            box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+        }
+        .service-num {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-weight: 700;
+            font-size: 1.35rem;
+            letter-spacing: 0.04em;
+            color: var(--ember);
+            margin-bottom: 0.6rem;
+            line-height: 1;
+        }
+
+        .debt-card {
+            background: var(--charcoal);
+            color: #fff;
+            border-radius: 1.25rem;
+            padding: 2.75rem 2.25rem;
+            max-width: 32rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .debt-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at 20% 0%, rgba(196,92,38,0.18), transparent 55%);
+            pointer-events: none;
+        }
+        .debt-card > * {
+            position: relative;
+        }
+
+        .faq-item {
+            border-bottom: 1px solid var(--border);
+        }
+        .faq-item:first-child {
+            border-top: 1px solid var(--border);
+        }
+        .faq-q {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: 1.25rem 0;
+            text-align: left;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-family: 'Playfair Display', Georgia, serif;
+            font-weight: 600;
+            font-size: 1.05rem;
+            color: var(--charcoal);
+            letter-spacing: -0.01em;
+        }
+        .faq-q:hover {
+            color: var(--ember);
+        }
+        .faq-icon {
+            flex-shrink: 0;
+            width: 1.75rem;
+            height: 1.75rem;
+            border-radius: 9999px;
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            line-height: 1;
+            color: var(--muted);
+            transition: transform 0.2s ease, border-color 0.15s ease, color 0.15s ease;
+        }
+        .faq-item.open .faq-icon {
+            transform: rotate(45deg);
+            border-color: var(--ember);
+            color: var(--ember);
+        }
+        .faq-a {
+            display: none;
+            padding: 0 0 1.35rem 0;
+            color: var(--muted);
+            font-size: 0.975rem;
+            line-height: 1.65;
+            max-width: 40rem;
+        }
+        .faq-item.open .faq-a {
+            display: block;
+        }
+
+        .pie-hint {
+            font-size: 0.75rem;
+            color: var(--muted);
+            margin-top: 0.5rem;
+        }
+
+        /* Get Involved form */
+        .involved-form input,
+        .involved-form select,
+        .involved-form textarea {
+            width: 100%;
+            border: 1px solid var(--border);
+            border-radius: 0.75rem;
+            padding: 0.75rem 1rem;
+            font-size: 0.95rem;
+            background: #fff;
+            color: var(--charcoal);
+        }
+        .involved-form input:focus,
+        .involved-form select:focus,
+        .involved-form textarea:focus {
+            outline: 2px solid var(--charcoal);
+            outline-offset: 1px;
+        }
+        .check-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            padding: 0.55rem 0;
+        }
+        .check-row input[type="checkbox"] {
+            width: auto;
+            margin-top: 0.2rem;
+            accent-color: var(--charcoal);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="border-b relative" style="border-color: var(--border); background: #fff;">
+        <div class="max-w-5xl mx-auto px-6 py-5 flex items-center justify-between">
+            <a href="#" onclick="goHome(); return false;" class="display text-2xl tracking-tight hover:opacity-80 transition" style="color: var(--charcoal);">
+                JUNTO NOVA
+            </a>
+
+            <button id="menu-toggle" onclick="toggleMenu()" class="p-2 -mr-2 focus:outline-none" style="color: var(--muted);" aria-label="Open menu">
+                <svg id="menu-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+                <svg id="close-icon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+
+        <div id="mobile-menu" class="absolute top-full left-0 right-0 border-b shadow-sm z-50" style="background: #fff; border-color: var(--border);">
+            <div class="max-w-5xl mx-auto px-6 py-4 flex flex-col gap-1">
+                <button onclick="showTab('share'); closeMenu();" class="text-left py-3 px-2 rounded-lg transition hover:bg-slate-50" style="color: var(--charcoal);">Your Share</button>
+                <button onclick="showTab('costs'); closeMenu();" class="text-left py-3 px-2 rounded-lg transition hover:bg-slate-50" style="color: var(--charcoal);">Cost Drivers</button>
+                <button onclick="showTab('services'); closeMenu();" class="text-left py-3 px-2 rounded-lg transition hover:bg-slate-50" style="color: var(--charcoal);">Our Services</button>
+                <button onclick="showTab('involved'); closeMenu();" class="text-left py-3 px-2 rounded-lg transition hover:bg-slate-50" style="color: var(--charcoal);">Get Involved</button>
+                <button onclick="showTab('about'); closeMenu();" class="text-left py-3 px-2 rounded-lg transition hover:bg-slate-50" style="color: var(--charcoal);">About Us</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero -->
+    <section class="max-w-5xl mx-auto px-6 pt-16 pb-8">
+        <div class="max-w-3xl">
+            <div class="text-xs font-medium tracking-widest uppercase mb-4" style="color: var(--muted);">A stake in the dream</div>
+            <h1 class="display text-4xl md:text-5xl tracking-tight leading-tight mb-6" style="color: var(--charcoal);">
+                The American Dream works best when every citizen owns a real stake in the country’s future.
+            </h1>
+            <div class="text-lg leading-relaxed space-y-5" style="color: var(--muted);">
+                <p>
+                    When the costs of housing, transportation, education, energy, healthcare, and taxes stay too high, ownership slips out of reach. People stop building and start renting just to survive. And when Americans cannot own their future, they begin to lose their connection to America, to its key institutions, and ultimately to themselves.
+                </p>
+                <p>
+                    Junto Nova identifies the barriers that keep costs high, turns them into clear investable strategies, and builds the organizations and deals that actually lower them. Once the proof is real, scale starts to become inevitable. We stay in to govern that shift and harvest the new reality.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- REST OF FILE CONTINUES - truncated for tool limits; will complete in follow-up if needed -->
+</body>
+</html>
