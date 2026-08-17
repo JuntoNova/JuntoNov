@@ -79,8 +79,51 @@ body{font-family:Inter,system-ui,sans-serif;color:var(--charcoal);background:#ff
         </div>
 </section>
 <section id="content-costs" class="tab-content max-w-5xl mx-auto px-6 py-12">
-<div class="mb-10 max-w-2xl"><h2 class="display text-3xl mb-4" style="color:var(--charcoal)">Cost drivers</h2>
-<p class="leading-relaxed" style="color:var(--muted)">Identify the biggest cost drivers American households face, then drive the changes that actually lower them. Full interactive charts returning shortly.</p></div>
+<div class="mb-10 max-w-2xl">
+<h2 class="display text-3xl mb-4" style="color:var(--charcoal)">Cost drivers</h2>
+<div class="space-y-4 leading-relaxed" style="color:var(--muted)">
+<p>Most of us do not feel the acute impact of our share of America nearly as much as we feel the impact of costs in daily life: rent or a mortgage, utilities, the doctor's bill, tuition, the tank of gas, the grocery run.</p>
+<p>If ownership is the goal, the work starts here. Identify the biggest cost drivers American households face, then drive the changes that actually lower them.</p>
+</div>
+</div>
+<div class="border rounded-2xl p-8" style="border-color:var(--border);background:var(--surface)">
+<div class="font-medium mb-1" style="color:var(--charcoal)">What if costs actually came down?</div>
+<p class="text-sm mb-6" style="color:var(--muted)">Move the levers. See rough annual savings for a family of four.</p>
+<div class="grid md:grid-cols-2 gap-x-10 gap-y-5 mb-8">
+<div>
+<label class="text-xs font-medium" style="color:var(--muted)">Housing supply reforms</label>
+<input type="range" id="housing" min="0" max="35" step="5" value="20" class="w-full" style="accent-color:var(--charcoal)" oninput="updateSavings()">
+<div class="flex justify-between text-[11px]" style="color:var(--muted)"><span>0%</span><span id="housingVal">20%</span></div>
+</div>
+<div>
+<label class="text-xs font-medium" style="color:var(--muted)">Energy and utilities</label>
+<input type="range" id="energy" min="0" max="30" step="5" value="15" class="w-full" style="accent-color:var(--charcoal)" oninput="updateSavings()">
+<div class="flex justify-between text-[11px]" style="color:var(--muted)"><span>0%</span><span id="energyVal">15%</span></div>
+</div>
+<div>
+<label class="text-xs font-medium" style="color:var(--muted)">Healthcare competition</label>
+<input type="range" id="health" min="0" max="25" step="5" value="12" class="w-full" style="accent-color:var(--charcoal)" oninput="updateSavings()">
+<div class="flex justify-between text-[11px]" style="color:var(--muted)"><span>0%</span><span id="healthVal">12%</span></div>
+</div>
+<div>
+<label class="text-xs font-medium" style="color:var(--muted)">Education choice and new supply</label>
+<input type="range" id="edu" min="0" max="30" step="5" value="18" class="w-full" style="accent-color:var(--charcoal)" oninput="updateSavings()">
+<div class="flex justify-between text-[11px]" style="color:var(--muted)"><span>0%</span><span id="eduVal">18%</span></div>
+</div>
+</div>
+<div class="pt-6 border-t flex items-baseline justify-between flex-wrap gap-4" style="border-color:var(--border)">
+<div>
+<div class="text-sm" style="color:var(--muted)">Projected annual savings</div>
+<div id="savings" class="display text-5xl tracking-tight" style="color:var(--ember)">$14,200</div>
+</div>
+<div class="text-right text-xs" style="color:var(--muted)">Per family of 4 · every year<br>Illustrative ranges based on policy literature</div>
+</div>
+</div>
+<div class="text-xs mt-8 space-y-1.5" style="color:var(--muted)">
+<div>Sources (last updated August 16, 2026):</div>
+<div>• <a href="https://www.bls.gov/cex/" target="_blank" rel="noopener" class="underline hover:opacity-80">BLS Consumer Expenditure Survey</a>, 2024. Average annual expenditures for four-person consumer units used as the baseline for share calculations.</div>
+<div>• Savings estimates are illustrative. They apply policy-literature reduction ranges to major household cost categories (housing, energy/utilities, healthcare, education). Not a formal forecast.</div>
+</div>
 </section>
 <section id="content-services" class="tab-content max-w-5xl mx-auto px-6 py-12">
 <div class="mb-12 max-w-2xl"><h2 class="display text-3xl mb-4" style="color:var(--charcoal)">Our services</h2>
@@ -185,6 +228,24 @@ function closeMenu(){document.getElementById('mobile-menu').classList.remove('op
 function goHome(){closeMenu();showTab('share');window.scrollTo({top:0,behavior:'smooth'})}
 function showTab(tab){document.querySelectorAll('.tab-content').forEach(el=>el.classList.remove('active'));document.getElementById('content-'+tab).classList.add('active');document.querySelectorAll('.nav-btn').forEach(btn=>{btn.classList.remove('btn-primary');btn.classList.add('btn-outline')});const a=document.getElementById('btn-'+tab);if(a){a.classList.remove('btn-outline');a.classList.add('btn-primary')}}
 function toggleFaq(btn){const item=btn.closest('.faq-item');const isOpen=item.classList.contains('open');document.querySelectorAll('.faq-item').forEach(el=>el.classList.remove('open'));if(!isOpen)item.classList.add('open')}
+function updateSavings(){
+  const housing=+document.getElementById('housing').value;
+  const energy=+document.getElementById('energy').value;
+  const health=+document.getElementById('health').value;
+  const edu=+document.getElementById('edu').value;
+  document.getElementById('housingVal').textContent=housing+'%';
+  document.getElementById('energyVal').textContent=energy+'%';
+  document.getElementById('healthVal').textContent=health+'%';
+  document.getElementById('eduVal').textContent=edu+'%';
+  const baseline=109000;
+  const savings=Math.round(
+    (baseline*0.33*(housing/100))+
+    (baseline*0.10*(energy/100))+
+    (baseline*0.18*(health/100))+
+    (baseline*0.12*(edu/100))
+  );
+  document.getElementById('savings').textContent='$'+savings.toLocaleString();
+}
 function submitInvolved(e){
   e.preventDefault();
   const name=document.getElementById('inv-name').value.trim();
