@@ -71,6 +71,12 @@ body{font-family:Inter,system-ui,sans-serif;color:var(--charcoal);background:#ff
 <p>People can feel that pocketbook pain. It shows up as less ownership, less confidence, and less trust in the institutions that are supposed to make a stake possible.</p>
 </div></div>
 <div class="mb-10"><div class="debt-card"><div class="display text-5xl sm:text-6xl md:text-7xl tracking-tight leading-none" style="color:var(--ember)">-$295,000</div></div></div>
+<div class="text-xs space-y-1.5" style="color: var(--muted);">
+            <div>Sources (last updated August 15, 2026):</div>
+            <div>• <a href="https://fiscaldata.treasury.gov/datasets/debt-to-the-penny/debt-to-the-penny" target="_blank" rel="noopener" class="underline hover:opacity-80">U.S. Treasury Debt to the Penny</a> (total public debt outstanding)</div>
+            <div>• Household figure derived from total debt ÷ number of U.S. households (Census / JEC estimates). Exact daily values move.</div>
+            <div>• <a href="https://news.gallup.com/poll/708905/affordability-dominates-americans-financial-worries.aspx" target="_blank" rel="noopener" class="underline hover:opacity-80">Gallup</a>, April 2026: record 55% say their financial situation is getting worse (highest since tracking began in 2001).</div>
+        </div>
 </section>
 <section id="content-costs" class="tab-content max-w-5xl mx-auto px-6 py-12">
 <div class="mb-10 max-w-2xl"><h2 class="display text-3xl mb-4" style="color:var(--charcoal)">Cost drivers</h2>
@@ -89,8 +95,48 @@ body{font-family:Inter,system-ui,sans-serif;color:var(--charcoal);background:#ff
 <div class="text-center"><a href="/project.html" class="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl font-medium btn-primary">Talk about a project</a></div>
 </section>
 <section id="content-involved" class="tab-content max-w-5xl mx-auto px-6 py-12">
-<div class="mb-10 max-w-2xl"><h2 class="display text-3xl mb-4" style="color:var(--charcoal)">Get involved</h2>
-<p class="leading-relaxed" style="color:var(--muted)">Email <a href="mailto:andrew@juntonova.com" class="underline" style="color:var(--charcoal)">andrew@juntonova.com</a> with the area you know and how you can help.</p></div>
+<div class="mb-10 max-w-2xl">
+<h2 class="display text-3xl mb-4" style="color:var(--charcoal)">Get involved</h2>
+<p class="text-lg leading-relaxed mb-4" style="color:var(--charcoal)">You don't have to be a client to help.</p>
+<p class="leading-relaxed mb-6" style="color:var(--muted)">If you're looking to hire us for a project, <a href="/project.html" class="underline hover:opacity-80" style="color:var(--charcoal)">talk about a project instead</a>.</p>
+<p class="leading-relaxed" style="color:var(--muted)">Otherwise, use the form below. Tell us the area you know and how you can help. We'll follow up when there's a useful fit.</p>
+</div>
+<form id="involved-form" class="involved-form max-w-xl space-y-6" onsubmit="return submitInvolved(event)">
+<div>
+<label class="block text-sm font-medium mb-2" style="color:var(--charcoal)">Your name</label>
+<input type="text" id="inv-name" name="name" required placeholder="Jane Smith" autocomplete="name" style="width:100%;border:1px solid var(--border);border-radius:0.75rem;padding:0.75rem 1rem;font-size:0.95rem;background:#fff;color:var(--charcoal)">
+</div>
+<div>
+<label class="block text-sm font-medium mb-2" style="color:var(--charcoal)">Email</label>
+<input type="email" id="inv-email" name="email" required placeholder="jane@org.org" autocomplete="email" style="width:100%;border:1px solid var(--border);border-radius:0.75rem;padding:0.75rem 1rem;font-size:0.95rem;background:#fff;color:var(--charcoal)">
+</div>
+<div>
+<label class="block text-sm font-medium mb-2" style="color:var(--charcoal)">Organization <span class="font-normal" style="color:var(--muted)">(optional)</span></label>
+<input type="text" id="inv-org" name="org" placeholder="Your firm, foundation, or campaign" style="width:100%;border:1px solid var(--border);border-radius:0.75rem;padding:0.75rem 1rem;font-size:0.95rem;background:#fff;color:var(--charcoal)">
+</div>
+<div>
+<label class="block text-sm font-medium mb-3" style="color:var(--charcoal)">Areas you know</label>
+<div class="space-y-1">
+<label class="flex items-start gap-3 py-1"><input type="checkbox" name="area" value="Housing" style="margin-top:0.2rem;accent-color:var(--charcoal)"><span class="text-sm" style="color:var(--muted)">Housing</span></label>
+<label class="flex items-start gap-3 py-1"><input type="checkbox" name="area" value="Transportation" style="margin-top:0.2rem;accent-color:var(--charcoal)"><span class="text-sm" style="color:var(--muted)">Transportation</span></label>
+<label class="flex items-start gap-3 py-1"><input type="checkbox" name="area" value="Education" style="margin-top:0.2rem;accent-color:var(--charcoal)"><span class="text-sm" style="color:var(--muted)">Education</span></label>
+<label class="flex items-start gap-3 py-1"><input type="checkbox" name="area" value="Energy" style="margin-top:0.2rem;accent-color:var(--charcoal)"><span class="text-sm" style="color:var(--muted)">Energy</span></label>
+<label class="flex items-start gap-3 py-1"><input type="checkbox" name="area" value="Healthcare" style="margin-top:0.2rem;accent-color:var(--charcoal)"><span class="text-sm" style="color:var(--muted)">Healthcare</span></label>
+<label class="flex items-start gap-3 py-1"><input type="checkbox" name="area" value="Taxes" style="margin-top:0.2rem;accent-color:var(--charcoal)"><span class="text-sm" style="color:var(--muted)">Taxes</span></label>
+<label class="flex items-start gap-3 py-1"><input type="checkbox" name="area" value="Other" style="margin-top:0.2rem;accent-color:var(--charcoal)"><span class="text-sm" style="color:var(--muted)">Other</span></label>
+</div>
+</div>
+<div>
+<label class="block text-sm font-medium mb-2" style="color:var(--charcoal)">How you can help</label>
+<textarea id="inv-help" name="help" rows="3" required placeholder="Capital, operating capacity, research, introductions, legislation, campaigns..." style="width:100%;border:1px solid var(--border);border-radius:0.75rem;padding:0.75rem 1rem;font-size:0.95rem;background:#fff;color:var(--charcoal)"></textarea>
+</div>
+<div>
+<label class="block text-sm font-medium mb-2" style="color:var(--charcoal)">Anything else we should know? <span class="font-normal" style="color:var(--muted)">(optional)</span></label>
+<textarea id="inv-notes" name="notes" rows="3" placeholder="Relevant experience, geography, or a short note." style="width:100%;border:1px solid var(--border);border-radius:0.75rem;padding:0.75rem 1rem;font-size:0.95rem;background:#fff;color:var(--charcoal)"></textarea>
+</div>
+<button type="submit" class="w-full py-3.5 rounded-xl font-medium transition btn-primary">Open email to send</button>
+<p class="text-xs text-center" style="color:var(--muted)">Opens your email client with a pre-filled message to andrew@juntonova.com. Nothing is stored on this site.</p>
+</form>
 </section>
 <section id="content-about" class="tab-content max-w-5xl mx-auto px-6 py-12">
 <div class="max-w-2xl"><h2 class="display text-3xl mb-8" style="color:var(--charcoal)">About us</h2>
@@ -139,6 +185,28 @@ function closeMenu(){document.getElementById('mobile-menu').classList.remove('op
 function goHome(){closeMenu();showTab('share');window.scrollTo({top:0,behavior:'smooth'})}
 function showTab(tab){document.querySelectorAll('.tab-content').forEach(el=>el.classList.remove('active'));document.getElementById('content-'+tab).classList.add('active');document.querySelectorAll('.nav-btn').forEach(btn=>{btn.classList.remove('btn-primary');btn.classList.add('btn-outline')});const a=document.getElementById('btn-'+tab);if(a){a.classList.remove('btn-outline');a.classList.add('btn-primary')}}
 function toggleFaq(btn){const item=btn.closest('.faq-item');const isOpen=item.classList.contains('open');document.querySelectorAll('.faq-item').forEach(el=>el.classList.remove('open'));if(!isOpen)item.classList.add('open')}
+function submitInvolved(e){
+  e.preventDefault();
+  const name=document.getElementById('inv-name').value.trim();
+  const email=document.getElementById('inv-email').value.trim();
+  const org=document.getElementById('inv-org').value.trim();
+  const areas=[...document.querySelectorAll('input[name=area]:checked')].map(c=>c.value);
+  const help=document.getElementById('inv-help').value.trim();
+  const notes=document.getElementById('inv-notes').value.trim();
+  const body=[
+    'Name: '+name,
+    'Email: '+email,
+    org?'Organization: '+org:null,
+    areas.length?'Areas: '+areas.join(', '):null,
+    '',
+    'How I can help:',
+    help,
+    notes?('\nNotes:\n'+notes):null
+  ].filter(Boolean).join('\n');
+  const subject=encodeURIComponent('Get involved — '+name);
+  window.location.href='mailto:andrew@juntonova.com?subject='+subject+'&body='+encodeURIComponent(body);
+  return false;
+}
 </script>
 </body>
 </html>
