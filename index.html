@@ -1,1 +1,117 @@
-SEE_FILE
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Junto Nova - A stake in the dream</title>
+<meta name="description" content="Junto Nova makes it possible for every American family to buy and own a genuine stake in the dream by driving down the costs of housing, transportation, education, energy, healthcare, and taxes.">
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@600;700&display=swap');
+:root{--charcoal:#1A1A1A;--ember:#C45C26;--muted:#64748B;--border:#E2E8F0;--surface:#F8FAFC}
+body{font-family:Inter,system-ui,sans-serif;color:var(--charcoal);background:#fff}
+.display{font-family:'Playfair Display',Georgia,serif;font-weight:700;letter-spacing:-0.02em}
+.tab-content{display:none}.tab-content.active{display:block}
+#mobile-menu{display:none}#mobile-menu.open{display:block}
+.btn-primary{background:var(--charcoal);color:#fff;border:1px solid var(--charcoal)}.btn-primary:hover{background:#000}
+.btn-outline{background:transparent;color:var(--charcoal);border:1px solid var(--border)}.btn-outline:hover{background:var(--surface)}
+.service-card{border:1px solid var(--border);border-radius:1rem;padding:1.75rem 1.5rem;background:#fff}
+.service-num{font-family:'Playfair Display',Georgia,serif;font-weight:700;font-size:1.35rem;letter-spacing:.04em;color:var(--ember);margin-bottom:.6rem}
+.debt-card{background:var(--charcoal);color:#fff;border-radius:1.25rem;padding:2.75rem 2.25rem;max-width:32rem;position:relative;overflow:hidden}
+.debt-card::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 20% 0%,rgba(196,92,38,.18),transparent 55%);pointer-events:none}
+.debt-card>*{position:relative}
+.faq-item{border-bottom:1px solid var(--border)}.faq-item:first-child{border-top:1px solid var(--border)}
+.faq-q{width:100%;display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:1.25rem 0;text-align:left;background:none;border:none;cursor:pointer;font-family:'Playfair Display',Georgia,serif;font-weight:600;font-size:1.05rem;color:var(--charcoal)}
+.faq-q:hover{color:var(--ember)}
+.faq-icon{flex-shrink:0;width:1.75rem;height:1.75rem;border-radius:9999px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:1.1rem;color:var(--muted)}
+.faq-item.open .faq-icon{transform:rotate(45deg);border-color:var(--ember);color:var(--ember)}
+.faq-a{display:none;padding:0 0 1.35rem;color:var(--muted);font-size:.975rem;line-height:1.65;max-width:40rem}
+.faq-item.open .faq-a{display:block}
+</style>
+</head>
+<body>
+<header class="border-b relative" style="border-color:var(--border);background:#fff">
+<div class="max-w-5xl mx-auto px-6 py-5 flex items-center justify-between">
+<a href="#" onclick="goHome();return false" class="display text-2xl tracking-tight hover:opacity-80 transition" style="color:var(--charcoal)">JUNTO NOVA</a>
+<button id="menu-toggle" onclick="toggleMenu()" class="p-2 -mr-2 focus:outline-none" style="color:var(--muted)" aria-label="Open menu">
+<svg id="menu-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+<svg id="close-icon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+</button>
+</div>
+<div id="mobile-menu" class="absolute top-full left-0 right-0 border-b shadow-sm z-50" style="background:#fff;border-color:var(--border)">
+<div class="max-w-5xl mx-auto px-6 py-4 flex flex-col gap-1">
+<button onclick="showTab('share');closeMenu()" class="text-left py-3 px-2 rounded-lg hover:bg-slate-50" style="color:var(--charcoal)">Your Share</button>
+<button onclick="showTab('costs');closeMenu()" class="text-left py-3 px-2 rounded-lg hover:bg-slate-50" style="color:var(--charcoal)">Cost Drivers</button>
+<button onclick="showTab('services');closeMenu()" class="text-left py-3 px-2 rounded-lg hover:bg-slate-50" style="color:var(--charcoal)">Our Services</button>
+<button onclick="showTab('involved');closeMenu()" class="text-left py-3 px-2 rounded-lg hover:bg-slate-50" style="color:var(--charcoal)">Get Involved</button>
+<button onclick="showTab('about');closeMenu()" class="text-left py-3 px-2 rounded-lg hover:bg-slate-50" style="color:var(--charcoal)">About Us</button>
+</div></div></header>
+<section class="max-w-5xl mx-auto px-6 pt-16 pb-8"><div class="max-w-3xl">
+<div class="text-xs font-medium tracking-widest uppercase mb-4" style="color:var(--muted)">A stake in the dream</div>
+<h1 class="display text-4xl md:text-5xl tracking-tight leading-tight mb-6" style="color:var(--charcoal)">The American Dream works best when every citizen owns a real stake in the country's future.</h1>
+<div class="text-lg leading-relaxed space-y-5" style="color:var(--muted)">
+<p>When the costs of housing, transportation, education, energy, healthcare, and taxes stay too high, ownership slips out of reach. People stop building and start renting just to survive. And when Americans cannot own their future, they begin to lose their connection to America, to its key institutions, and ultimately to themselves.</p>
+<p>Junto Nova identifies the barriers that keep costs high, turns them into clear investable strategies, and builds the organizations and deals that actually lower them. Once the proof is real, scale starts to become inevitable. We stay in to govern that shift and harvest the new reality.</p>
+</div></div></section>
+<section class="max-w-5xl mx-auto px-6 pt-10 pb-4"><div class="flex flex-wrap gap-3">
+<button id="btn-share" onclick="showTab('share')" class="nav-btn px-5 py-2.5 rounded-xl text-sm font-medium transition btn-primary">Your Share</button>
+<button id="btn-costs" onclick="showTab('costs')" class="nav-btn px-5 py-2.5 rounded-xl text-sm font-medium transition btn-outline">Cost Drivers</button>
+<button id="btn-services" onclick="showTab('services')" class="nav-btn px-5 py-2.5 rounded-xl text-sm font-medium transition btn-outline">Our Services</button>
+<button id="btn-involved" onclick="showTab('involved')" class="nav-btn px-5 py-2.5 rounded-xl text-sm font-medium transition btn-outline">Get Involved</button>
+<button id="btn-about" onclick="showTab('about')" class="nav-btn px-5 py-2.5 rounded-xl text-sm font-medium transition btn-outline">About Us</button>
+</div></section>
+<section id="content-share" class="tab-content active max-w-5xl mx-auto px-6 py-12">
+<div class="mb-10 max-w-2xl"><h2 class="display text-3xl mb-4" style="color:var(--charcoal)">Your share of America</h2>
+<div class="space-y-4 leading-relaxed" style="color:var(--muted)">
+<p>America works best when people can own a real stake in their future, and feel the confidence and trust that come with it.</p>
+<p>We live in the richest country in history, at the best time in the world's history. Yet the average American household's share of just the federal debt is nearly negative $300,000. And a record 55% of Americans say their financial situation is getting worse.</p>
+<p>People can feel that pocketbook pain. It shows up as less ownership, less confidence, and less trust in the institutions that are supposed to make a stake possible.</p>
+</div></div>
+<div class="mb-10"><div class="debt-card"><div class="display text-5xl sm:text-6xl md:text-7xl tracking-tight leading-none" style="color:var(--ember)">-$295,000</div></div></div>
+</section>
+<section id="content-costs" class="tab-content max-w-5xl mx-auto px-6 py-12">
+<div class="mb-10 max-w-2xl"><h2 class="display text-3xl mb-4" style="color:var(--charcoal)">Cost drivers</h2>
+<p class="leading-relaxed" style="color:var(--muted)">Identify the biggest cost drivers American households face, then drive the changes that actually lower them. Full interactive charts returning shortly.</p></div>
+</section>
+<section id="content-services" class="tab-content max-w-5xl mx-auto px-6 py-12">
+<div class="mb-12 max-w-2xl"><h2 class="display text-3xl mb-4" style="color:var(--charcoal)">Our services</h2>
+<p class="text-lg leading-relaxed mb-4" style="color:var(--charcoal)">You hire us if the cost of living is the constraint you actually care about.</p></div>
+<div class="grid md:grid-cols-2 gap-5 mb-12">
+<div class="service-card"><div class="service-num">01</div><h3 class="display text-xl mb-3">Diagnose the cost drivers</h3><p class="text-[15px] leading-relaxed" style="color:var(--muted)">Independent analysis of what actually keeps prices high.</p></div>
+<div class="service-card"><div class="service-num">02</div><h3 class="display text-xl mb-3">Build the strategy</h3><p class="text-[15px] leading-relaxed" style="color:var(--muted)">A plan with numbers, targets, and a clear path to capital or political support.</p></div>
+<div class="service-card"><div class="service-num">03</div><h3 class="display text-xl mb-3">Structure the capital and partnerships</h3><p class="text-[15px] leading-relaxed" style="color:var(--muted)">Term design and agreements that turn strategy into funded action.</p></div>
+<div class="service-card"><div class="service-num">04</div><h3 class="display text-xl mb-3">Build the organization and run the work</h3><p class="text-[15px] leading-relaxed" style="color:var(--muted)">Stand up organizations, run campaigns, advance legislation.</p></div>
+<div class="service-card md:col-span-2"><div class="service-num">05</div><h3 class="display text-xl mb-3">Govern the scale</h3><p class="text-[15px] leading-relaxed" style="color:var(--muted)">Board seats and oversight after the first wins.</p></div>
+</div>
+<div class="text-center"><a href="/project.html" class="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl font-medium btn-primary">Talk about a project</a></div>
+</section>
+<section id="content-involved" class="tab-content max-w-5xl mx-auto px-6 py-12">
+<div class="mb-10 max-w-2xl"><h2 class="display text-3xl mb-4" style="color:var(--charcoal)">Get involved</h2>
+<p class="leading-relaxed" style="color:var(--muted)">Email <a href="mailto:andrew@juntonova.com" class="underline" style="color:var(--charcoal)">andrew@juntonova.com</a> with the area you know and how you can help.</p></div>
+</section>
+<section id="content-about" class="tab-content max-w-5xl mx-auto px-6 py-12">
+<div class="max-w-2xl"><h2 class="display text-3xl mb-8" style="color:var(--charcoal)">About us</h2>
+<div class="faq-item"><button type="button" class="faq-q" onclick="toggleFaq(this)"><span>What's the weird name all about?</span><span class="faq-icon">+</span></button>
+<div class="faq-a"><p class="mb-3">In 1727, Benjamin Franklin gathered tradesmen into the Junto — the Leather Apron Club. They built libraries, fire companies, hospitals, and a college. Nova means a new start. Junto Nova is a new Junto focused on ownership and lower costs.</p></div></div>
+<div class="faq-item"><button type="button" class="faq-q" onclick="toggleFaq(this)"><span>Who are you?</span><span class="faq-icon">+</span></button>
+<div class="faq-a"><p>I'm <strong>Andrew Clark</strong>. <a href="https://www.linkedin.com/in/jandrewclark" target="_blank" rel="noopener" class="underline">LinkedIn</a>.</p></div></div>
+</div></section>
+<footer class="border-t" style="border-color:var(--border)">
+<div class="max-w-5xl mx-auto px-6 py-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm" style="color:var(--muted)">
+<div><div class="display text-lg" style="color:var(--charcoal)">JUNTO NOVA</div><div class="text-xs mt-1">Junto Nova LLC · Dallas, TX</div></div>
+<div class="flex items-center gap-5">
+<a href="mailto:andrew@juntonova.com" class="hover:opacity-70"><i class="fa-solid fa-envelope"></i></a>
+<a href="https://x.com/jandrewclark" target="_blank" rel="noopener" class="hover:opacity-70"><i class="fa-brands fa-x-twitter"></i></a>
+<a href="https://juntonova.substack.com" target="_blank" rel="noopener" class="hover:opacity-70"><i class="fa-solid fa-bookmark"></i></a>
+<a href="/privacy.html">Privacy</a><span>© 2026</span>
+</div></div></footer>
+<script>
+function toggleMenu(){const m=document.getElementById('mobile-menu'),a=document.getElementById('menu-icon'),b=document.getElementById('close-icon');m.classList.toggle('open');a.classList.toggle('hidden');b.classList.toggle('hidden')}
+function closeMenu(){document.getElementById('mobile-menu').classList.remove('open');document.getElementById('menu-icon').classList.remove('hidden');document.getElementById('close-icon').classList.add('hidden')}
+function goHome(){closeMenu();showTab('share');window.scrollTo({top:0,behavior:'smooth'})}
+function showTab(tab){document.querySelectorAll('.tab-content').forEach(el=>el.classList.remove('active'));document.getElementById('content-'+tab).classList.add('active');document.querySelectorAll('.nav-btn').forEach(btn=>{btn.classList.remove('btn-primary');btn.classList.add('btn-outline')});const a=document.getElementById('btn-'+tab);if(a){a.classList.remove('btn-outline');a.classList.add('btn-primary')}}
+function toggleFaq(btn){const item=btn.closest('.faq-item');const isOpen=item.classList.contains('open');document.querySelectorAll('.faq-item').forEach(el=>el.classList.remove('open'));if(!isOpen)item.classList.add('open')}
+</script>
+</body>
+</html>
