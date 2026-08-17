@@ -1,1 +1,211 @@
-PLACEHOLDER
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Talk about a project · Junto Nova</title>
+    <meta name="description" content="Tell us what you're working on so we can come prepared.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@600;700&display=swap');
+        
+        :root {
+            --charcoal: #1A1A1A;
+            --ember: #C45C26;
+            --muted: #64748B;
+            --border: #E2E8F0;
+            --surface: #F8FAFC;
+        }
+        
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            color: var(--charcoal);
+            background-color: #FFFFFF;
+        }
+        
+        .display {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        .btn-primary {
+            background-color: var(--charcoal);
+            color: #FFFFFF;
+            border: 1px solid var(--charcoal);
+        }
+        .btn-primary:hover {
+            background-color: #000;
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: var(--charcoal);
+            border: 1px solid var(--border);
+        }
+        .btn-outline:hover {
+            background-color: var(--surface);
+        }
+
+        input, select, textarea {
+            width: 100%;
+            border: 1px solid var(--border);
+            border-radius: 0.75rem;
+            padding: 0.75rem 1rem;
+            font-size: 0.95rem;
+            background: #fff;
+            color: var(--charcoal);
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: 2px solid var(--charcoal);
+            outline-offset: 1px;
+        }
+
+        .check-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            padding: 0.6rem 0;
+        }
+        .check-row input[type="checkbox"] {
+            width: auto;
+            margin-top: 0.2rem;
+            accent-color: var(--charcoal);
+        }
+    </style>
+</head>
+<body>
+
+    <header class="border-b" style="border-color: var(--border); background: #fff;">
+        <div class="max-w-5xl mx-auto px-6 py-5 flex items-center justify-between">
+            <a href="/" class="display text-2xl tracking-tight hover:opacity-80 transition" style="color: var(--charcoal);">
+                JUNTO NOVA
+            </a>
+            <a href="/" class="text-sm hover:opacity-70" style="color: var(--muted);">← Back</a>
+        </div>
+    </header>
+
+    <main class="max-w-xl mx-auto px-6 py-14">
+        <div class="mb-10">
+            <h1 class="display text-3xl mb-3" style="color: var(--charcoal);">Talk about a project</h1>
+            <p style="color: var(--muted);">A few specifics help us show up prepared. This opens an email to Andrew with the details below.</p>
+        </div>
+
+        <form id="project-form" class="space-y-7" onsubmit="return submitProject(event)">
+            <div>
+                <label class="block text-sm font-medium mb-2" style="color: var(--charcoal);">Your name</label>
+                <input type="text" id="name" name="name" required placeholder="Jane Smith" autocomplete="name">
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium mb-2" style="color: var(--charcoal);">Email</label>
+                <input type="email" id="email" name="email" required placeholder="jane@org.org" autocomplete="email">
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium mb-2" style="color: var(--charcoal);">Organization (optional)</label>
+                <input type="text" id="org" name="org" placeholder="Foundation, firm, or operator">
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium mb-2" style="color: var(--charcoal);">Area you're focused on</label>
+                <select id="area" name="area" required>
+                    <option value="" disabled selected>Select one</option>
+                    <option value="All / cross-cutting">All / cross-cutting</option>
+                    <option value="Housing">Housing</option>
+                    <option value="Transportation">Transportation</option>
+                    <option value="Education">Education</option>
+                    <option value="Energy">Energy</option>
+                    <option value="Healthcare">Healthcare</option>
+                    <option value="Taxes">Taxes</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium mb-2" style="color: var(--charcoal);">What kind of help do you need?</label>
+                <p class="text-xs mb-3" style="color: var(--muted);">Select all that apply</p>
+                <div class="border rounded-xl px-4 py-2" style="border-color: var(--border); background: var(--surface);">
+                    <label class="check-row">
+                        <input type="checkbox" name="service" value="Diagnose the cost drivers">
+                        <span>Diagnose the cost drivers</span>
+                    </label>
+                    <label class="check-row">
+                        <input type="checkbox" name="service" value="Build the strategy">
+                        <span>Build the strategy</span>
+                    </label>
+                    <label class="check-row">
+                        <input type="checkbox" name="service" value="Structure the deals">
+                        <span>Structure the deals</span>
+                    </label>
+                    <label class="check-row">
+                        <input type="checkbox" name="service" value="Prove it in a few places">
+                        <span>Prove it in a few places</span>
+                    </label>
+                    <label class="check-row">
+                        <input type="checkbox" name="service" value="Govern the scale">
+                        <span>Govern the scale (board / ongoing)</span>
+                    </label>
+                    <label class="check-row">
+                        <input type="checkbox" name="service" value="Other">
+                        <span>Other</span>
+                    </label>
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium mb-2" style="color: var(--charcoal);">Anything else we should know? <span class="font-normal" style="color: var(--muted);">(optional)</span></label>
+                <textarea id="notes" name="notes" rows="4" placeholder="Timeline, geography, constraints, or a one-line description of the problem."></textarea>
+            </div>
+
+            <button type="submit" class="w-full py-3.5 rounded-xl font-medium transition btn-primary">
+                Open email to send
+            </button>
+
+            <p class="text-xs text-center" style="color: var(--muted);">
+                Opens your email client with a pre-filled message to andrew@juntonova.com. Nothing is stored on this site.
+            </p>
+        </form>
+    </main>
+
+    <footer class="border-t mt-8" style="border-color: var(--border);">
+        <div class="max-w-5xl mx-auto px-6 py-8 text-center text-sm" style="color: var(--muted);">
+            <div class="display text-lg mb-1" style="color: var(--charcoal);">JUNTO NOVA</div>
+            <div class="text-xs">Junto Nova LLC · Dallas, TX · © 2026</div>
+        </div>
+    </footer>
+
+    <script>
+        function submitProject(e) {
+            e.preventDefault();
+
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const org = document.getElementById('org').value.trim();
+            const area = document.getElementById('area').value;
+            const notes = document.getElementById('notes').value.trim();
+
+            const services = Array.from(document.querySelectorAll('input[name="service"]:checked'))
+                .map(cb => cb.value);
+
+            if (services.length === 0) {
+                alert('Please select at least one type of help.');
+                return false;
+            }
+
+            const subject = encodeURIComponent('Project inquiry — ' + area + (org ? ' (' + org + ')' : ''));
+
+            let body = 'Name: ' + name + '\n';
+            body += 'Email: ' + email + '\n';
+            if (org) body += 'Organization: ' + org + '\n';
+            body += '\nArea: ' + area + '\n';
+            body += 'Help needed:\n' + services.map(s => '  - ' + s).join('\n') + '\n';
+            if (notes) body += '\nNotes:\n' + notes + '\n';
+
+            window.location.href = 'mailto:andrew@juntonova.com?subject=' + subject + '&body=' + encodeURIComponent(body);
+            return false;
+        }
+    </script>
+</body>
+</html>
