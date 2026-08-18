@@ -4,6 +4,272 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Junto Nova - A stake in the dream</title>
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/favicon-180.png">
+<meta name="description" content="Junto Nova makes it possible for every American family to buy and own a genuine stake in the dream by driving down the costs of housing, transportation, education, energy, healthcare, and taxes.">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@600;700&display=swap');
+:root{--charcoal:#1A1A1A;--ember:#C45C26;--muted:#64748B;--border:#E2E8F0;--surface:#F8FAFC}
+body{font-family:Inter,system-ui,sans-serif;color:var(--charcoal);background:#fff}
+.display{font-family:'Playfair Display',Georgia,serif;font-weight:700;letter-spacing:-0.02em}
+.tab-content{display:none}.tab-content.active{display:block}
+#mobile-menu{display:none}#mobile-menu.open{display:block}
+.btn-primary{background:var(--charcoal);color:#fff;border:1px solid var(--charcoal)}.btn-primary:hover{background:#000}
+.btn-outline{background:transparent;color:var(--charcoal);border:1px solid var(--border)}.btn-outline:hover{background:var(--surface)}
+.service-card{border:1px solid var(--border);border-radius:1rem;padding:1.75rem 1.5rem;background:#fff}a.service-card{cursor:pointer}a.service-card:hover{border-color:#cbd5e1}
+.service-num{font-family:'Playfair Display',Georgia,serif;font-weight:700;font-size:1.35rem;letter-spacing:.04em;color:var(--ember);margin-bottom:.6rem}
+.debt-card{background:var(--charcoal);color:#fff;border-radius:1.25rem;padding:2.75rem 2.25rem;max-width:32rem;position:relative;overflow:hidden}
+.debt-card::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 20% 0%,rgba(196,92,38,.18),transparent 55%);pointer-events:none}
+.debt-card>*{position:relative}
+.faq-item{border-bottom:1px solid var(--border)}.faq-item:first-child{border-top:1px solid var(--border)}
+.faq-q{width:100%;display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:1.25rem 0;text-align:left;background:none;border:none;cursor:pointer;font-family:'Playfair Display',Georgia,serif;font-weight:600;font-size:1.05rem;color:var(--charcoal)}
+.faq-q:hover{color:var(--ember)}
+.faq-icon{flex-shrink:0;width:1.75rem;height:1.75rem;border-radius:9999px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:1.1rem;color:var(--muted)}
+.faq-item.open .faq-icon{transform:rotate(45deg);border-color:var(--ember);color:var(--ember)}
+.faq-a{display:none;padding:0 0 1.35rem;color:var(--muted);font-size:.975rem;line-height:1.65;max-width:40rem}
+.faq-item.open .faq-a{display:block}
+.pie-hint{font-size:.75rem;color:var(--muted);margin-top:.35rem}
+</style>
 </head>
-<body><p>TEMP - wait for full restore</p></body>
+<body>
+<header class="border-b relative" style="border-color:var(--border);background:#fff">
+<div class="max-w-5xl mx-auto px-6 py-5 flex items-center justify-between">
+<a href="#" onclick="goHome();return false" class="flex items-center gap-3 hover:opacity-80 transition" style="color:var(--charcoal)"><img src="/jn-header.png" alt="Junto Nova" width="40" height="46" style="display:block" /><span class="display text-2xl tracking-tight">JUNTO NOVA</span></a>
+<button id="menu-toggle" onclick="toggleMenu()" class="p-2 -mr-2 focus:outline-none" style="color:var(--muted)" aria-label="Open menu">
+<svg id="menu-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+<svg id="close-icon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+</button>
+</div>
+<div id="mobile-menu" class="absolute top-full left-0 right-0 border-b shadow-sm z-50" style="background:#fff;border-color:var(--border)">
+<div class="max-w-5xl mx-auto px-6 py-4 flex flex-col gap-1">
+<button onclick="showTab('share');closeMenu()" class="text-left py-3 px-2 rounded-lg hover:bg-slate-50" style="color:var(--charcoal)">Your Share</button>
+<button onclick="showTab('costs');closeMenu()" class="text-left py-3 px-2 rounded-lg hover:bg-slate-50" style="color:var(--charcoal)">Cost Drivers</button>
+<button onclick="showTab('services');closeMenu()" class="text-left py-3 px-2 rounded-lg hover:bg-slate-50" style="color:var(--charcoal)">Our Services</button>
+<button onclick="showTab('involved');closeMenu()" class="text-left py-3 px-2 rounded-lg hover:bg-slate-50" style="color:var(--charcoal)">Get Involved</button>
+<button onclick="showTab('about');closeMenu()" class="text-left py-3 px-2 rounded-lg hover:bg-slate-50" style="color:var(--charcoal)">About Us</button>
+</div></div></header>
+<section class="max-w-5xl mx-auto px-6 pt-16 pb-8"><div class="max-w-3xl">
+<div class="text-xs font-medium tracking-widest uppercase mb-4" style="color:var(--muted)">A stake in the dream</div>
+<h1 class="display text-4xl md:text-5xl tracking-tight leading-tight mb-6" style="color:var(--charcoal)">The American Dream works best when every citizen owns a real stake in the country's future.</h1>
+<div class="text-lg leading-relaxed space-y-5" style="color:var(--muted)">
+<p>When the costs of housing, transportation, education, energy, healthcare, and taxes stay too high, ownership slips out of reach. People stop building and start renting just to survive. And when Americans cannot own their future, they begin to lose their connection to America, to its key institutions, and ultimately to themselves.</p>
+<p>Junto Nova identifies the barriers that keep costs high, turns them into clear investable strategies, and builds the organizations and deals that actually lower them. Once the proof is real, scale starts to become inevitable. We stay in to govern that shift and harvest the new reality.</p>
+</div></div></section>
+<section class="max-w-5xl mx-auto px-6 pt-10 pb-4"><div class="flex flex-wrap gap-3">
+<button id="btn-share" onclick="showTab('share')" class="nav-btn px-5 py-2.5 rounded-xl text-sm font-medium transition btn-primary">Your Share</button>
+<button id="btn-costs" onclick="showTab('costs')" class="nav-btn px-5 py-2.5 rounded-xl text-sm font-medium transition btn-outline">Cost Drivers</button>
+<button id="btn-services" onclick="showTab('services')" class="nav-btn px-5 py-2.5 rounded-xl text-sm font-medium transition btn-outline">Our Services</button>
+<button id="btn-involved" onclick="showTab('involved')" class="nav-btn px-5 py-2.5 rounded-xl text-sm font-medium transition btn-outline">Get Involved</button>
+<button id="btn-about" onclick="showTab('about')" class="nav-btn px-5 py-2.5 rounded-xl text-sm font-medium transition btn-outline">About Us</button>
+</div></section>
+<section id="content-share" class="tab-content active max-w-5xl mx-auto px-6 py-12">
+<div class="mb-10 max-w-2xl"><h2 class="display text-3xl mb-4" style="color:var(--charcoal)">Your share of America</h2>
+<div class="space-y-4 leading-relaxed" style="color:var(--muted)">
+<p>America works best when people can own a real stake in their future, and feel the confidence and trust that come with it.</p>
+<p>We live in the richest country in history, at the best time in the world's history. Yet the average American household's share of just the federal debt is nearly negative $300,000. And a record 55% of Americans say their financial situation is getting worse.</p>
+<p>People can feel that pocketbook pain. It shows up as less ownership, less confidence, and less trust in the institutions that are supposed to make a stake possible.</p>
+</div></div>
+<div class="mb-10"><div class="debt-card"><div class="display text-5xl sm:text-6xl md:text-7xl tracking-tight leading-none" style="color:var(--ember)">-$295,000</div></div></div>
+<div class="text-xs space-y-1.5" style="color:var(--muted)">
+<div>Sources (last updated August 15, 2026):</div>
+<div>• <a href="https://fiscaldata.treasury.gov/datasets/debt-to-the-penny/debt-to-the-penny" target="_blank" rel="noopener" class="underline hover:opacity-80">U.S. Treasury Debt to the Penny</a> (total public debt outstanding)</div>
+<div>• Household figure derived from total debt ÷ number of U.S. households (Census / JEC estimates). Exact daily values move.</div>
+<div>• <a href="https://news.gallup.com/poll/708905/affordability-dominates-americans-financial-worries.aspx" target="_blank" rel="noopener" class="underline hover:opacity-80">Gallup</a>, April 2026: record 55% say their financial situation is getting worse (highest since tracking began in 2001).</div>
+</div>
+</section>
+<section id="content-costs" class="tab-content max-w-5xl mx-auto px-6 py-12">
+<div class="mb-10 max-w-2xl">
+<h2 class="display text-3xl mb-4" style="color:var(--charcoal)">Cost drivers</h2>
+<div class="space-y-4 leading-relaxed" style="color:var(--muted)">
+<p>Most of us do not feel the acute impact of our share of America nearly as much as we feel the impact of costs in daily life: rent or a mortgage, utilities, the doctor's bill, tuition, the tank of gas, the grocery run.</p>
+<p>If ownership is the goal, the work starts here. Identify the biggest cost drivers American households face, then drive the changes that actually lower them.</p>
+</div>
+</div>
+<div class="grid md:grid-cols-2 gap-8 mb-4">
+<div class="border rounded-2xl p-6" style="border-color:var(--border);background:var(--surface)">
+<div class="flex justify-between items-center mb-1">
+<div class="font-medium" style="color:var(--charcoal)">Family of four outflows, 2024</div>
+<div class="text-xs" style="color:var(--muted)">~$147,000 / year</div>
+</div>
+<p class="pie-hint mb-3">Click a slice to project that cost through 2050</p>
+<canvas id="pieToday" height="240"></canvas>
+</div>
+<div class="border rounded-2xl p-6" style="border-color:var(--border);background:var(--surface)">
+<div class="flex justify-between items-center mb-1">
+<div class="font-medium" style="color:var(--charcoal)">Projected household share, 2050</div>
+<div class="text-xs" style="color:var(--ember)">Current path</div>
+</div>
+<p class="pie-hint mb-3">Selected category highlighted</p>
+<canvas id="pie2050" height="240"></canvas>
+</div>
+</div>
+<div class="border rounded-2xl p-6 mb-10" style="border-color:var(--border);background:var(--surface)">
+<div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-4">
+<div>
+<div class="font-medium" style="color:var(--charcoal)" id="trendTitle">Housing average annual spending, 2010–2050</div>
+<div class="text-sm" style="color:var(--muted)">Dollars (nominal) · BLS CEX historical + illustrative high/low paths</div>
+</div>
+</div>
+<canvas id="lineChart" height="120"></canvas>
+<p class="text-xs mt-3" style="color:var(--muted)">Projections are illustrative, not forecasts. High path assumes continued supply constraints; low path assumes reforms that expand supply and competition.</p>
+</div>
+<div class="border rounded-2xl p-8" style="border-color:var(--border);background:var(--surface)">
+<div class="font-medium mb-1" style="color:var(--charcoal)">What if costs actually came down?</div>
+<p class="text-sm mb-6" style="color:var(--muted)">Move the levers. See rough annual savings for a family of four.</p>
+<div class="grid md:grid-cols-2 gap-x-10 gap-y-5 mb-8">
+<div>
+<label class="text-xs font-medium" style="color:var(--muted)">Housing supply reforms</label>
+<input type="range" id="housing" min="0" max="35" step="5" value="20" class="w-full" style="accent-color:var(--charcoal)" oninput="updateSavings()">
+<div class="flex justify-between text-[11px]" style="color:var(--muted)"><span>0%</span><span id="housingVal">20%</span></div>
+</div>
+<div>
+<label class="text-xs font-medium" style="color:var(--muted)">Energy and utilities</label>
+<input type="range" id="energy" min="0" max="30" step="5" value="15" class="w-full" style="accent-color:var(--charcoal)" oninput="updateSavings()">
+<div class="flex justify-between text-[11px]" style="color:var(--muted)"><span>0%</span><span id="energyVal">15%</span></div>
+</div>
+<div>
+<label class="text-xs font-medium" style="color:var(--muted)">Healthcare competition</label>
+<input type="range" id="health" min="0" max="25" step="5" value="12" class="w-full" style="accent-color:var(--charcoal)" oninput="updateSavings()">
+<div class="flex justify-between text-[11px]" style="color:var(--muted)"><span>0%</span><span id="healthVal">12%</span></div>
+</div>
+<div>
+<label class="text-xs font-medium" style="color:var(--muted)">Education choice and new supply</label>
+<input type="range" id="edu" min="0" max="30" step="5" value="18" class="w-full" style="accent-color:var(--charcoal)" oninput="updateSavings()">
+<div class="flex justify-between text-[11px]" style="color:var(--muted)"><span>0%</span><span id="eduVal">18%</span></div>
+</div>
+</div>
+<div class="pt-6 border-t flex items-baseline justify-between flex-wrap gap-4" style="border-color:var(--border)">
+<div>
+<div class="text-sm" style="color:var(--muted)">Projected annual savings</div>
+<div id="savings" class="display text-5xl tracking-tight" style="color:var(--ember)">$14,200</div>
+</div>
+<div class="text-right text-xs" style="color:var(--muted)">Per family of 4 · every year<br>Illustrative ranges based on policy literature</div>
+</div>
+</div>
+<div class="text-xs mt-8 space-y-1.5" style="color:var(--muted)">
+<div>Sources (last updated August 16, 2026):</div>
+<div>• <a href="https://www.bls.gov/cex/" target="_blank" rel="noopener" class="underline hover:opacity-80">BLS Consumer Expenditure Survey</a>, 2024.</div>
+<div>• Savings and 2050 shares are illustrative, not formal forecasts.</div>
+</div>
+</section>
+<section id="content-services" class="tab-content max-w-5xl mx-auto px-6 py-12">
+<div class="mb-12 max-w-2xl"><h2 class="display text-3xl mb-4" style="color:var(--charcoal)">Our services</h2>
+<p class="text-lg leading-relaxed mb-4" style="color:var(--charcoal)">You hire us if the cost of living is the constraint you actually care about.</p></div>
+<div class="grid md:grid-cols-2 gap-5 mb-12">
+<a href="/diagnose.html" class="service-card block hover:opacity-90 transition" style="text-decoration:none;color:inherit"><div class="service-num">01</div><h3 class="display text-xl mb-3">Diagnose the cost drivers</h3><p class="text-[15px] leading-relaxed" style="color:var(--muted)">Independent analysis of what actually keeps prices high.</p></a>
+<a href="/strategy.html" class="service-card block hover:opacity-90 transition" style="text-decoration:none;color:inherit"><div class="service-num">02</div><h3 class="display text-xl mb-3">Build the strategy</h3><p class="text-[15px] leading-relaxed" style="color:var(--muted)">A plan with numbers, targets, and a clear path to capital or political support.</p></a>
+<a href="/capital.html" class="service-card block hover:opacity-90 transition" style="text-decoration:none;color:inherit"><div class="service-num">03</div><h3 class="display text-xl mb-3">Structure the capital and partnerships</h3><p class="text-[15px] leading-relaxed" style="color:var(--muted)">Term design and agreements that turn strategy into funded action.</p></a>
+<a href="/organization.html" class="service-card block hover:opacity-90 transition" style="text-decoration:none;color:inherit"><div class="service-num">04</div><h3 class="display text-xl mb-3">Build the organization and run the work</h3><p class="text-[15px] leading-relaxed" style="color:var(--muted)">Stand up organizations, run campaigns, advance legislation.</p></a>
+<a href="/govern.html" class="service-card block md:col-span-2 hover:opacity-90 transition" style="text-decoration:none;color:inherit"><div class="service-num">05</div><h3 class="display text-xl mb-3">Govern the scale</h3><p class="text-[15px] leading-relaxed" style="color:var(--muted)">Board seats and oversight after the first wins.</p></a>
+</div>
+<div class="text-center"><a href="/project.html" class="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl font-medium btn-primary">Talk about a project</a></div>
+</section>
+<section id="content-involved" class="tab-content max-w-5xl mx-auto px-6 py-12">
+<div class="mb-10 max-w-2xl">
+<h2 class="display text-3xl mb-4" style="color:var(--charcoal)">Get involved</h2>
+<p class="text-lg leading-relaxed mb-4" style="color:var(--charcoal)">You don't have to be a client to help.</p>
+<p class="leading-relaxed mb-6" style="color:var(--muted)">If you're looking to hire us for a project, <a href="/project.html" class="underline hover:opacity-80" style="color:var(--charcoal)">talk about a project instead</a>.</p>
+<p class="leading-relaxed" style="color:var(--muted)">Otherwise, use the form below.</p>
+</div>
+<form id="involved-form" class="max-w-xl space-y-6" onsubmit="return submitInvolved(event)">
+<div><label class="block text-sm font-medium mb-2" style="color:var(--charcoal)">Your name</label>
+<input type="text" id="inv-name" required placeholder="Jane Smith" style="width:100%;border:1px solid var(--border);border-radius:0.75rem;padding:0.75rem 1rem"></div>
+<div><label class="block text-sm font-medium mb-2" style="color:var(--charcoal)">Email</label>
+<input type="email" id="inv-email" required placeholder="jane@org.org" style="width:100%;border:1px solid var(--border);border-radius:0.75rem;padding:0.75rem 1rem"></div>
+<div><label class="block text-sm font-medium mb-2" style="color:var(--charcoal)">Organization (optional)</label>
+<input type="text" id="inv-org" placeholder="Your firm or campaign" style="width:100%;border:1px solid var(--border);border-radius:0.75rem;padding:0.75rem 1rem"></div>
+<div><label class="block text-sm font-medium mb-3" style="color:var(--charcoal)">Areas you know</label>
+<div class="space-y-1">
+<label class="flex gap-3 py-1"><input type="checkbox" name="area" value="Housing" style="accent-color:var(--charcoal)"><span class="text-sm" style="color:var(--muted)">Housing</span></label>
+<label class="flex gap-3 py-1"><input type="checkbox" name="area" value="Transportation" style="accent-color:var(--charcoal)"><span class="text-sm" style="color:var(--muted)">Transportation</span></label>
+<label class="flex gap-3 py-1"><input type="checkbox" name="area" value="Education" style="accent-color:var(--charcoal)"><span class="text-sm" style="color:var(--muted)">Education</span></label>
+<label class="flex gap-3 py-1"><input type="checkbox" name="area" value="Energy" style="accent-color:var(--charcoal)"><span class="text-sm" style="color:var(--muted)">Energy</span></label>
+<label class="flex gap-3 py-1"><input type="checkbox" name="area" value="Healthcare" style="accent-color:var(--charcoal)"><span class="text-sm" style="color:var(--muted)">Healthcare</span></label>
+<label class="flex gap-3 py-1"><input type="checkbox" name="area" value="Taxes" style="accent-color:var(--charcoal)"><span class="text-sm" style="color:var(--muted)">Taxes</span></label>
+</div></div>
+<div><label class="block text-sm font-medium mb-2" style="color:var(--charcoal)">How you can help</label>
+<textarea id="inv-help" rows="3" required style="width:100%;border:1px solid var(--border);border-radius:0.75rem;padding:0.75rem 1rem"></textarea></div>
+<div><label class="block text-sm font-medium mb-2" style="color:var(--charcoal)">Anything else? (optional)</label>
+<textarea id="inv-notes" rows="2" style="width:100%;border:1px solid var(--border);border-radius:0.75rem;padding:0.75rem 1rem"></textarea></div>
+<button type="submit" class="w-full py-3.5 rounded-xl font-medium btn-primary">Open email to send</button>
+<p class="text-xs text-center" style="color:var(--muted)">Opens your email client. Nothing is stored on this site.</p>
+</form>
+</section>
+<section id="content-about" class="tab-content max-w-5xl mx-auto px-6 py-12">
+<div class="max-w-2xl"><h2 class="display text-3xl mb-8" style="color:var(--charcoal)">About us</h2>
+<div class="faq-item"><button type="button" class="faq-q" onclick="toggleFaq(this)"><span>What's the weird name all about?</span><span class="faq-icon">+</span></button>
+<div class="faq-a">
+<p class="mb-3">In 1727, a young Benjamin Franklin gathered a dozen tradesmen and artisans in Philadelphia into a club for mutual improvement. They called it the <strong style="color:var(--charcoal)">Junto</strong>. Outsiders called it the Leather Apron Club, because the members were the kind of people who wore leather aprons to work: printers, surveyors, cabinetmakers, clerks. Not a debating society for gentlemen. A working group that asked hard questions, shared knowledge, and then built things.</p>
+<p class="mb-3">Out of that small circle came the first subscription library in America, the first fire insurance company, a volunteer fire department, a hospital, a college, and habits of practical problem-solving that shaped the early republic. They did not wait for permission. They put on the apron and got to work.</p>
+<p class="mb-3">That is exactly the kind of American effort we still need. Not just thinkers. People willing to dig into the barriers that keep costs high, build the organizations and deals that lower them, and stay long enough for the proof to stick.</p>
+<p><strong style="color:var(--charcoal)">Nova</strong> means a new start. <strong style="color:var(--charcoal)">Junto Nova</strong> is a new Junto: practical people, focused on ownership and lower costs, ready to put on the leather apron.</p>
+</div></div>
+<div class="faq-item"><button type="button" class="faq-q" onclick="toggleFaq(this)"><span>Who do you work with?</span><span class="faq-icon">+</span></button>
+<div class="faq-a">
+<p class="mb-3">Anyone serious about driving down the costs of housing, transportation, education, energy, healthcare, and taxes. If you treat high costs as a solvable constraint and are willing to put capital, strategy, or operating muscle behind that goal, we can talk.</p>
+<p class="mb-2" style="color:var(--charcoal)"><strong>People funding the work</strong></p>
+<p class="mb-3">Private equity and venture firms, corporations, philanthropists, and family foundations that want their capital to expand ownership and lower real prices, not just underwrite process.</p>
+<p class="mb-2" style="color:var(--charcoal)"><strong>People thinking about the work</strong></p>
+<p class="mb-3">Think tanks, policy shops, research institutes, and strategy teams inside trade associations or companies that need independent analysis of the barriers and a path that can actually be executed.</p>
+<p class="mb-2" style="color:var(--charcoal)"><strong>People doing the work</strong></p>
+<p>Chambers of commerce, startups building new supply, nonprofits, advocacy organizations, and political parties or campaigns that need the machine built, the campaign run, or the legislation advanced until the model works and can scale.</p>
+</div></div>
+<div class="faq-item"><button type="button" class="faq-q" onclick="toggleFaq(this)"><span>Why should I hire you?</span><span class="faq-icon">+</span></button>
+<div class="faq-a">
+<p class="mb-3">Three beliefs shape how we work. Each will get a full note on <a href="https://juntonova.substack.com" target="_blank" rel="noopener" class="underline hover:opacity-80" style="color:var(--charcoal)">Substack</a>. Until then, the short version:</p>
+<p class="mb-2" style="color:var(--charcoal)"><strong>1. Good policy is not enough.</strong></p>
+<p class="mb-3">It has to be good politics too, or it does not stick. Sustainable reform needs coalitions, timing, and a path that can survive the next election cycle, not just the next white paper.</p>
+<p class="mb-2" style="color:var(--charcoal)"><strong>2. Measures matter, but only the ones people feel.</strong></p>
+<p class="mb-3">What households care about most is cost. Rent, tuition, the power bill, the doctor's bill, the tax bill. If the metric does not show up in daily life, it will not drive ownership or trust.</p>
+<p class="mb-2" style="color:var(--charcoal)"><strong>3. Proof beats process.</strong></p>
+<p>Strategy decks are cheap. The work is building the organization, running the campaign, and proving the model in a few places until scale starts to become inevitable. We stay for that part.</p>
+</div></div>
+<div class="faq-item"><button type="button" class="faq-q" onclick="toggleFaq(this)"><span>Who are you?</span><span class="faq-icon">+</span></button>
+<div class="faq-a"><p>I'm <strong style="color:var(--charcoal)">Andrew Clark</strong>. <a href="https://www.linkedin.com/in/jandrewclark" target="_blank" rel="noopener" class="underline hover:opacity-80" style="color:var(--charcoal)">LinkedIn</a>.</p></div></div>
+</div></section>
+<footer class="border-t" style="border-color:var(--border)">
+<div class="max-w-5xl mx-auto px-6 py-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm" style="color:var(--muted)">
+<div><div class="display text-lg" style="color:var(--charcoal)">JUNTO NOVA</div><div class="text-xs mt-1">Junto Nova LLC · Dallas, TX</div></div>
+<div class="flex items-center gap-5">
+<a href="mailto:andrew@juntonova.com" class="hover:opacity-70"><i class="fa-solid fa-envelope"></i></a>
+<a href="https://x.com/jandrewclark" target="_blank" rel="noopener" class="hover:opacity-70"><i class="fa-brands fa-x-twitter"></i></a>
+<a href="https://juntonova.substack.com" target="_blank" rel="noopener" class="hover:opacity-70"><i class="fa-solid fa-bookmark"></i></a>
+<a href="/privacy.html">Privacy</a><span>© 2026</span>
+</div></div></footer>
+<script>
+const pieLabels=['Housing','Transportation','Food','Healthcare','Education','Federal Income Tax','Payroll Tax','State & Local Tax','Insurance','Other'];
+const pieTodayData=[24.7,12.6,9.5,5.8,1.5,9,8,9,1.5,8.4];
+const pie2050Data=[28,11,8,10,1.5,10,8,10,2,11.5];
+const pieColors=['#1A1A1A','#334155','#475569','#C45C26','#64748B','#9A3412','#9A3412','#9A3412','#94A3B8','#CBD5E1'];
+const pieColorsDim=['#1A1A1A88','#33415588','#47556988','#C45C2688','#64748B88','#9A341288','#9A341288','#9A341288','#94A3B888','#CBD5E188'];
+const categoryTrends={
+Housing:{years:[2010,2015,2020,2024,2030,2040,2050],high:[16557,18409,21417,26266,34000,48000,65000],low:[16557,18409,21417,26266,30000,36000,42000]},
+Transportation:{years:[2010,2015,2020,2024,2030,2040,2050],high:[7677,9503,9826,13318,16000,21000,27000],low:[7677,9503,9826,13318,14500,16000,17500]},
+Food:{years:[2010,2015,2020,2024,2030,2040,2050],high:[6129,7023,7316,10169,12000,15500,19500],low:[6129,7023,7316,10169,11200,12500,14000]},
+Healthcare:{years:[2010,2015,2020,2024,2030,2040,2050],high:[3157,4342,5177,6197,8500,13000,19000],low:[3157,4342,5177,6197,7500,9500,12000]},
+Education:{years:[2010,2015,2020,2024,2030,2040,2050],high:[1076,1315,1271,1569,2100,3200,4800],low:[1076,1315,1271,1569,1700,1900,2200]},
+'Taxes':{years:[2010,2015,2020,2024,2030,2040,2050],high:[12000,14000,16000,20000,26000,36000,48000],low:[12000,14000,16000,20000,22000,26000,30000]},
+'Federal Income Tax':{years:[2010,2015,2020,2024,2030,2040,2050],high:[4500,5200,6000,7500,10000,14000,19000],low:[4500,5200,6000,7500,8500,10000,11500]},
+'Payroll Tax':{years:[2010,2015,2020,2024,2030,2040,2050],high:[4000,4700,5400,6700,8500,12000,16000],low:[4000,4700,5400,6700,7200,8500,9800]},
+'State & Local Tax':{years:[2010,2015,2020,2024,2030,2040,2050],high:[3500,4100,4600,5800,7500,10000,13000],low:[3500,4100,4600,5800,6300,7500,8700]},
+Insurance:{years:[2010,2015,2020,2024,2030,2040,2050],high:[800,1000,1200,1600,2200,3200,4500],low:[800,1000,1200,1600,1800,2100,2400]},
+Other:{years:[2010,2015,2020,2024,2030,2040,2050],high:[5000,6000,7000,8900,11000,15000,20000],low:[5000,6000,7000,8900,9800,11000,12500]}
+};
+let selectedCategory='Housing',chartToday,chart2050,chartLine;
+function colorsForSelection(selected){return pieLabels.map((label,i)=>!selected||label===selected?pieColors[i]:pieColorsDim[i])}
+function selectCategory(label){selectedCategory=label;if(chartToday){chartToday.data.datasets[0].backgroundColor=colorsForSelection(label);chartToday.update()}if(chart2050){chart2050.data.datasets[0].backgroundColor=colorsForSelection(label);chart2050.update()}updateTrendChart(label)}
+function updateTrendChart(label){const key=categoryTrends[label]?label:'Housing';const t=categoryTrends[key];document.getElementById('trendTitle').textContent=key+' average annual spending, 2010–2050';if(!chartLine)return;chartLine.data.labels=t.years;chartLine.data.datasets[0].data=t.high;chartLine.data.datasets[1].data=t.low;chartLine.update()}
+function initCharts(){const charcoal='#1A1A1A',muted='#64748B';const pieOptions={cutout:'58%',plugins:{legend:{position:'bottom',labels:{boxWidth:10,padding:10,font:{size:11},color:muted}},tooltip:{callbacks:{label:ctx=>ctx.label+': '+ctx.parsed+'%'}}},onClick:(evt,elements)=>{if(!elements.length)return;selectCategory(pieLabels[elements[0].index])}};chartToday=new Chart(document.getElementById('pieToday'),{type:'doughnut',data:{labels:pieLabels,datasets:[{data:pieTodayData,backgroundColor:colorsForSelection(selectedCategory),borderWidth:0}]},options:pieOptions});chart2050=new Chart(document.getElementById('pie2050'),{type:'doughnut',data:{labels:pieLabels,datasets:[{data:pie2050Data,backgroundColor:colorsForSelection(selectedCategory),borderWidth:0}]},options:pieOptions});const t=categoryTrends[selectedCategory];chartLine=new Chart(document.getElementById('lineChart'),{type:'line',data:{labels:t.years,datasets:[{label:'High path',data:t.high,borderColor:charcoal,borderWidth:2.5,tension:0.3,pointRadius:3,pointBackgroundColor:charcoal},{label:'Low path',data:t.low,borderColor:muted,borderWidth:2,borderDash:[5,5],tension:0.3,pointRadius:3,pointBackgroundColor:muted}]},options:{plugins:{legend:{position:'bottom',labels:{boxWidth:12,font:{size:11},color:muted}}},scales:{x:{ticks:{color:muted,font:{size:10}},grid:{color:'#E2E8F0'}},y:{ticks:{color:muted,font:{size:10},callback:v=>'$'+(v/1000)+'k'},grid:{color:'#E2E8F0'}}}}});window.chartsInitialized=true}
+function toggleMenu(){const m=document.getElementById('mobile-menu'),a=document.getElementById('menu-icon'),b=document.getElementById('close-icon');m.classList.toggle('open');a.classList.toggle('hidden');b.classList.toggle('hidden')}
+function closeMenu(){document.getElementById('mobile-menu').classList.remove('open');document.getElementById('menu-icon').classList.remove('hidden');document.getElementById('close-icon').classList.add('hidden')}
+function goHome(){closeMenu();showTab('share');window.scrollTo({top:0,behavior:'smooth'})}
+function showTab(tab){document.querySelectorAll('.tab-content').forEach(el=>el.classList.remove('active'));document.getElementById('content-'+tab).classList.add('active');document.querySelectorAll('.nav-btn').forEach(btn=>{btn.classList.remove('btn-primary');btn.classList.add('btn-outline')});const a=document.getElementById('btn-'+tab);if(a){a.classList.remove('btn-outline');a.classList.add('btn-primary')}if(tab==='costs'&&!window.chartsInitialized){initCharts()}}
+function toggleFaq(btn){const item=btn.closest('.faq-item');const isOpen=item.classList.contains('open');document.querySelectorAll('.faq-item').forEach(el=>el.classList.remove('open'));if(!isOpen)item.classList.add('open')}
+function updateSavings(){const housing=+document.getElementById('housing').value,energy=+document.getElementById('energy').value,health=+document.getElementById('health').value,edu=+document.getElementById('edu').value;document.getElementById('housingVal').textContent=housing+'%';document.getElementById('energyVal').textContent=energy+'%';document.getElementById('healthVal').textContent=health+'%';document.getElementById('eduVal').textContent=edu+'%';const baseline=109000;const savings=Math.round((baseline*0.33*(housing/100))+(baseline*0.10*(energy/100))+(baseline*0.18*(health/100))+(baseline*0.12*(edu/100)));document.getElementById('savings').textContent='$'+savings.toLocaleString()}
+function submitInvolved(e){e.preventDefault();const name=document.getElementById('inv-name').value.trim(),email=document.getElementById('inv-email').value.trim(),org=document.getElementById('inv-org').value.trim(),areas=[...document.querySelectorAll('input[name=area]:checked')].map(c=>c.value),help=document.getElementById('inv-help').value.trim(),notes=document.getElementById('inv-notes').value.trim();const body=['Name: '+name,'Email: '+email,org?'Organization: '+org:null,areas.length?'Areas: '+areas.join(', '):null,'','How I can help:',help,notes?('\nNotes:\n'+notes):null].filter(Boolean).join('\n');window.location.href='mailto:andrew@juntonova.com?subject='+encodeURIComponent('Get involved — '+name)+'&body='+encodeURIComponent(body);return false}
+</script>
+</body>
 </html>
