@@ -56,16 +56,16 @@ body{font-family:Inter,system-ui,sans-serif;color:var(--charcoal);background:#ff
 <h1 class="display text-4xl md:text-5xl tracking-tight leading-tight mb-6" style="color:var(--charcoal)">The American Dream works best when every citizen owns a real stake in the country's future.</h1>
 <div class="text-lg leading-relaxed space-y-5" style="color:var(--muted)">
 <p>When the costs of housing, transportation, education, energy, healthcare, and taxes stay too high, ownership slips out of reach. People stop building and start renting just to survive. And when Americans cannot own their future, they begin to lose their connection to America, to its key institutions, and ultimately to themselves.</p>
-<p>Junto Nova identifies the barriers that keep costs high, turns them into clear investable strategies, and builds the organizations and deals that actually lower them. Once the proof is real, scale starts to become inevitable. We stay in to govern that shift and harvest the new reality.</p>
+<p>Junto Nova finds what keeps those costs high and does the work that lowers household prices. You can hire Junto Nova in private. If you let the lessons be published, the next client does not pay Junto Nova to learn the same lessons again.</p>
 </div></div></section>
 <section class="max-w-5xl mx-auto px-6 pt-10 pb-4"><div class="flex flex-wrap gap-3">
-<button id="btn-share" onclick="showTab('share')" class="nav-btn px-5 py-2.5 rounded-xl text-sm font-medium transition btn-primary">Your Share</button>
+<button id="btn-share" onclick="showTab('share')" class="nav-btn px-5 py-2.5 rounded-xl text-sm font-medium transition btn-outline">Your Share</button>
 <button id="btn-costs" onclick="showTab('costs')" class="nav-btn px-5 py-2.5 rounded-xl text-sm font-medium transition btn-outline">Cost Drivers</button>
 <button id="btn-services" onclick="showTab('services')" class="nav-btn px-5 py-2.5 rounded-xl text-sm font-medium transition btn-outline">Our Services</button>
 <button id="btn-involved" onclick="showTab('involved')" class="nav-btn px-5 py-2.5 rounded-xl text-sm font-medium transition btn-outline">Get Involved</button>
-<button id="btn-about" onclick="showTab('about')" class="nav-btn px-5 py-2.5 rounded-xl text-sm font-medium transition btn-outline">About Us</button>
+<button id="btn-about" onclick="showTab('about')" class="nav-btn px-5 py-2.5 rounded-xl text-sm font-medium transition btn-primary">About Us</button>
 </div></section>
-<section id="content-share" class="tab-content active max-w-5xl mx-auto px-6 py-12">
+<section id="content-share" class="tab-content max-w-5xl mx-auto px-6 py-12">
 <div class="mb-10 max-w-2xl"><h2 class="display text-3xl mb-4" style="color:var(--charcoal)">Your share of America</h2>
 <div class="space-y-4 leading-relaxed" style="color:var(--muted)">
 <p>America works best when people can own a real stake in their future, and feel the confidence and trust that come with it.</p>
@@ -198,7 +198,7 @@ body{font-family:Inter,system-ui,sans-serif;color:var(--charcoal);background:#ff
 <p class="text-xs text-center" style="color:var(--muted)">Opens your email client. Nothing is stored on this site.</p>
 </form>
 </section>
-<section id="content-about" class="tab-content max-w-5xl mx-auto px-6 py-12">
+<section id="content-about" class="tab-content active max-w-5xl mx-auto px-6 py-12">
 <div class="max-w-2xl"><h2 class="display text-3xl mb-8" style="color:var(--charcoal)">About us</h2>
 <div class="faq-item"><button type="button" class="faq-q" onclick="toggleFaq(this)"><span>What's the weird name all about?</span><span class="faq-icon">+</span></button>
 <div class="faq-a">
@@ -266,9 +266,9 @@ function updateTrendChart(label){const key=categoryTrends[label]?label:'Housing'
 function initCharts(){const charcoal='#1A1A1A',muted='#64748B';const pieOptions={cutout:'58%',plugins:{legend:{position:'bottom',labels:{boxWidth:10,padding:10,font:{size:11},color:muted}},tooltip:{callbacks:{label:ctx=>ctx.label+': '+ctx.parsed+'%'}}},onClick:(evt,elements)=>{if(!elements.length)return;selectCategory(pieLabels[elements[0].index])}};chartToday=new Chart(document.getElementById('pieToday'),{type:'doughnut',data:{labels:pieLabels,datasets:[{data:pieTodayData,backgroundColor:colorsForSelection(selectedCategory),borderWidth:0}]},options:pieOptions});chart2050=new Chart(document.getElementById('pie2050'),{type:'doughnut',data:{labels:pieLabels,datasets:[{data:pie2050Data,backgroundColor:colorsForSelection(selectedCategory),borderWidth:0}]},options:pieOptions});const t=categoryTrends[selectedCategory];chartLine=new Chart(document.getElementById('lineChart'),{type:'line',data:{labels:t.years,datasets:[{label:'High path',data:t.high,borderColor:charcoal,borderWidth:2.5,tension:0.3,pointRadius:3,pointBackgroundColor:charcoal},{label:'Low path',data:t.low,borderColor:muted,borderWidth:2,borderDash:[5,5],tension:0.3,pointRadius:3,pointBackgroundColor:muted}]},options:{plugins:{legend:{position:'bottom',labels:{boxWidth:12,font:{size:11},color:muted}}},scales:{x:{ticks:{color:muted,font:{size:10}},grid:{color:'#E2E8F0'}},y:{ticks:{color:muted,font:{size:10},callback:v=>'$'+(v/1000)+'k'},grid:{color:'#E2E8F0'}}}}});window.chartsInitialized=true}
 function toggleMenu(){const m=document.getElementById('mobile-menu'),a=document.getElementById('menu-icon'),b=document.getElementById('close-icon');m.classList.toggle('open');a.classList.toggle('hidden');b.classList.toggle('hidden')}
 function closeMenu(){document.getElementById('mobile-menu').classList.remove('open');document.getElementById('menu-icon').classList.remove('hidden');document.getElementById('close-icon').classList.add('hidden')}
-function goHome(){closeMenu();showTab('share');window.scrollTo({top:0,behavior:'smooth'})}
-function showTab(tab,skipHash){if(!validTabs.includes(tab))tab='share';document.querySelectorAll('.tab-content').forEach(el=>el.classList.remove('active'));document.getElementById('content-'+tab).classList.add('active');document.querySelectorAll('.nav-btn').forEach(btn=>{btn.classList.remove('btn-primary');btn.classList.add('btn-outline')});const a=document.getElementById('btn-'+tab);if(a){a.classList.remove('btn-outline');a.classList.add('btn-primary')}if(tab==='costs'&&!window.chartsInitialized){initCharts()}if(!skipHash){const next=tab==='share'?'':('#'+tab);if(location.hash!==next)history.replaceState(null,'',next||location.pathname+location.search)}}
-function applyHash(){const h=(location.hash||'').replace(/^#/,'').toLowerCase();showTab(validTabs.includes(h)?h:'share',true)}
+function goHome(){closeMenu();showTab('about');window.scrollTo({top:0,behavior:'smooth'})}
+function showTab(tab,skipHash){if(!validTabs.includes(tab))tab='about';document.querySelectorAll('.tab-content').forEach(el=>el.classList.remove('active'));document.getElementById('content-'+tab).classList.add('active');document.querySelectorAll('.nav-btn').forEach(btn=>{btn.classList.remove('btn-primary');btn.classList.add('btn-outline')});const a=document.getElementById('btn-'+tab);if(a){a.classList.remove('btn-outline');a.classList.add('btn-primary')}if(tab==='costs'&&!window.chartsInitialized){initCharts()}if(!skipHash){const next=tab==='about'?'':('#'+tab);if(location.hash!==next)history.replaceState(null,'',next||location.pathname+location.search)}}
+function applyHash(){const h=(location.hash||'').replace(/^#/,'').toLowerCase();showTab(validTabs.includes(h)?h:'about',true)}
 window.addEventListener('hashchange',applyHash);
 applyHash();
 function toggleFaq(btn){const item=btn.closest('.faq-item');const isOpen=item.classList.contains('open');document.querySelectorAll('.faq-item').forEach(el=>el.classList.remove('open'));if(!isOpen)item.classList.add('open')}
