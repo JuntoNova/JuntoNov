@@ -45,11 +45,11 @@ body{font-family:Inter,system-ui,sans-serif;color:var(--charcoal);background:#ff
 </div>
 <div id="mobile-menu" class="absolute top-full left-0 right-0 border-b shadow-sm z-50" style="background:#fff;border-color:var(--border)">
 <div class="max-w-5xl mx-auto px-6 py-4 flex flex-col gap-1">
+<button onclick="showTab('about');closeMenu()" class="text-left py-3 px-2 rounded-lg hover:bg-slate-50" style="color:var(--charcoal)">About Us</button>
 <button onclick="showTab('share');closeMenu()" class="text-left py-3 px-2 rounded-lg hover:bg-slate-50" style="color:var(--charcoal)">Your Share</button>
 <button onclick="showTab('costs');closeMenu()" class="text-left py-3 px-2 rounded-lg hover:bg-slate-50" style="color:var(--charcoal)">Cost Drivers</button>
 <button onclick="showTab('services');closeMenu()" class="text-left py-3 px-2 rounded-lg hover:bg-slate-50" style="color:var(--charcoal)">Our Services</button>
 <button onclick="showTab('involved');closeMenu()" class="text-left py-3 px-2 rounded-lg hover:bg-slate-50" style="color:var(--charcoal)">Get Involved</button>
-<button onclick="showTab('about');closeMenu()" class="text-left py-3 px-2 rounded-lg hover:bg-slate-50" style="color:var(--charcoal)">About Us</button>
 </div></div></header>
 <section class="max-w-5xl mx-auto px-6 pt-16 pb-8"><div class="max-w-3xl">
 <div class="text-xs font-medium tracking-widest uppercase mb-4" style="color:var(--muted)">A stake in the dream</div>
@@ -59,11 +59,11 @@ body{font-family:Inter,system-ui,sans-serif;color:var(--charcoal);background:#ff
 <p>Junto Nova finds what keeps those costs high and does the work that lowers household prices. You can hire Junto Nova in private. If you let the lessons be published, the next client does not pay Junto Nova to learn the same lessons again.</p>
 </div></div></section>
 <section class="max-w-5xl mx-auto px-6 pt-10 pb-4"><div class="flex flex-wrap gap-3">
+<button id="btn-about" onclick="showTab('about')" class="nav-btn px-5 py-2.5 rounded-xl text-sm font-medium transition btn-primary">About Us</button>
 <button id="btn-share" onclick="showTab('share')" class="nav-btn px-5 py-2.5 rounded-xl text-sm font-medium transition btn-outline">Your Share</button>
 <button id="btn-costs" onclick="showTab('costs')" class="nav-btn px-5 py-2.5 rounded-xl text-sm font-medium transition btn-outline">Cost Drivers</button>
 <button id="btn-services" onclick="showTab('services')" class="nav-btn px-5 py-2.5 rounded-xl text-sm font-medium transition btn-outline">Our Services</button>
 <button id="btn-involved" onclick="showTab('involved')" class="nav-btn px-5 py-2.5 rounded-xl text-sm font-medium transition btn-outline">Get Involved</button>
-<button id="btn-about" onclick="showTab('about')" class="nav-btn px-5 py-2.5 rounded-xl text-sm font-medium transition btn-primary">About Us</button>
 </div></section>
 <section id="content-share" class="tab-content max-w-5xl mx-auto px-6 py-12">
 <div class="mb-10 max-w-2xl"><h2 class="display text-3xl mb-4" style="color:var(--charcoal)">Your share of America</h2>
