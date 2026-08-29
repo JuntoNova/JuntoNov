@@ -32,6 +32,10 @@ body{font-family:Inter,system-ui,sans-serif;color:var(--charcoal);background:#ff
 .faq-a{display:none;padding:0 0 1.35rem;color:var(--muted);font-size:.975rem;line-height:1.65;max-width:40rem}
 .faq-item.open .faq-a{display:block}
 .pie-hint{font-size:.75rem;color:var(--muted);margin-top:.35rem}
+.stage{border-top:1px solid var(--border);padding:1.25rem 0}
+.stage:first-child{border-top:none;padding-top:0}
+.stage-label{font-family:'Playfair Display',Georgia,serif;font-weight:600;font-size:1.05rem;color:var(--charcoal);margin-bottom:.35rem}
+.stage-line{color:var(--muted);font-size:.975rem;line-height:1.65}
 </style>
 </head>
 <body>
@@ -48,6 +52,7 @@ body{font-family:Inter,system-ui,sans-serif;color:var(--charcoal);background:#ff
 <button onclick="showTab('about');closeMenu()" class="text-left py-3 px-2 rounded-lg hover:bg-slate-50" style="color:var(--charcoal)">About Us</button>
 <button onclick="showTab('share');closeMenu()" class="text-left py-3 px-2 rounded-lg hover:bg-slate-50" style="color:var(--charcoal)">Your Share</button>
 <button onclick="showTab('costs');closeMenu()" class="text-left py-3 px-2 rounded-lg hover:bg-slate-50" style="color:var(--charcoal)">Cost Drivers</button>
+<button onclick="showTab('work');closeMenu()" class="text-left py-3 px-2 rounded-lg hover:bg-slate-50" style="color:var(--charcoal)">How we work</button>
 <a href="/project.html" class="text-left py-3 px-2 rounded-lg hover:bg-slate-50" style="color:var(--charcoal)">Let's work together</a>
 </div></div></header>
 <section class="max-w-5xl mx-auto px-6 pt-16 pb-8"><div class="max-w-3xl">
@@ -61,6 +66,7 @@ body{font-family:Inter,system-ui,sans-serif;color:var(--charcoal);background:#ff
 <button id="btn-about" onclick="showTab('about')" class="nav-btn px-5 py-2.5 rounded-xl text-sm font-medium transition btn-primary">About Us</button>
 <button id="btn-share" onclick="showTab('share')" class="nav-btn px-5 py-2.5 rounded-xl text-sm font-medium transition btn-outline">Your Share</button>
 <button id="btn-costs" onclick="showTab('costs')" class="nav-btn px-5 py-2.5 rounded-xl text-sm font-medium transition btn-outline">Cost Drivers</button>
+<button id="btn-work" onclick="showTab('work')" class="nav-btn px-5 py-2.5 rounded-xl text-sm font-medium transition btn-outline">How we work</button>
 </div></section>
 <section id="content-share" class="tab-content max-w-5xl mx-auto px-6 py-12">
 <div class="mb-10 max-w-2xl"><h2 class="display text-3xl mb-4" style="color:var(--charcoal)">Your share of America</h2>
@@ -126,6 +132,48 @@ body{font-family:Inter,system-ui,sans-serif;color:var(--charcoal);background:#ff
 <a href="/project.html" class="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl font-medium btn-primary">Let's fix this together</a>
 </div>
 </section>
+<section id="content-work" class="tab-content max-w-5xl mx-auto px-6 py-12">
+<div class="max-w-2xl">
+<h2 class="display text-3xl mb-4" style="color:var(--charcoal)">How we work</h2>
+<div class="space-y-4 leading-relaxed" style="color:var(--muted)">
+<p>Junto Nova finds what keeps household costs high and does the work that lowers prices.</p>
+<p>Diagnose is public. <a href="#costs" onclick="showTab('costs');return false" class="underline hover:opacity-80" style="color:var(--charcoal)">Cost Drivers</a> is the household bill. A real fight (<a href="/costs/social-security.html" class="underline hover:opacity-80" style="color:var(--charcoal)">Social Security</a> now, then housing, school, power, health, taxes) opens a page for that slice: the diagnosis, then the path on that front.</p>
+<p>A hire is not a catalog. A hire is a slice on one front. A client can buy one stage or the path. Day one is not a menu.</p>
+</div>
+<div class="mt-10 mb-10">
+<p class="text-sm mb-6" style="color:var(--muted)">What a hire on a front can include.</p>
+<div>
+<div class="stage">
+<div class="stage-label">Diagnose</div>
+<div class="stage-line">Independent analysis of what actually keeps that slice high.</div>
+</div>
+<div class="stage">
+<div class="stage-label">Strategy</div>
+<div class="stage-line">A plan with numbers, targets, and a path to capital or political support.</div>
+</div>
+<div class="stage">
+<div class="stage-label">Capital</div>
+<div class="stage-line">Term design and agreements that turn that plan into funded action.</div>
+</div>
+<div class="stage">
+<div class="stage-label">Organization</div>
+<div class="stage-line">Stand up the work, run the campaign, move the rule.</div>
+</div>
+<div class="stage">
+<div class="stage-label">Govern</div>
+<div class="stage-line">Board seats and oversight after the first wins.</div>
+</div>
+</div>
+</div>
+<div class="space-y-4 leading-relaxed mb-10" style="color:var(--muted)">
+<p>Two ways to hire. Keep the work proprietary. Or let the key insights be published so no one pays to learn the same lessons again. The first pass on a new front costs more. Later work on a similar problem moves faster.</p>
+<p>Junto Nova is a startup founded in 2026 and led by Andrew Clark.</p>
+</div>
+<div class="text-center">
+<a href="/project.html" class="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl font-medium btn-primary">Let's work together</a>
+</div>
+</div>
+</section>
 <section id="content-about" class="tab-content active max-w-5xl mx-auto px-6 py-12">
 <div class="max-w-2xl"><h2 class="display text-3xl mb-8" style="color:var(--charcoal)">About us</h2>
 <div class="faq-item"><button type="button" class="faq-q" onclick="toggleFaq(this)"><span>What's the weird name all about?</span><span class="faq-icon">+</span></button>
@@ -188,7 +236,7 @@ Education:{years:[2010,2015,2020,2023,2024,2030,2040,2050],high:[2561,2666,2979,
 'Personal taxes':{years:[2015,2019,2020,2021,2022,2023,2030,2040,2050],high:[15658,17799,15860,16977,17835,19846,21860,24738,27616],low:[15658,17799,15860,16977,17835,19846,19000,17500,16000]},
 Other:{years:[2010,2015,2020,2023,2024,2030,2040,2050],high:[9871,10650,8970,10311,9567,10000,9800,9500],low:[9871,10650,8970,10311,9567,9000,8200,7500]}
 };
-const validTabs=['share','costs','about'];
+const validTabs=['share','costs','about','work'];
 let selectedCategory='Housing',chartToday,chart2050,chartLine;
 function colorsForSelection(selected){return pieLabels.map((label,i)=>!selected||label===selected?pieColors[i]:pieColorsDim[i])}
 function selectCategory(label){selectedCategory=label;if(chartToday){chartToday.data.datasets[0].backgroundColor=colorsForSelection(label);chartToday.update()}if(chart2050){chart2050.data.datasets[0].backgroundColor=colorsForSelection(label);chart2050.update()}updateTrendChart(label);const door=document.getElementById('slice-door');if(door)door.style.display=label==='Social Security and retirement'?'block':'none'}
