@@ -99,7 +99,7 @@ body{font-family:Inter,system-ui,sans-serif;color:var(--charcoal);background:#ff
 <div class="font-medium" style="color:var(--charcoal)">Projected household share, 2050</div>
 <div class="text-xs" style="color:var(--ember)">Illustrative sketch</div>
 </div>
-<p class="pie-hint mb-3">Illustrative household outflows if Congress sets the combined OASDI payroll tax to the Trustees intermediate cost rate (employee pays half). Personal taxes use CBO individual income tax as a share of GDP through 2036 (post-OBBBA); no 2050 CBO cell. 2023 household total held as the pie denominator. Not CEX. Not current-law SSA. Not a forecast.</p>
+<p class="pie-hint mb-3">Illustrative current path if household outflows fill Social Security insolvency and the tax share keeps rising. Mix shift, not 2023 inflated. Not CEX. Not a forecast. Not current-law SSA (that path cuts benefits after 2034).</p>
 <canvas id="pie2050" height="240"></canvas>
 </div>
 </div>
@@ -208,7 +208,7 @@ body{font-family:Inter,system-ui,sans-serif;color:var(--charcoal);background:#ff
 <script>
 const pieLabels=['Housing','Personal taxes','Transportation','Social Security and retirement','Food','Other','Healthcare','Utilities','Entertainment','Education'];
 const pieTodayData=[21,16,15,12,11,8,6,5,4,2];
-const pie2050Data=[20,17,13,15,10,8,6,5,4,2];
+const pie2050Data=[17,22,11,20,9,6,6,5,2,2];
 const pieColors=['#1A1A1A','#9A3412','#334155','#57534E','#64748B','#CBD5E1','#C45C26','#B45309','#94A3B8','#78716C'];
 const pieColorsDim=['#1A1A1A88','#9A341288','#33415588','#57534E88','#64748B88','#CBD5E188','#C45C2688','#B4530988','#94A3B888','#78716C88'];
 const categoryTrends={
