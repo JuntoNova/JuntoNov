@@ -167,6 +167,14 @@
             window.location.href = 'mailto:andrew@juntonova.com?subject=' + subject + '&body=' + encodeURIComponent(body);
             return false;
         }
+        (function () {
+            const q = new URLSearchParams(location.search).get('area');
+            if (!q) return;
+            const sel = document.getElementById('area');
+            if (!sel) return;
+            const match = Array.from(sel.options).find(function (o) { return o.value === q; });
+            if (match) sel.value = q;
+        })();
     </script>
 </body>
 </html>
