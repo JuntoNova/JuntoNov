@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@600;700&display=swap');
-        
+
         :root {
             --charcoal: #1A1A1A;
             --ember: #C45C26;
@@ -19,13 +19,13 @@
             --border: #E2E8F0;
             --surface: #F8FAFC;
         }
-        
+
         body {
             font-family: 'Inter', system-ui, sans-serif;
             color: var(--charcoal);
             background-color: #FFFFFF;
         }
-        
+
         .display {
             font-family: 'Playfair Display', Georgia, serif;
             font-weight: 700;
@@ -62,18 +62,6 @@
         input:focus, select:focus, textarea:focus {
             outline: 2px solid var(--charcoal);
             outline-offset: 1px;
-        }
-
-        .check-row {
-            display: flex;
-            align-items: flex-start;
-            gap: 0.75rem;
-            padding: 0.6rem 0;
-        }
-        .check-row input[type="checkbox"] {
-            width: auto;
-            margin-top: 0.2rem;
-            accent-color: var(--charcoal);
         }
     </style>
 </head>
@@ -121,40 +109,10 @@
                     <option value="Education">Education</option>
                     <option value="Energy">Energy</option>
                     <option value="Healthcare">Healthcare</option>
+                    <option value="Social Security">Social Security</option>
                     <option value="Taxes">Taxes</option>
                     <option value="Other">Other</option>
                 </select>
-            </div>
-
-            <div>
-                <label class="block text-sm font-medium mb-2" style="color: var(--charcoal);">What kind of help do you need?</label>
-                <p class="text-xs mb-3" style="color: var(--muted);">Select all that apply</p>
-                <div class="border rounded-xl px-4 py-2" style="border-color: var(--border); background: var(--surface);">
-                    <label class="check-row">
-                        <input type="checkbox" name="service" value="Diagnose the cost drivers">
-                        <span>Diagnose the cost drivers</span>
-                    </label>
-                    <label class="check-row">
-                        <input type="checkbox" name="service" value="Build the strategy">
-                        <span>Build the strategy</span>
-                    </label>
-                    <label class="check-row">
-                        <input type="checkbox" name="service" value="Structure the deals">
-                        <span>Structure the deals</span>
-                    </label>
-                    <label class="check-row">
-                        <input type="checkbox" name="service" value="Prove it in a few places">
-                        <span>Prove it in a few places</span>
-                    </label>
-                    <label class="check-row">
-                        <input type="checkbox" name="service" value="Govern the scale">
-                        <span>Govern the scale (board / ongoing)</span>
-                    </label>
-                    <label class="check-row">
-                        <input type="checkbox" name="service" value="Other">
-                        <span>Other</span>
-                    </label>
-                </div>
             </div>
 
             <div>
@@ -198,21 +156,12 @@
             const area = document.getElementById('area').value;
             const notes = document.getElementById('notes').value.trim();
 
-            const services = Array.from(document.querySelectorAll('input[name="service"]:checked'))
-                .map(cb => cb.value);
-
-            if (services.length === 0) {
-                alert('Please select at least one type of help.');
-                return false;
-            }
-
             const subject = encodeURIComponent('Project inquiry — ' + area + (org ? ' (' + org + ')' : ''));
 
             let body = 'Name: ' + name + '\n';
             body += 'Email: ' + email + '\n';
             if (org) body += 'Organization: ' + org + '\n';
             body += '\nArea: ' + area + '\n';
-            body += 'Help needed:\n' + services.map(s => '  - ' + s).join('\n') + '\n';
             if (notes) body += '\nNotes:\n' + notes + '\n';
 
             window.location.href = 'mailto:andrew@juntonova.com?subject=' + subject + '&body=' + encodeURIComponent(body);

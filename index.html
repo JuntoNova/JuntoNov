@@ -38,17 +38,20 @@ body{font-family:Inter,system-ui,sans-serif;color:var(--charcoal);background:#ff
 <header class="border-b relative" style="border-color:var(--border);background:#fff">
 <div class="max-w-5xl mx-auto px-6 py-5 flex items-center justify-between">
 <a href="#" onclick="goHome();return false" class="flex items-center gap-3 hover:opacity-80 transition" style="color:var(--charcoal)"><img src="/jn-header.png" alt="Junto Nova" width="40" height="46" style="display:block" /><span class="display text-2xl tracking-tight">JUNTO NOVA</span></a>
+<div class="flex items-center gap-3">
+<a href="/project.html" class="px-3 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-medium btn-primary whitespace-nowrap">Talk about a project</a>
 <button id="menu-toggle" onclick="toggleMenu()" class="p-2 -mr-2 focus:outline-none" style="color:var(--muted)" aria-label="Open menu">
 <svg id="menu-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
 <svg id="close-icon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
 </button>
+</div>
 </div>
 <div id="mobile-menu" class="absolute top-full left-0 right-0 border-b shadow-sm z-50" style="background:#fff;border-color:var(--border)">
 <div class="max-w-5xl mx-auto px-6 py-4 flex flex-col gap-1">
 <button onclick="showTab('about');closeMenu()" class="text-left py-3 px-2 rounded-lg hover:bg-slate-50" style="color:var(--charcoal)">About Us</button>
 <button onclick="showTab('share');closeMenu()" class="text-left py-3 px-2 rounded-lg hover:bg-slate-50" style="color:var(--charcoal)">Your Share</button>
 <button onclick="showTab('costs');closeMenu()" class="text-left py-3 px-2 rounded-lg hover:bg-slate-50" style="color:var(--charcoal)">Cost Drivers</button>
-<button onclick="showTab('services');closeMenu()" class="text-left py-3 px-2 rounded-lg hover:bg-slate-50" style="color:var(--charcoal)">Our Services</button>
+<a href="/project.html" class="text-left py-3 px-2 rounded-lg hover:bg-slate-50" style="color:var(--charcoal)">Talk about a project</a>
 </div></div></header>
 <section class="max-w-5xl mx-auto px-6 pt-16 pb-8"><div class="max-w-3xl">
 <div class="text-xs font-medium tracking-widest uppercase mb-4" style="color:var(--muted)">A stake in the dream</div>
@@ -61,7 +64,6 @@ body{font-family:Inter,system-ui,sans-serif;color:var(--charcoal);background:#ff
 <button id="btn-about" onclick="showTab('about')" class="nav-btn px-5 py-2.5 rounded-xl text-sm font-medium transition btn-primary">About Us</button>
 <button id="btn-share" onclick="showTab('share')" class="nav-btn px-5 py-2.5 rounded-xl text-sm font-medium transition btn-outline">Your Share</button>
 <button id="btn-costs" onclick="showTab('costs')" class="nav-btn px-5 py-2.5 rounded-xl text-sm font-medium transition btn-outline">Cost Drivers</button>
-<button id="btn-services" onclick="showTab('services')" class="nav-btn px-5 py-2.5 rounded-xl text-sm font-medium transition btn-outline">Our Services</button>
 </div></section>
 <section id="content-share" class="tab-content max-w-5xl mx-auto px-6 py-12">
 <div class="mb-10 max-w-2xl"><h2 class="display text-3xl mb-4" style="color:var(--charcoal)">Your share of America</h2>
@@ -117,18 +119,9 @@ body{font-family:Inter,system-ui,sans-serif;color:var(--charcoal);background:#ff
 <div>• <a href="https://www.bls.gov/cex/" target="_blank" rel="noopener" class="underline hover:opacity-80">BLS Consumer Expenditure Survey</a>, 2023, four-person consumer units. Average annual expenditures $105,683 plus personal taxes $19,846 (federal, state, and local income taxes, plus other personal taxes). Payroll is already inside Social Security and retirement. Life insurance is inside Other. Property tax is already inside housing. Utilities, including water and phone, are their own slice.</div>
 <div>• Illustrative current path if household outflows fill Social Security insolvency and the tax share keeps rising. Mix shift, not 2023 inflated. Not CEX. Not a forecast. Not current-law SSA (that path cuts benefits after 2034).</div>
 </div>
-</section>
-<section id="content-services" class="tab-content max-w-5xl mx-auto px-6 py-12">
-<div class="mb-12 max-w-2xl"><h2 class="display text-3xl mb-4" style="color:var(--charcoal)">Our services</h2>
-<p class="text-lg leading-relaxed mb-4" style="color:var(--charcoal)">You hire us if the cost of living is the constraint you actually care about.</p></div>
-<div class="grid md:grid-cols-2 gap-5 mb-12">
-<a href="/diagnose.html" class="service-card block hover:opacity-90 transition" style="text-decoration:none;color:inherit"><div class="service-num">01</div><h3 class="display text-xl mb-3">Diagnose the cost drivers</h3><p class="text-[15px] leading-relaxed" style="color:var(--muted)">Independent analysis of what actually keeps prices high.</p></a>
-<a href="/strategy.html" class="service-card block hover:opacity-90 transition" style="text-decoration:none;color:inherit"><div class="service-num">02</div><h3 class="display text-xl mb-3">Build the strategy</h3><p class="text-[15px] leading-relaxed" style="color:var(--muted)">A plan with numbers, targets, and a clear path to capital or political support.</p></a>
-<a href="/capital.html" class="service-card block hover:opacity-90 transition" style="text-decoration:none;color:inherit"><div class="service-num">03</div><h3 class="display text-xl mb-3">Structure the capital and partnerships</h3><p class="text-[15px] leading-relaxed" style="color:var(--muted)">Term design and agreements that turn strategy into funded action.</p></a>
-<a href="/organization.html" class="service-card block hover:opacity-90 transition" style="text-decoration:none;color:inherit"><div class="service-num">04</div><h3 class="display text-xl mb-3">Build the organization and run the work</h3><p class="text-[15px] leading-relaxed" style="color:var(--muted)">Stand up organizations, run campaigns, advance legislation.</p></a>
-<a href="/govern.html" class="service-card block md:col-span-2 hover:opacity-90 transition" style="text-decoration:none;color:inherit"><div class="service-num">05</div><h3 class="display text-xl mb-3">Govern the scale</h3><p class="text-[15px] leading-relaxed" style="color:var(--muted)">Board seats and oversight after the first wins.</p></a>
+<div class="text-center mt-10">
+<a href="/project.html" class="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl font-medium btn-primary">Talk about a project</a>
 </div>
-<div class="text-center"><a href="/project.html" class="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl font-medium btn-primary">Talk about a project</a></div>
 </section>
 <section id="content-about" class="tab-content active max-w-5xl mx-auto px-6 py-12">
 <div class="max-w-2xl"><h2 class="display text-3xl mb-8" style="color:var(--charcoal)">About us</h2>
@@ -189,7 +182,7 @@ Education:{years:[2010,2015,2020,2023,2024,2030,2040,2050],high:[2561,2666,2979,
 'Personal taxes':{years:[2015,2019,2020,2021,2022,2023,2030,2040,2050],high:[15658,17799,15860,16977,17835,19846,21860,24738,27616],low:[15658,17799,15860,16977,17835,19846,19000,17500,16000]},
 Other:{years:[2010,2015,2020,2023,2024,2030,2040,2050],high:[9871,10650,8970,10311,9567,10000,9800,9500],low:[9871,10650,8970,10311,9567,9000,8200,7500]}
 };
-const validTabs=['share','costs','services','about'];
+const validTabs=['share','costs','about'];
 let selectedCategory='Housing',chartToday,chart2050,chartLine;
 function colorsForSelection(selected){return pieLabels.map((label,i)=>!selected||label===selected?pieColors[i]:pieColorsDim[i])}
 function selectCategory(label){selectedCategory=label;if(chartToday){chartToday.data.datasets[0].backgroundColor=colorsForSelection(label);chartToday.update()}if(chart2050){chart2050.data.datasets[0].backgroundColor=colorsForSelection(label);chart2050.update()}updateTrendChart(label)}
@@ -199,7 +192,7 @@ function toggleMenu(){const m=document.getElementById('mobile-menu'),a=document.
 function closeMenu(){document.getElementById('mobile-menu').classList.remove('open');document.getElementById('menu-icon').classList.remove('hidden');document.getElementById('close-icon').classList.add('hidden')}
 function goHome(){closeMenu();showTab('about');window.scrollTo({top:0,behavior:'smooth'})}
 function showTab(tab,skipHash){if(!validTabs.includes(tab))tab='about';document.querySelectorAll('.tab-content').forEach(el=>el.classList.remove('active'));document.getElementById('content-'+tab).classList.add('active');document.querySelectorAll('.nav-btn').forEach(btn=>{btn.classList.remove('btn-primary');btn.classList.add('btn-outline')});const a=document.getElementById('btn-'+tab);if(a){a.classList.remove('btn-outline');a.classList.add('btn-primary')}if(tab==='costs'&&!window.chartsInitialized){initCharts()}if(!skipHash){const next=tab==='about'?'':('#'+tab);if(location.hash!==next)history.replaceState(null,'',next||location.pathname+location.search)}}
-function applyHash(){const h=(location.hash||'').replace(/^#/,'').toLowerCase();if(h==='involved'){location.replace('/involved.html');return}showTab(validTabs.includes(h)?h:'about',true)}
+function applyHash(){const h=(location.hash||'').replace(/^#/,'').toLowerCase();if(h==='involved'){location.replace('/involved.html');return}if(h==='services'){location.replace('/project.html');return}showTab(validTabs.includes(h)?h:'about',true)}
 window.addEventListener('hashchange',applyHash);
 applyHash();
 function toggleFaq(btn){const item=btn.closest('.faq-item');const isOpen=item.classList.contains('open');document.querySelectorAll('.faq-item').forEach(el=>el.classList.remove('open'));if(!isOpen)item.classList.add('open')}
