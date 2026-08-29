@@ -21,6 +21,26 @@ body{font-family:Inter,system-ui,sans-serif;color:var(--charcoal);background:#ff
 .stage:first-child{border-top:none;padding-top:0}
 .stage-label{font-family:'Playfair Display',Georgia,serif;font-weight:600;font-size:1.05rem;color:var(--charcoal);margin-bottom:.35rem}
 .stage-line{color:var(--muted);font-size:.975rem;line-height:1.65}
+
+.issue-bar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.issue-btn{border:1.5px solid var(--border);background:#fff;color:var(--muted);padding:8px 14px;border-radius:999px;font-size:13px;cursor:pointer;transition:all .15s ease}
+.issue-btn:hover{border-color:#cbd5e1;color:var(--charcoal)}
+.issue-btn.active{background:var(--charcoal);border-color:var(--charcoal);color:#fff}
+.continuum{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px 24px 28px}
+.ends{display:flex;justify-content:space-between;font-size:12px;font-weight:600;margin-bottom:8px;letter-spacing:.01em}
+.ends .left{color:#777;font-weight:500}
+.ends .right{color:var(--charcoal)}
+.track{position:relative;height:96px;background:#e8e8e2;border-radius:8px}
+.range{position:absolute;height:26px;border-radius:5px;transition:left .35s ease,width .35s ease}
+.range-public{top:12px;background:rgba(26,26,26,.14);border:1.5px solid rgba(26,26,26,.4)}
+.range-political{bottom:12px;background:rgba(26,26,26,.07);border:1.5px dashed rgba(26,26,26,.45)}
+.range-label{position:absolute;left:0;right:0;text-align:center;font-size:11px;font-weight:600;letter-spacing:.02em;white-space:nowrap}
+.range-public .range-label{top:-18px;color:var(--charcoal)}
+.range-political .range-label{bottom:-18px;color:var(--muted)}
+.reality{position:absolute;top:50%;transform:translate(-50%,-50%);z-index:3;text-align:center;transition:left .35s ease}
+.reality .marker{width:18px;height:18px;background:var(--charcoal);border:3px solid #fff;border-radius:50%;box-shadow:0 0 0 1.5px var(--charcoal);margin:0 auto 4px}
+.reality .r-label{font-size:12px;font-weight:700;background:var(--surface);padding:1px 6px;border-radius:3px}
+.chart-caption{font-size:.75rem;color:var(--muted);margin-top:.75rem}
 </style>
 </head>
 <body>
@@ -48,6 +68,37 @@ body{font-family:Inter,system-ui,sans-serif;color:var(--charcoal);background:#ff
 <p>Junto Nova finds what keeps household costs high and does the work that lowers prices.</p>
 <p>Diagnose is public. <a href="/#costs" class="underline hover:opacity-80" style="color:var(--charcoal)">Cost Drivers</a> is the household bill. A real fight (<a href="/costs/social-security.html" class="underline hover:opacity-80" style="color:var(--charcoal)">Social Security</a> now, then housing, school, power, health, taxes) opens a page for that slice: the diagnosis, then the path on that front.</p>
 <p>A hire is not a catalog. A hire is a slice on one front. A client can buy one stage or the path. Day one is not a menu.</p>
+</div>
+
+<div class="mb-12">
+<div class="issue-bar" id="issueBar">
+<button class="issue-btn" data-issue="housing">Housing</button>
+<button class="issue-btn" data-issue="transportation">Getting around</button>
+<button class="issue-btn active" data-issue="education">School</button>
+<button class="issue-btn" data-issue="power">Power</button>
+<button class="issue-btn" data-issue="healthcare">Health</button>
+<button class="issue-btn" data-issue="taxes">Taxes</button>
+<button class="issue-btn" data-issue="socialsecurity">Social Security</button>
+</div>
+<div class="continuum">
+<div class="ends">
+<span class="left">Cost-raising ←</span>
+<span class="right">→ Cost-lowering</span>
+</div>
+<div class="track">
+<div class="range range-public" id="pubRange">
+<div class="range-label">Public Support</div>
+</div>
+<div class="range range-political" id="polRange">
+<div class="range-label">Political Support</div>
+</div>
+<div class="reality" id="reality">
+<div class="marker"></div>
+<div class="r-label">Reality</div>
+</div>
+</div>
+</div>
+<p class="chart-caption">Illustrative sketch of the method. Not a poll. Not a forecast.</p>
 </div>
 
 <div class="mb-12">
@@ -98,6 +149,36 @@ body{font-family:Inter,system-ui,sans-serif;color:var(--charcoal);background:#ff
 <script>
 function toggleMenu(){const m=document.getElementById('mobile-menu'),a=document.getElementById('menu-icon'),b=document.getElementById('close-icon');m.classList.toggle('open');a.classList.toggle('hidden');b.classList.toggle('hidden')}
 function closeMenu(){document.getElementById('mobile-menu').classList.remove('open');document.getElementById('menu-icon').classList.remove('hidden');document.getElementById('close-icon').classList.add('hidden')}
+
+const issues={
+education:{public:[42,48],political:[22,40],reality:14},
+housing:{public:[28,45],political:[25,38],reality:32},
+transportation:{public:[30,40],political:[28,34],reality:36},
+power:{public:[35,42],political:[30,35],reality:40},
+healthcare:{public:[20,50],political:[18,32],reality:12},
+taxes:{public:[25,40],political:[30,28],reality:48},
+socialsecurity:{public:[25,40],political:[30,28],reality:48}
+};
+const pub=document.getElementById("pubRange");
+const pol=document.getElementById("polRange");
+const real=document.getElementById("reality");
+function setIssue(key){
+const d=issues[key];
+if(!d)return;
+pub.style.left=d.public[0]+"%";
+pub.style.width=d.public[1]+"%";
+pol.style.left=d.political[0]+"%";
+pol.style.width=d.political[1]+"%";
+real.style.left=d.reality+"%";
+document.querySelectorAll(".issue-btn").forEach(b=>b.classList.toggle("active",b.dataset.issue===key));
+}
+document.getElementById("issueBar").addEventListener("click",(e)=>{
+const btn=e.target.closest(".issue-btn");
+if(!btn)return;
+setIssue(btn.dataset.issue);
+});
+setIssue("education");
+
 </script>
 </body>
 </html>
