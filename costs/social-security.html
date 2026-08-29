@@ -27,13 +27,10 @@ body{font-family:Inter,system-ui,sans-serif;color:var(--charcoal);background:#ff
 <header class="border-b relative" style="border-color:var(--border);background:#fff">
 <div class="max-w-5xl mx-auto px-6 py-5 flex items-center justify-between">
 <a href="/" class="flex items-center gap-3 hover:opacity-80 transition" style="color:var(--charcoal)"><img src="/jn-header.png" alt="Junto Nova" width="40" height="46" style="display:block" /><span class="display text-2xl tracking-tight">JUNTO NOVA</span></a>
-<div class="flex items-center gap-3">
-<a href="/project.html" class="px-3 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-medium btn-primary whitespace-nowrap">Talk about a project</a>
 <button id="menu-toggle" onclick="toggleMenu()" class="p-2 -mr-2 focus:outline-none" style="color:var(--muted)" aria-label="Open menu">
 <svg id="menu-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
 <svg id="close-icon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
 </button>
-</div>
 </div>
 <div id="mobile-menu" class="absolute top-full left-0 right-0 border-b shadow-sm z-50" style="background:#fff;border-color:var(--border)">
 <div class="max-w-5xl mx-auto px-6 py-4 flex flex-col gap-1">
@@ -92,7 +89,7 @@ body{font-family:Inter,system-ui,sans-serif;color:var(--charcoal);background:#ff
 <a href="mailto:andrew@juntonova.com" class="hover:opacity-70"><i class="fa-solid fa-envelope"></i></a>
 <a href="https://x.com/jandrewclark" target="_blank" rel="noopener" class="hover:opacity-70"><i class="fa-brands fa-x-twitter"></i></a>
 <a href="https://juntonova.substack.com" target="_blank" rel="noopener" class="hover:opacity-70"><i class="fa-solid fa-bookmark"></i></a>
-<a href="/involved.html">Get Involved</a><a href="/privacy.html">Privacy</a><span>© 2026</span>
+<a href="/project.html">Talk about a project</a><a href="/involved.html">Get Involved</a><a href="/privacy.html">Privacy</a><span>© 2026</span>
 </div></div></footer>
 <script>
 function toggleMenu(){const m=document.getElementById('mobile-menu'),a=document.getElementById('menu-icon'),b=document.getElementById('close-icon');m.classList.toggle('open');a.classList.toggle('hidden');b.classList.toggle('hidden')}
