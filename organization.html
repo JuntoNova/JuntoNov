@@ -1,1 +1,344 @@
-LOAD_FROM_WORKSPACE_ORGANIZATION
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Build the organization and run the work · Junto Nova</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon-180.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <meta name="description" content="Stand up organizations, run campaigns, advance legislation — the operating layer that turns strategy into actual lower costs and expanded ownership.">
+  <style>
+    :root {
+      --charcoal: #1a1a1a;
+      --muted: #5a5a5a;
+      --light: #f7f7f5;
+      --border: #e5e5e0;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      color: var(--charcoal);
+      background: #fff;
+      line-height: 1.6;
+    }
+    .display {
+      font-family: "Playfair Display", "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    header {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 24px 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: var(--charcoal);
+    }
+    .logo img {
+      width: 40px;
+      height: 46px;
+      display: block;
+    }
+    .logo span {
+      font-family: "Playfair Display", Georgia, serif;
+      font-weight: 700;
+      font-size: 1.5rem;
+      letter-spacing: -0.02em;
+    }
+    .back {
+      font-size: 14px;
+      color: var(--muted);
+      text-decoration: none;
+    }
+    .back:hover { color: var(--charcoal); }
+    main { max-width: 860px; margin: 0 auto; padding: 48px 28px 64px; }
+    .eyebrow {
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+    h1 {
+      font-size: clamp(2rem, 5vw, 2.75rem);
+      line-height: 1.15;
+      margin-bottom: 20px;
+    }
+    .lede {
+      font-size: 1.15rem;
+      color: var(--muted);
+      max-width: 640px;
+      margin-bottom: 40px;
+    }
+    section { margin-bottom: 52px; }
+    h2 { font-size: 1.5rem; margin-bottom: 14px; }
+    h3 { font-size: 1.1rem; margin: 24px 0 8px; }
+    p { margin-bottom: 14px; color: var(--muted); }
+    p strong { color: var(--charcoal); }
+    .four-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 22px;
+    }
+    @media (max-width: 640px) {
+      .four-grid { grid-template-columns: 1fr; }
+    }
+    .four-item {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px;
+    }
+    .four-item .num {
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    .four-item h4 {
+      font-size: 1rem;
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+    .four-item p {
+      font-size: 14px;
+      margin-bottom: 0;
+    }
+    .menu {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .menu-item {
+      padding: 20px 22px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+    }
+    .menu-item:last-child { border-bottom: none; }
+    .menu-item.featured { background: var(--light); }
+    .menu-item h4 { font-size: 1.05rem; margin-bottom: 4px; }
+    .menu-item p { font-size: 14px; margin-bottom: 0; max-width: 520px; }
+    .menu-tag {
+      font-size: 12px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      white-space: nowrap;
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+    .menu-item.featured .menu-tag {
+      background: var(--charcoal);
+      color: #fff;
+      border-color: var(--charcoal);
+    }
+    .case {
+      background: var(--light);
+      border-radius: 12px;
+      padding: 24px;
+      border: 1px solid var(--border);
+    }
+    .case h3 { margin-top: 0; }
+    .cta {
+      text-align: center;
+      padding: 44px 24px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      margin-bottom: 8px;
+    }
+    .cta p { max-width: 460px; margin: 0 auto 22px; }
+    .btn {
+      display: inline-block;
+      background: var(--charcoal);
+      color: #fff;
+      padding: 13px 26px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 500;
+    }
+    .btn:hover { opacity: 0.9; }
+    .btn-secondary {
+      background: transparent;
+      color: var(--charcoal);
+      border: 1.5px solid var(--charcoal);
+      margin-left: 10px;
+    }
+    @media (max-width: 520px) {
+      .btn-secondary { margin-left: 0; margin-top: 10px; display: block; }
+    }
+    footer {
+      border-top: 1px solid var(--border);
+      margin-top: 24px;
+    }
+    .footer-inner {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 28px 28px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .footer-links {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+    .footer-links a {
+      color: var(--muted);
+      text-decoration: none;
+    }
+    .footer-links a:hover { color: var(--charcoal); }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="https://juntonova.com" class="logo">
+      <img src="/jn-header.png" alt="Junto Nova" width="40" height="46" />
+      <span>JUNTO NOVA</span>
+    </a>
+    <a href="https://juntonova.com/#services" class="back">← Back to services</a>
+  </header>
+
+  <main>
+    <div class="eyebrow">Service 04</div>
+    <h1 class="display">Build the organization and run the work</h1>
+    <p class="lede">
+      Stand up organizations, run campaigns, advance legislation — the operating layer that turns a continuum strategy into actual lower costs and expanded ownership.
+    </p>
+
+    <section>
+      <h2 class="display">Strategy without an organization is still process</h2>
+      <p>
+        The diagnosis is clean. The strategy has numbers, a support band, a political path, and a capital structure. Then nothing moves because there is no vehicle, no campaign muscle, no legislative operation, and no one whose daily job is to keep the model inside the cost-lowering zone.
+      </p>
+      <p>
+        We build and run the work: new entities when needed, campaigns that shift the public and political continuum, and the legislative or regulatory pushes that lock in the wins. The goal is not activity. It is measurable household cost reduction that survives the next election and the next board meeting.
+      </p>
+    </section>
+
+    <section>
+      <h2 class="display">What we build and run</h2>
+      <div class="four-grid">
+        <div class="four-item">
+          <div class="num">01 · ORGANIZATION STAND-UP</div>
+          <h4>The vehicle that owns the outcome</h4>
+          <p>New nonprofits, LLCs, coalitions, or special-purpose entities designed around the cost-lowering mandate. Governance, staffing model, operating cadence, and legal structure that protect the metrics (cost, supply, ownership) rather than activity or donor theater.</p>
+        </div>
+        <div class="four-item">
+          <div class="num">02 · CAMPAIGN OPERATIONS</div>
+          <h4>Public and political pressure that moves the continuum</h4>
+          <p>Issue campaigns, ballot measures, local organizing, digital and field programs that expand the support band or force political actors to act inside it. Designed against the diagnosis’s intensity maps, not generic “awareness.”</p>
+        </div>
+        <div class="four-item">
+          <div class="num">03 · LEGISLATIVE &amp; REGULATORY</div>
+          <h4>The statute or rule that locks the win</h4>
+          <p>Bill drafting, amendment strategy, whip operations, regulatory comment campaigns, and the ongoing presence required to keep language from being diluted back into cost-raising territory.</p>
+        </div>
+        <div class="four-item">
+          <div class="num">04 · MODEL OPERATIONS</div>
+          <h4>Running the proof at scale</h4>
+          <p>When the strategy requires an operating model (new school networks, housing production vehicles, energy co-ops, etc.), we stand up or staff the team that delivers the first units of lower cost and expanded ownership.</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="display">How you buy this</h2>
+      <p>
+        Start with the execution gap that is blocking progress. Single workstreams are priced competitively; full operating capacity is the higher-leverage engagement when strategy is ready and the continuum needs force.
+      </p>
+      <div class="menu">
+        <div class="menu-item">
+          <div>
+            <h4>Organization design &amp; stand-up</h4>
+            <p>Entity structure, governance documents, initial staffing plan, operating cadence, and metrics focused on cost outcomes.</p>
+          </div>
+          <span class="menu-tag">Single workstream</span>
+        </div>
+        <div class="menu-item">
+          <div>
+            <h4>Campaign package</h4>
+            <p>Full campaign architecture (message, field, digital, earned) mapped to the public support band and political path, with clear cost-reduction victory conditions.</p>
+          </div>
+          <span class="menu-tag">Single workstream</span>
+        </div>
+        <div class="menu-item">
+          <div>
+            <h4>Legislative / regulatory package</h4>
+            <p>Bill or rule language, amendment defense, coalition whip work, and sustained presence through enactment and implementation.</p>
+          </div>
+          <span class="menu-tag">Single workstream</span>
+        </div>
+        <div class="menu-item">
+          <div>
+            <h4>Model operations</h4>
+            <p>Team design, hiring, operating systems, and early delivery of the proof points the capital and political strategy require.</p>
+          </div>
+          <span class="menu-tag">Single workstream</span>
+        </div>
+        <div class="menu-item featured">
+          <div>
+            <h4>Full operating capacity</h4>
+            <p>Organization + campaign + legislative/regulatory + model operations integrated so the strategy converts into sustained lower costs rather than a series of disconnected activities.</p>
+          </div>
+          <span class="menu-tag">Recommended</span>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="case">
+        <h3 class="display">Why the operating layer decides everything</h3>
+        <p>
+          Most cost-lowering efforts produce excellent analysis and respectable strategy documents, then stall at execution. The organization that is stood up optimizes for funding cycles instead of household dollars. The campaign celebrates process wins. The legislation is amended into something that no longer moves the continuum. The model softens under the usual pressures.
+        </p>
+        <p style="margin-bottom:0">
+          Building and running the work is the refusal to accept that outcome. The organization exists to protect the cost and ownership metrics. The campaign exists to expand the support band or force action inside it. The legislative work exists to lock the rules that keep prices from rising again. When those pieces are missing, the continuum drifts back toward cost-raising policy no matter how good the earlier diagnosis and strategy were.
+        </p>
+      </div>
+    </section>
+
+    <div class="cta">
+      <h2 class="display" style="margin-bottom:10px">Start with the execution gap</h2>
+      <p>
+        Organization, campaign, legislation, model operations, or the full operating system. We will show you how the rest of the continuum fits before you commit further.
+      </p>
+      <a href="/project.html" class="btn">Let's work together</a>
+      <a href="https://juntonova.com/#services" class="btn btn-secondary">Back to services</a>
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+      <div>
+        <div class="display" style="font-size:1.1rem;color:var(--charcoal)">JUNTO NOVA</div>
+        <div style="font-size:12px;margin-top:4px">Junto Nova LLC · Dallas, TX</div>
+      </div>
+      <div class="footer-links">
+        <a href="mailto:andrew@juntonova.com" title="Email"><i class="fa-solid fa-envelope"></i></a>
+        <a href="https://x.com/jandrewclark" target="_blank" rel="noopener" title="X"><i class="fa-brands fa-x-twitter"></i></a>
+        <a href="https://juntonova.substack.com" target="_blank" rel="noopener" title="Substack"><i class="fa-solid fa-bookmark"></i></a>
+        <a href="/privacy.html">Privacy</a>
+        <span>© 2026</span>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
