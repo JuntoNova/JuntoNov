@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Get involved · Junto Nova</title>
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/favicon-180.png">
+<meta name="description" content="You don't have to be a client to help. Tell Junto Nova how you can help drive down costs.">
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@600;700&display=swap');
+:root{--charcoal:#1A1A1A;--ember:#C45C26;--muted:#64748B;--border:#E2E8F0;--surface:#F8FAFC}
+body{font-family:Inter,system-ui,sans-serif;color:var(--charcoal);background:#fff}
+.display{font-family:'Playfair Display',Georgia,serif;font-weight:700;letter-spacing:-0.02em}
+.btn-primary{background:var(--charcoal);color:#fff;border:1px solid var(--charcoal)}.btn-primary:hover{background:#000}
+</style>
+</head>
+<body>
+<header class="border-b" style="border-color:var(--border);background:#fff">
+<div class="max-w-5xl mx-auto px-6 py-5 flex items-center justify-between">
+<a href="/" class="flex items-center gap-3 hover:opacity-80 transition" style="color:var(--charcoal)"><img src="/jn-header.png" alt="Junto Nova" width="40" height="46" style="display:block" /><span class="display text-2xl tracking-tight">JUNTO NOVA</span></a>
+<a href="/" class="text-sm hover:opacity-70" style="color:var(--muted)">← Back</a>
+</div>
+</header>
+<main class="max-w-5xl mx-auto px-6 py-12">
+<div class="mb-10 max-w-2xl">
+<h1 class="display text-3xl mb-4" style="color:var(--charcoal)">Get involved</h1>
+<p class="text-lg leading-relaxed mb-4" style="color:var(--charcoal)">You don't have to be a client to help.</p>
+<p class="leading-relaxed mb-6" style="color:var(--muted)">If you're looking to hire us for a project, <a href="/project.html" class="underline hover:opacity-80" style="color:var(--charcoal)">talk about a project instead</a>.</p>
+<p class="leading-relaxed" style="color:var(--muted)">Otherwise, use the form below.</p>
+</div>
+<form id="involved-form" class="max-w-xl space-y-6" onsubmit="return submitInvolved(event)">
+<div><label class="block text-sm font-medium mb-2" style="color:var(--charcoal)">Your name</label>
+<input type="text" id="inv-name" required placeholder="Jane Smith" style="width:100%;border:1px solid var(--border);border-radius:0.75rem;padding:0.75rem 1rem"></div>
+<div><label class="block text-sm font-medium mb-2" style="color:var(--charcoal)">Email</label>
+<input type="email" id="inv-email" required placeholder="jane@org.org" style="width:100%;border:1px solid var(--border);border-radius:0.75rem;padding:0.75rem 1rem"></div>
+<div><label class="block text-sm font-medium mb-2" style="color:var(--charcoal)">Organization (optional)</label>
+<input type="text" id="inv-org" placeholder="Your firm or campaign" style="width:100%;border:1px solid var(--border);border-radius:0.75rem;padding:0.75rem 1rem"></div>
+<div><label class="block text-sm font-medium mb-3" style="color:var(--charcoal)">Areas you know</label>
+<div class="space-y-1">
+<label class="flex gap-3 py-1"><input type="checkbox" name="area" value="Housing" style="accent-color:var(--charcoal)"><span class="text-sm" style="color:var(--muted)">Housing</span></label>
+<label class="flex gap-3 py-1"><input type="checkbox" name="area" value="Transportation" style="accent-color:var(--charcoal)"><span class="text-sm" style="color:var(--muted)">Transportation</span></label>
+<label class="flex gap-3 py-1"><input type="checkbox" name="area" value="Education" style="accent-color:var(--charcoal)"><span class="text-sm" style="color:var(--muted)">Education</span></label>
+<label class="flex gap-3 py-1"><input type="checkbox" name="area" value="Energy" style="accent-color:var(--charcoal)"><span class="text-sm" style="color:var(--muted)">Energy</span></label>
+<label class="flex gap-3 py-1"><input type="checkbox" name="area" value="Healthcare" style="accent-color:var(--charcoal)"><span class="text-sm" style="color:var(--muted)">Healthcare</span></label>
+<label class="flex gap-3 py-1"><input type="checkbox" name="area" value="Taxes" style="accent-color:var(--charcoal)"><span class="text-sm" style="color:var(--muted)">Taxes</span></label>
+</div></div>
+<div><label class="block text-sm font-medium mb-2" style="color:var(--charcoal)">How you can help</label>
+<textarea id="inv-help" rows="3" required style="width:100%;border:1px solid var(--border);border-radius:0.75rem;padding:0.75rem 1rem"></textarea></div>
+<div><label class="block text-sm font-medium mb-2" style="color:var(--charcoal)">Anything else? (optional)</label>
+<textarea id="inv-notes" rows="2" style="width:100%;border:1px solid var(--border);border-radius:0.75rem;padding:0.75rem 1rem"></textarea></div>
+<button type="submit" class="w-full py-3.5 rounded-xl font-medium btn-primary">Open email to send</button>
+<p class="text-xs text-center" style="color:var(--muted)">Opens your email client. Nothing is stored on this site.</p>
+</form>
+</main>
+<footer class="border-t" style="border-color:var(--border)">
+<div class="max-w-5xl mx-auto px-6 py-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm" style="color:var(--muted)">
+<div><div class="display text-lg" style="color:var(--charcoal)">JUNTO NOVA</div><div class="text-xs mt-1">Junto Nova LLC · Dallas, TX</div></div>
+<div class="flex items-center gap-5">
+<a href="mailto:andrew@juntonova.com" class="hover:opacity-70"><i class="fa-solid fa-envelope"></i></a>
+<a href="https://x.com/jandrewclark" target="_blank" rel="noopener" class="hover:opacity-70"><i class="fa-brands fa-x-twitter"></i></a>
+<a href="https://juntonova.substack.com" target="_blank" rel="noopener" class="hover:opacity-70"><i class="fa-solid fa-bookmark"></i></a>
+<a href="/involved.html">Get Involved</a>
+<a href="/privacy.html">Privacy</a>
+<span>© 2026</span>
+</div></div></footer>
+<script>
+function submitInvolved(e){e.preventDefault();const name=document.getElementById('inv-name').value.trim(),email=document.getElementById('inv-email').value.trim(),org=document.getElementById('inv-org').value.trim(),areas=[...document.querySelectorAll('input[name=area]:checked')].map(c=>c.value),help=document.getElementById('inv-help').value.trim(),notes=document.getElementById('inv-notes').value.trim();const body=['Name: '+name,'Email: '+email,org?'Organization: '+org:null,areas.length?'Areas: '+areas.join(', '):null,'','How I can help:',help,notes?('\nNotes:\n'+notes):null].filter(Boolean).join('\n');window.location.href='mailto:andrew@juntonova.com?subject='+encodeURIComponent('Get involved — '+name)+'&body='+encodeURIComponent(body);return false}
+</script>
+</body>
+</html>

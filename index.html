@@ -49,7 +49,6 @@ body{font-family:Inter,system-ui,sans-serif;color:var(--charcoal);background:#ff
 <button onclick="showTab('share');closeMenu()" class="text-left py-3 px-2 rounded-lg hover:bg-slate-50" style="color:var(--charcoal)">Your Share</button>
 <button onclick="showTab('costs');closeMenu()" class="text-left py-3 px-2 rounded-lg hover:bg-slate-50" style="color:var(--charcoal)">Cost Drivers</button>
 <button onclick="showTab('services');closeMenu()" class="text-left py-3 px-2 rounded-lg hover:bg-slate-50" style="color:var(--charcoal)">Our Services</button>
-<button onclick="showTab('involved');closeMenu()" class="text-left py-3 px-2 rounded-lg hover:bg-slate-50" style="color:var(--charcoal)">Get Involved</button>
 </div></div></header>
 <section class="max-w-5xl mx-auto px-6 pt-16 pb-8"><div class="max-w-3xl">
 <div class="text-xs font-medium tracking-widest uppercase mb-4" style="color:var(--muted)">A stake in the dream</div>
@@ -63,7 +62,6 @@ body{font-family:Inter,system-ui,sans-serif;color:var(--charcoal);background:#ff
 <button id="btn-share" onclick="showTab('share')" class="nav-btn px-5 py-2.5 rounded-xl text-sm font-medium transition btn-outline">Your Share</button>
 <button id="btn-costs" onclick="showTab('costs')" class="nav-btn px-5 py-2.5 rounded-xl text-sm font-medium transition btn-outline">Cost Drivers</button>
 <button id="btn-services" onclick="showTab('services')" class="nav-btn px-5 py-2.5 rounded-xl text-sm font-medium transition btn-outline">Our Services</button>
-<button id="btn-involved" onclick="showTab('involved')" class="nav-btn px-5 py-2.5 rounded-xl text-sm font-medium transition btn-outline">Get Involved</button>
 </div></section>
 <section id="content-share" class="tab-content max-w-5xl mx-auto px-6 py-12">
 <div class="mb-10 max-w-2xl"><h2 class="display text-3xl mb-4" style="color:var(--charcoal)">Your share of America</h2>
@@ -167,37 +165,6 @@ body{font-family:Inter,system-ui,sans-serif;color:var(--charcoal);background:#ff
 </div>
 <div class="text-center"><a href="/project.html" class="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl font-medium btn-primary">Talk about a project</a></div>
 </section>
-<section id="content-involved" class="tab-content max-w-5xl mx-auto px-6 py-12">
-<div class="mb-10 max-w-2xl">
-<h2 class="display text-3xl mb-4" style="color:var(--charcoal)">Get involved</h2>
-<p class="text-lg leading-relaxed mb-4" style="color:var(--charcoal)">You don't have to be a client to help.</p>
-<p class="leading-relaxed mb-6" style="color:var(--muted)">If you're looking to hire us for a project, <a href="/project.html" class="underline hover:opacity-80" style="color:var(--charcoal)">talk about a project instead</a>.</p>
-<p class="leading-relaxed" style="color:var(--muted)">Otherwise, use the form below.</p>
-</div>
-<form id="involved-form" class="max-w-xl space-y-6" onsubmit="return submitInvolved(event)">
-<div><label class="block text-sm font-medium mb-2" style="color:var(--charcoal)">Your name</label>
-<input type="text" id="inv-name" required placeholder="Jane Smith" style="width:100%;border:1px solid var(--border);border-radius:0.75rem;padding:0.75rem 1rem"></div>
-<div><label class="block text-sm font-medium mb-2" style="color:var(--charcoal)">Email</label>
-<input type="email" id="inv-email" required placeholder="jane@org.org" style="width:100%;border:1px solid var(--border);border-radius:0.75rem;padding:0.75rem 1rem"></div>
-<div><label class="block text-sm font-medium mb-2" style="color:var(--charcoal)">Organization (optional)</label>
-<input type="text" id="inv-org" placeholder="Your firm or campaign" style="width:100%;border:1px solid var(--border);border-radius:0.75rem;padding:0.75rem 1rem"></div>
-<div><label class="block text-sm font-medium mb-3" style="color:var(--charcoal)">Areas you know</label>
-<div class="space-y-1">
-<label class="flex gap-3 py-1"><input type="checkbox" name="area" value="Housing" style="accent-color:var(--charcoal)"><span class="text-sm" style="color:var(--muted)">Housing</span></label>
-<label class="flex gap-3 py-1"><input type="checkbox" name="area" value="Transportation" style="accent-color:var(--charcoal)"><span class="text-sm" style="color:var(--muted)">Transportation</span></label>
-<label class="flex gap-3 py-1"><input type="checkbox" name="area" value="Education" style="accent-color:var(--charcoal)"><span class="text-sm" style="color:var(--muted)">Education</span></label>
-<label class="flex gap-3 py-1"><input type="checkbox" name="area" value="Energy" style="accent-color:var(--charcoal)"><span class="text-sm" style="color:var(--muted)">Energy</span></label>
-<label class="flex gap-3 py-1"><input type="checkbox" name="area" value="Healthcare" style="accent-color:var(--charcoal)"><span class="text-sm" style="color:var(--muted)">Healthcare</span></label>
-<label class="flex gap-3 py-1"><input type="checkbox" name="area" value="Taxes" style="accent-color:var(--charcoal)"><span class="text-sm" style="color:var(--muted)">Taxes</span></label>
-</div></div>
-<div><label class="block text-sm font-medium mb-2" style="color:var(--charcoal)">How you can help</label>
-<textarea id="inv-help" rows="3" required style="width:100%;border:1px solid var(--border);border-radius:0.75rem;padding:0.75rem 1rem"></textarea></div>
-<div><label class="block text-sm font-medium mb-2" style="color:var(--charcoal)">Anything else? (optional)</label>
-<textarea id="inv-notes" rows="2" style="width:100%;border:1px solid var(--border);border-radius:0.75rem;padding:0.75rem 1rem"></textarea></div>
-<button type="submit" class="w-full py-3.5 rounded-xl font-medium btn-primary">Open email to send</button>
-<p class="text-xs text-center" style="color:var(--muted)">Opens your email client. Nothing is stored on this site.</p>
-</form>
-</section>
 <section id="content-about" class="tab-content active max-w-5xl mx-auto px-6 py-12">
 <div class="max-w-2xl"><h2 class="display text-3xl mb-8" style="color:var(--charcoal)">About us</h2>
 <div class="faq-item"><button type="button" class="faq-q" onclick="toggleFaq(this)"><span>What's the weird name all about?</span><span class="faq-icon">+</span></button>
@@ -237,7 +204,7 @@ body{font-family:Inter,system-ui,sans-serif;color:var(--charcoal);background:#ff
 <a href="mailto:andrew@juntonova.com" class="hover:opacity-70"><i class="fa-solid fa-envelope"></i></a>
 <a href="https://x.com/jandrewclark" target="_blank" rel="noopener" class="hover:opacity-70"><i class="fa-brands fa-x-twitter"></i></a>
 <a href="https://juntonova.substack.com" target="_blank" rel="noopener" class="hover:opacity-70"><i class="fa-solid fa-bookmark"></i></a>
-<a href="/privacy.html">Privacy</a><span>© 2026</span>
+<a href="/involved.html">Get Involved</a><a href="/privacy.html">Privacy</a><span>© 2026</span>
 </div></div></footer>
 <script>
 const pieLabels=['Housing','Transportation','Food','Healthcare','Education','Federal Income Tax','Payroll Tax','State & Local Tax','Insurance','Other'];
@@ -258,7 +225,7 @@ Education:{years:[2010,2015,2020,2024,2030,2040,2050],high:[1076,1315,1271,1569,
 Insurance:{years:[2010,2015,2020,2024,2030,2040,2050],high:[800,1000,1200,1600,2200,3200,4500],low:[800,1000,1200,1600,1800,2100,2400]},
 Other:{years:[2010,2015,2020,2024,2030,2040,2050],high:[5000,6000,7000,8900,11000,15000,20000],low:[5000,6000,7000,8900,9800,11000,12500]}
 };
-const validTabs=['share','costs','services','involved','about'];
+const validTabs=['share','costs','services','about'];
 let selectedCategory='Housing',chartToday,chart2050,chartLine;
 function colorsForSelection(selected){return pieLabels.map((label,i)=>!selected||label===selected?pieColors[i]:pieColorsDim[i])}
 function selectCategory(label){selectedCategory=label;if(chartToday){chartToday.data.datasets[0].backgroundColor=colorsForSelection(label);chartToday.update()}if(chart2050){chart2050.data.datasets[0].backgroundColor=colorsForSelection(label);chart2050.update()}updateTrendChart(label)}
@@ -268,12 +235,11 @@ function toggleMenu(){const m=document.getElementById('mobile-menu'),a=document.
 function closeMenu(){document.getElementById('mobile-menu').classList.remove('open');document.getElementById('menu-icon').classList.remove('hidden');document.getElementById('close-icon').classList.add('hidden')}
 function goHome(){closeMenu();showTab('about');window.scrollTo({top:0,behavior:'smooth'})}
 function showTab(tab,skipHash){if(!validTabs.includes(tab))tab='about';document.querySelectorAll('.tab-content').forEach(el=>el.classList.remove('active'));document.getElementById('content-'+tab).classList.add('active');document.querySelectorAll('.nav-btn').forEach(btn=>{btn.classList.remove('btn-primary');btn.classList.add('btn-outline')});const a=document.getElementById('btn-'+tab);if(a){a.classList.remove('btn-outline');a.classList.add('btn-primary')}if(tab==='costs'&&!window.chartsInitialized){initCharts()}if(!skipHash){const next=tab==='about'?'':('#'+tab);if(location.hash!==next)history.replaceState(null,'',next||location.pathname+location.search)}}
-function applyHash(){const h=(location.hash||'').replace(/^#/,'').toLowerCase();showTab(validTabs.includes(h)?h:'about',true)}
+function applyHash(){const h=(location.hash||'').replace(/^#/,'').toLowerCase();if(h==='involved'){location.replace('/involved.html');return}showTab(validTabs.includes(h)?h:'about',true)}
 window.addEventListener('hashchange',applyHash);
 applyHash();
 function toggleFaq(btn){const item=btn.closest('.faq-item');const isOpen=item.classList.contains('open');document.querySelectorAll('.faq-item').forEach(el=>el.classList.remove('open'));if(!isOpen)item.classList.add('open')}
 function updateSavings(){const housing=+document.getElementById('housing').value,energy=+document.getElementById('energy').value,health=+document.getElementById('health').value,edu=+document.getElementById('edu').value;document.getElementById('housingVal').textContent=housing+'%';document.getElementById('energyVal').textContent=energy+'%';document.getElementById('healthVal').textContent=health+'%';document.getElementById('eduVal').textContent=edu+'%';const baseline=109000;const savings=Math.round((baseline*0.33*(housing/100))+(baseline*0.10*(energy/100))+(baseline*0.18*(health/100))+(baseline*0.12*(edu/100)));document.getElementById('savings').textContent='$'+savings.toLocaleString()}
-function submitInvolved(e){e.preventDefault();const name=document.getElementById('inv-name').value.trim(),email=document.getElementById('inv-email').value.trim(),org=document.getElementById('inv-org').value.trim(),areas=[...document.querySelectorAll('input[name=area]:checked')].map(c=>c.value),help=document.getElementById('inv-help').value.trim(),notes=document.getElementById('inv-notes').value.trim();const body=['Name: '+name,'Email: '+email,org?'Organization: '+org:null,areas.length?'Areas: '+areas.join(', '):null,'','How I can help:',help,notes?('\nNotes:\n'+notes):null].filter(Boolean).join('\n');window.location.href='mailto:andrew@juntonova.com?subject='+encodeURIComponent('Get involved — '+name)+'&body='+encodeURIComponent(body);return false}
 </script>
 </body>
 </html>
