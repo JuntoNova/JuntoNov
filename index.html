@@ -52,6 +52,7 @@ body{font-family:Inter,system-ui,sans-serif;color:var(--charcoal);background:#ff
 <button onclick="showTab('about');closeMenu()" class="text-left py-3 px-2 rounded-lg hover:bg-slate-50" style="color:var(--charcoal)">About Us</button>
 <button onclick="showTab('share');closeMenu()" class="text-left py-3 px-2 rounded-lg hover:bg-slate-50" style="color:var(--charcoal)">Your Share</button>
 <button onclick="showTab('costs');closeMenu()" class="text-left py-3 px-2 rounded-lg hover:bg-slate-50" style="color:var(--charcoal)">Cost Drivers</button>
+<a href="/how.html" class="text-left py-3 px-2 rounded-lg hover:bg-slate-50" style="color:var(--charcoal)">How we work</a>
 <a href="/project.html" class="text-left py-3 px-2 rounded-lg hover:bg-slate-50" style="color:var(--charcoal)">Let's work together</a>
 </div></div></header>
 <section class="max-w-5xl mx-auto px-6 pt-16 pb-8"><div class="max-w-3xl">
@@ -161,40 +162,7 @@ body{font-family:Inter,system-ui,sans-serif;color:var(--charcoal);background:#ff
 <div class="mt-6">
 <a href="/project.html" class="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl font-medium btn-primary">Let's talk about it</a>
 </div>
-</div></div>
-<div class="faq-item" id="faq-work"><button type="button" class="faq-q" onclick="toggleFaq(this)"><span>How we work?</span><span class="faq-icon">+</span></button>
-<div class="faq-a">
-<p class="mb-3">Junto Nova finds what keeps household costs high and does the work that lowers prices.</p>
-<p class="mb-3">Diagnose is public. <a href="#costs" onclick="showTab('costs');return false" class="underline hover:opacity-80" style="color:var(--charcoal)">Cost Drivers</a> is the household bill. A real fight (<a href="/costs/social-security.html" class="underline hover:opacity-80" style="color:var(--charcoal)">Social Security</a> now, then housing, school, power, health, taxes) opens a page for that slice: the diagnosis, then the path on that front.</p>
-<p class="mb-3">A hire is not a catalog. A hire is a slice on one front. A client can buy one stage or the path. Day one is not a menu.</p>
-<p class="text-sm mb-6">What a hire on a front can include.</p>
-<div class="mb-6">
-<div class="stage">
-<div class="stage-label">Diagnose</div>
-<div class="stage-line">Independent analysis of what actually keeps that slice high.</div>
-</div>
-<div class="stage">
-<div class="stage-label">Strategy</div>
-<div class="stage-line">A plan with numbers, targets, and a path to capital or political support.</div>
-</div>
-<div class="stage">
-<div class="stage-label">Capital</div>
-<div class="stage-line">Term design and agreements that turn that plan into funded action.</div>
-</div>
-<div class="stage">
-<div class="stage-label">Organization</div>
-<div class="stage-line">Stand up the work, run the campaign, move the rule.</div>
-</div>
-<div class="stage">
-<div class="stage-label">Govern</div>
-<div class="stage-line">Board seats and oversight after the first wins.</div>
-</div>
-</div>
-<p class="mb-3">Two ways to hire. Keep the work proprietary. Or let the key insights be published so no one pays to learn the same lessons again. The first pass on a new front costs more. Later work on a similar problem moves faster.</p>
-<p class="mb-3">Junto Nova is a startup founded in 2026 and led by Andrew Clark.</p>
-<div class="mt-6">
-<a href="/project.html" class="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl font-medium btn-primary">Let's work together</a>
-</div>
+<p class="mt-4"><a href="/how.html" class="underline hover:opacity-80" style="color:var(--charcoal)">How we work</a></p>
 </div></div>
 <div class="faq-item"><button type="button" class="faq-q" onclick="toggleFaq(this)"><span>Who are you?</span><span class="faq-icon">+</span></button>
 <div class="faq-a"><p>Junto Nova is a startup founded in 2026 and led by <a href="https://www.linkedin.com/in/jandrewclark" target="_blank" rel="noopener" class="underline hover:opacity-80" style="color:var(--charcoal)">Andrew Clark</a>.</p></div></div>
@@ -206,7 +174,7 @@ body{font-family:Inter,system-ui,sans-serif;color:var(--charcoal);background:#ff
 <a href="mailto:andrew@juntonova.com" class="hover:opacity-70"><i class="fa-solid fa-envelope"></i></a>
 <a href="https://x.com/jandrewclark" target="_blank" rel="noopener" class="hover:opacity-70"><i class="fa-brands fa-x-twitter"></i></a>
 <a href="https://juntonova.substack.com" target="_blank" rel="noopener" class="hover:opacity-70"><i class="fa-solid fa-bookmark"></i></a>
-<a href="/project.html">Let's work together</a><a href="/involved.html">Get Involved</a><a href="/privacy.html">Privacy</a><span>© 2026</span>
+<a href="/project.html">Let's work together</a><a href="/how.html">How we work</a><a href="/involved.html">Get Involved</a><a href="/privacy.html">Privacy</a><span>© 2026</span>
 </div></div></footer>
 <script>
 const pieLabels=['Housing','Personal taxes','Transportation','Social Security and retirement','Food','Other','Healthcare','Utilities','Entertainment','Education'];
@@ -236,7 +204,7 @@ function toggleMenu(){const m=document.getElementById('mobile-menu'),a=document.
 function closeMenu(){document.getElementById('mobile-menu').classList.remove('open');document.getElementById('menu-icon').classList.remove('hidden');document.getElementById('close-icon').classList.add('hidden')}
 function goHome(){closeMenu();showTab('about');window.scrollTo({top:0,behavior:'smooth'})}
 function showTab(tab,skipHash){if(!validTabs.includes(tab))tab='about';document.querySelectorAll('.tab-content').forEach(el=>el.classList.remove('active'));document.getElementById('content-'+tab).classList.add('active');document.querySelectorAll('.nav-btn').forEach(btn=>{btn.classList.remove('btn-primary');btn.classList.add('btn-outline')});const a=document.getElementById('btn-'+tab);if(a){a.classList.remove('btn-outline');a.classList.add('btn-primary')}if(tab==='costs'&&!window.chartsInitialized){initCharts()}if(!skipHash){const next=tab==='about'?'':('#'+tab);if(location.hash!==next)history.replaceState(null,'',next||location.pathname+location.search)}}
-function applyHash(){const h=(location.hash||'').replace(/^#/,'').toLowerCase();if(h==='involved'){location.replace('/involved.html');return}if(h==='services'){location.replace('/project.html');return}if(h==='work'){showTab('about',true);const item=document.getElementById('faq-work');if(item){document.querySelectorAll('.faq-item').forEach(el=>el.classList.remove('open'));item.classList.add('open')}return}showTab(validTabs.includes(h)?h:'about',true)}
+function applyHash(){const h=(location.hash||'').replace(/^#/,'').toLowerCase();if(h==='involved'){location.replace('/involved.html');return}if(h==='services'){location.replace('/project.html');return}if(h==='work'){location.replace('/how.html');return}showTab(validTabs.includes(h)?h:'about',true)}
 window.addEventListener('hashchange',applyHash);
 applyHash();
 function toggleFaq(btn){const item=btn.closest('.faq-item');const isOpen=item.classList.contains('open');document.querySelectorAll('.faq-item').forEach(el=>el.classList.remove('open'));if(!isOpen)item.classList.add('open')}
