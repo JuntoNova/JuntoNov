@@ -148,7 +148,7 @@ body{font-family:Inter,system-ui,sans-serif;color:var(--charcoal);background:#ff
 </div>
 <div class="text-xs mt-8 space-y-1.5" style="color:var(--muted)">
 <div>Sources (last updated August 28, 2026):</div>
-<div>• <a href="https://www.bls.gov/cex/" target="_blank" rel="noopener" class="underline hover:opacity-80">BLS Consumer Expenditure Survey</a>, 2023, four-person consumer units. Average annual expenditures $105,683 plus personal taxes $19,846 (federal, state, and local income taxes, plus other personal taxes). Payroll is already inside personal insurance and pensions. Property tax is already inside housing.</div>
+<div>• <a href="https://www.bls.gov/cex/" target="_blank" rel="noopener" class="underline hover:opacity-80">BLS Consumer Expenditure Survey</a>, 2023, four-person consumer units. Average annual expenditures $105,683 plus personal taxes $19,846 (federal, state, and local income taxes, plus other personal taxes). Payroll is already inside personal insurance and pensions. Property tax is already inside housing. Utilities, including water and phone, are their own slice.</div>
 <div>• Savings and 2050 shares are illustrative, not formal forecasts.</div>
 </div>
 </section>
@@ -206,11 +206,11 @@ body{font-family:Inter,system-ui,sans-serif;color:var(--charcoal);background:#ff
 <a href="/involved.html">Get Involved</a><a href="/privacy.html">Privacy</a><span>© 2026</span>
 </div></div></footer>
 <script>
-const pieLabels=['Housing','Personal taxes','Transportation','Personal insurance and pensions','Food','Other','Healthcare','Entertainment','Education'];
-const pieTodayData=[26,16,15,12,11,8,6,4,2];
-const pie2050Data=[28,20,11,10,8,7.5,10,4,1.5];
-const pieColors=['#1A1A1A','#9A3412','#334155','#57534E','#64748B','#CBD5E1','#C45C26','#94A3B8','#78716C'];
-const pieColorsDim=['#1A1A1A88','#9A341288','#33415588','#57534E88','#64748B88','#CBD5E188','#C45C2688','#94A3B888','#78716C88'];
+const pieLabels=['Housing','Personal taxes','Transportation','Personal insurance and pensions','Food','Other','Healthcare','Utilities','Entertainment','Education'];
+const pieTodayData=[21,16,15,12,11,8,6,5,4,2];
+const pie2050Data=[22.5,20,11,10,8,7.5,10,5.5,4,1.5];
+const pieColors=['#1A1A1A','#9A3412','#334155','#57534E','#64748B','#CBD5E1','#C45C26','#B45309','#94A3B8','#78716C'];
+const pieColorsDim=['#1A1A1A88','#9A341288','#33415588','#57534E88','#64748B88','#CBD5E188','#C45C2688','#B4530988','#94A3B888','#78716C88'];
 const categoryTrends={
 Housing:{years:[2010,2015,2020,2023,2024,2030,2040,2050],high:[21684,24044,28216,32221,34389,34389,48000,65000],low:[21684,24044,28216,32221,34389,30000,36000,42000]},
 Transportation:{years:[2010,2015,2020,2023,2024,2030,2040,2050],high:[9897,13687,13869,19115,19527,19527,21000,27000],low:[9897,13687,13869,19115,19527,14500,16000,17500]},
@@ -226,7 +226,7 @@ const validTabs=['share','costs','services','about'];
 let selectedCategory='Housing',chartToday,chart2050,chartLine;
 function colorsForSelection(selected){return pieLabels.map((label,i)=>!selected||label===selected?pieColors[i]:pieColorsDim[i])}
 function selectCategory(label){selectedCategory=label;if(chartToday){chartToday.data.datasets[0].backgroundColor=colorsForSelection(label);chartToday.update()}if(chart2050){chart2050.data.datasets[0].backgroundColor=colorsForSelection(label);chart2050.update()}updateTrendChart(label)}
-function updateTrendChart(label){const key=categoryTrends[label]?label:'Housing';const t=categoryTrends[key];document.getElementById('trendTitle').textContent=key+' average annual spending, '+t.years[0]+'–'+t.years[t.years.length-1];if(!chartLine)return;chartLine.data.labels=t.years;chartLine.data.datasets[0].data=t.high;chartLine.data.datasets[1].data=t.low;chartLine.update()}
+function updateTrendChart(label){if(!categoryTrends[label])return;const t=categoryTrends[label];document.getElementById('trendTitle').textContent=label+' average annual spending, '+t.years[0]+'–'+t.years[t.years.length-1];if(!chartLine)return;chartLine.data.labels=t.years;chartLine.data.datasets[0].data=t.high;chartLine.data.datasets[1].data=t.low;chartLine.update()}
 function initCharts(){const charcoal='#1A1A1A',muted='#64748B';const pieOptions={cutout:'58%',plugins:{legend:{position:'bottom',labels:{boxWidth:10,padding:10,font:{size:11},color:muted}},tooltip:{callbacks:{label:ctx=>ctx.label+': '+ctx.parsed+'%'}}},onClick:(evt,elements)=>{if(!elements.length)return;selectCategory(pieLabels[elements[0].index])}};chartToday=new Chart(document.getElementById('pieToday'),{type:'doughnut',data:{labels:pieLabels,datasets:[{data:pieTodayData,backgroundColor:colorsForSelection(selectedCategory),borderWidth:0}]},options:pieOptions});chart2050=new Chart(document.getElementById('pie2050'),{type:'doughnut',data:{labels:pieLabels,datasets:[{data:pie2050Data,backgroundColor:colorsForSelection(selectedCategory),borderWidth:0}]},options:pieOptions});const t=categoryTrends[selectedCategory];chartLine=new Chart(document.getElementById('lineChart'),{type:'line',data:{labels:t.years,datasets:[{label:'High path',data:t.high,borderColor:charcoal,borderWidth:2.5,tension:0.3,pointRadius:3,pointBackgroundColor:charcoal},{label:'Low path',data:t.low,borderColor:muted,borderWidth:2,borderDash:[5,5],tension:0.3,pointRadius:3,pointBackgroundColor:muted}]},options:{plugins:{legend:{position:'bottom',labels:{boxWidth:12,font:{size:11},color:muted}}},scales:{x:{ticks:{color:muted,font:{size:10}},grid:{color:'#E2E8F0'}},y:{ticks:{color:muted,font:{size:10},callback:v=>'$'+(v/1000)+'k'},grid:{color:'#E2E8F0'}}}}});window.chartsInitialized=true}
 function toggleMenu(){const m=document.getElementById('mobile-menu'),a=document.getElementById('menu-icon'),b=document.getElementById('close-icon');m.classList.toggle('open');a.classList.toggle('hidden');b.classList.toggle('hidden')}
 function closeMenu(){document.getElementById('mobile-menu').classList.remove('open');document.getElementById('menu-icon').classList.remove('hidden');document.getElementById('close-icon').classList.add('hidden')}
