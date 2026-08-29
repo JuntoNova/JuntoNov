@@ -212,24 +212,21 @@ const pie2050Data=[28,20,11,10,8,7.5,10,4,1.5];
 const pieColors=['#1A1A1A','#9A3412','#334155','#57534E','#64748B','#CBD5E1','#C45C26','#94A3B8','#78716C'];
 const pieColorsDim=['#1A1A1A88','#9A341288','#33415588','#57534E88','#64748B88','#CBD5E188','#C45C2688','#94A3B888','#78716C88'];
 const categoryTrends={
-Housing:{years:[2010,2015,2020,2024,2030,2040,2050],high:[16557,18409,21417,26266,34000,48000,65000],low:[16557,18409,21417,26266,30000,36000,42000]},
-Transportation:{years:[2010,2015,2020,2024,2030,2040,2050],high:[7677,9503,9826,13318,16000,21000,27000],low:[7677,9503,9826,13318,14500,16000,17500]},
-Food:{years:[2010,2015,2020,2024,2030,2040,2050],high:[6129,7023,7316,10169,12000,15500,19500],low:[6129,7023,7316,10169,11200,12500,14000]},
-Healthcare:{years:[2010,2015,2020,2024,2030,2040,2050],high:[3157,4342,5177,6197,8500,13000,19000],low:[3157,4342,5177,6197,7500,9500,12000]},
-Education:{years:[2010,2015,2020,2024,2030,2040,2050],high:[1076,1315,1271,1569,2100,3200,4800],low:[1076,1315,1271,1569,1700,1900,2200]},
-'Taxes':{years:[2010,2015,2020,2024,2030,2040,2050],high:[12000,14000,16000,20000,26000,36000,48000],low:[12000,14000,16000,20000,22000,26000,30000]},
-'Personal taxes':{years:[2010,2015,2020,2024,2030,2040,2050],high:[12000,14000,16000,20000,26000,36000,48000],low:[12000,14000,16000,20000,22000,26000,30000]},
-'Federal Income Tax':{years:[2010,2015,2020,2024,2030,2040,2050],high:[4500,5200,6000,7500,10000,14000,19000],low:[4500,5200,6000,7500,8500,10000,11500]},
-'Payroll Tax':{years:[2010,2015,2020,2024,2030,2040,2050],high:[4000,4700,5400,6700,8500,12000,16000],low:[4000,4700,5400,6700,7200,8500,9800]},
-'State & Local Tax':{years:[2010,2015,2020,2024,2030,2040,2050],high:[3500,4100,4600,5800,7500,10000,13000],low:[3500,4100,4600,5800,6300,7500,8700]},
-Insurance:{years:[2010,2015,2020,2024,2030,2040,2050],high:[800,1000,1200,1600,2200,3200,4500],low:[800,1000,1200,1600,1800,2100,2400]},
-Other:{years:[2010,2015,2020,2024,2030,2040,2050],high:[5000,6000,7000,8900,11000,15000,20000],low:[5000,6000,7000,8900,9800,11000,12500]}
+Housing:{years:[2010,2015,2020,2023,2024,2030,2040,2050],high:[21684,24044,28216,32221,34389,34389,48000,65000],low:[21684,24044,28216,32221,34389,30000,36000,42000]},
+Transportation:{years:[2010,2015,2020,2023,2024,2030,2040,2050],high:[9897,13687,13869,19115,19527,19527,21000,27000],low:[9897,13687,13869,19115,19527,14500,16000,17500]},
+Food:{years:[2010,2015,2020,2023,2024,2030,2040,2050],high:[8778,9771,10909,14325,14543,14543,15500,19500],low:[8778,9771,10909,14325,14543,11200,12500,14000]},
+'Personal insurance and pensions':{years:[2010,2015,2020,2023,2024,2030,2040,2050],high:[7732,9413,11360,15708,16252,20000,28000,38000],low:[7732,9413,11360,15708,16252,17500,20000,23000]},
+Entertainment:{years:[2010,2015,2020,2023,2024,2030,2040,2050],high:[3396,3468,4092,4762,4995,6500,9000,12000],low:[3396,3468,4092,4762,4995,5400,6200,7000]},
+Healthcare:{years:[2010,2015,2020,2023,2024,2030,2040,2050],high:[3286,4943,6103,7151,7629,8500,13000,19000],low:[3286,4943,6103,7151,7629,7500,9500,12000]},
+Education:{years:[2010,2015,2020,2023,2024,2030,2040,2050],high:[1833,2074,2530,2877,2668,2668,3200,4800],low:[1833,2074,2530,2877,2668,1700,1900,2200]},
+'Personal taxes':{years:[2015,2020,2023,2030,2040,2050],high:[12180,13471,19846,26000,36000,48000],low:[12180,13471,19846,22000,26000,30000]},
+Other:{years:[2010,2015,2020,2023,2024,2030,2040,2050],high:[6662,7876,6935,9524,8999,11000,15000,20000],low:[6662,7876,6935,9524,8999,9800,11000,12500]}
 };
 const validTabs=['share','costs','services','about'];
 let selectedCategory='Housing',chartToday,chart2050,chartLine;
 function colorsForSelection(selected){return pieLabels.map((label,i)=>!selected||label===selected?pieColors[i]:pieColorsDim[i])}
 function selectCategory(label){selectedCategory=label;if(chartToday){chartToday.data.datasets[0].backgroundColor=colorsForSelection(label);chartToday.update()}if(chart2050){chart2050.data.datasets[0].backgroundColor=colorsForSelection(label);chart2050.update()}updateTrendChart(label)}
-function updateTrendChart(label){const key=categoryTrends[label]?label:'Housing';const t=categoryTrends[key];document.getElementById('trendTitle').textContent=key+' average annual spending, 2010–2050';if(!chartLine)return;chartLine.data.labels=t.years;chartLine.data.datasets[0].data=t.high;chartLine.data.datasets[1].data=t.low;chartLine.update()}
+function updateTrendChart(label){const key=categoryTrends[label]?label:'Housing';const t=categoryTrends[key];document.getElementById('trendTitle').textContent=key+' average annual spending, '+t.years[0]+'–'+t.years[t.years.length-1];if(!chartLine)return;chartLine.data.labels=t.years;chartLine.data.datasets[0].data=t.high;chartLine.data.datasets[1].data=t.low;chartLine.update()}
 function initCharts(){const charcoal='#1A1A1A',muted='#64748B';const pieOptions={cutout:'58%',plugins:{legend:{position:'bottom',labels:{boxWidth:10,padding:10,font:{size:11},color:muted}},tooltip:{callbacks:{label:ctx=>ctx.label+': '+ctx.parsed+'%'}}},onClick:(evt,elements)=>{if(!elements.length)return;selectCategory(pieLabels[elements[0].index])}};chartToday=new Chart(document.getElementById('pieToday'),{type:'doughnut',data:{labels:pieLabels,datasets:[{data:pieTodayData,backgroundColor:colorsForSelection(selectedCategory),borderWidth:0}]},options:pieOptions});chart2050=new Chart(document.getElementById('pie2050'),{type:'doughnut',data:{labels:pieLabels,datasets:[{data:pie2050Data,backgroundColor:colorsForSelection(selectedCategory),borderWidth:0}]},options:pieOptions});const t=categoryTrends[selectedCategory];chartLine=new Chart(document.getElementById('lineChart'),{type:'line',data:{labels:t.years,datasets:[{label:'High path',data:t.high,borderColor:charcoal,borderWidth:2.5,tension:0.3,pointRadius:3,pointBackgroundColor:charcoal},{label:'Low path',data:t.low,borderColor:muted,borderWidth:2,borderDash:[5,5],tension:0.3,pointRadius:3,pointBackgroundColor:muted}]},options:{plugins:{legend:{position:'bottom',labels:{boxWidth:12,font:{size:11},color:muted}}},scales:{x:{ticks:{color:muted,font:{size:10}},grid:{color:'#E2E8F0'}},y:{ticks:{color:muted,font:{size:10},callback:v=>'$'+(v/1000)+'k'},grid:{color:'#E2E8F0'}}}}});window.chartsInitialized=true}
 function toggleMenu(){const m=document.getElementById('mobile-menu'),a=document.getElementById('menu-icon'),b=document.getElementById('close-icon');m.classList.toggle('open');a.classList.toggle('hidden');b.classList.toggle('hidden')}
 function closeMenu(){document.getElementById('mobile-menu').classList.remove('open');document.getElementById('menu-icon').classList.remove('hidden');document.getElementById('close-icon').classList.add('hidden')}
