@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sandbox · Junto Nova</title>
+    <title>Member · Junto Nova</title>
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
     <link rel="apple-touch-icon" sizes="180x180" href="/favicon-180.png">
-    <meta name="description" content="A blank Junto Nova page used to show how fast a site can change.">
+    <meta name="description" content="Prototype: what membership and incoming payments could look like.">
     <meta name="robots" content="noindex, nofollow">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -29,6 +29,51 @@
             font-weight: 700;
             letter-spacing: -0.02em;
         }
+        .card {
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            background: #fff;
+        }
+        .btn-primary {
+            background: var(--charcoal);
+            color: #fff;
+            border: 1px solid var(--charcoal);
+        }
+        .btn-primary:hover { background: #000; }
+        .btn-outline {
+            background: transparent;
+            color: var(--charcoal);
+            border: 1px solid var(--border);
+        }
+        .btn-outline:hover { background: var(--surface); }
+        .pill {
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            border-radius: 999px;
+            padding: 0.2rem 0.6rem;
+        }
+        .pill-paid { background: #ECFDF5; color: #047857; }
+        .pill-scheduled { background: #FFF7ED; color: #C2410C; }
+        .pill-active { background: #F1F5F9; color: var(--charcoal); }
+        table { width: 100%; border-collapse: collapse; }
+        th {
+            text-align: left;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: var(--muted);
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+        td {
+            padding: 0.9rem 1rem;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.925rem;
+        }
+        tr:last-child td { border-bottom: none; }
     </style>
 </head>
 <body>
@@ -39,14 +84,127 @@
                 <img src="/jn-header.png" alt="Junto Nova" width="40" height="46" style="display:block" />
                 <span class="display text-2xl tracking-tight">JUNTO NOVA</span>
             </a>
-            <a href="/" class="text-sm hover:opacity-70" style="color: var(--muted);">← Back</a>
+            <div class="flex items-center gap-4">
+                <span class="pill pill-active hidden sm:inline">Prototype</span>
+                <a href="/" class="text-sm hover:opacity-70" style="color: var(--muted);">← Back</a>
+            </div>
         </div>
     </header>
 
-    <main class="max-w-3xl mx-auto px-6 py-24 min-h-[60vh]">
-        <p class="text-xs uppercase tracking-[0.18em] mb-4" style="color: var(--ember);">Sandbox</p>
-        <h1 class="display text-4xl mb-4" style="color: var(--charcoal);">This page is blank on purpose.</h1>
-        <p class="text-lg leading-relaxed" style="color: var(--muted);">Say what should be here. We will change it live.</p>
+    <main class="max-w-5xl mx-auto px-6 py-10 md:py-14">
+
+        <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-8">
+            <div>
+                <p class="text-xs uppercase tracking-[0.18em] mb-2" style="color: var(--ember);">Member</p>
+                <h1 class="display text-3xl md:text-4xl mb-2">Maya Reyes</h1>
+                <p style="color: var(--muted);">Active since March 2026 · Housing slice · Dallas</p>
+            </div>
+            <div class="flex gap-3">
+                <button type="button" class="px-4 py-2.5 rounded-xl text-sm font-medium btn-outline" onclick="alert('Prototype only — payout method would open here.')">Payout method</button>
+                <button type="button" class="px-4 py-2.5 rounded-xl text-sm font-medium btn-primary" onclick="alert('Prototype only — next distribution is already scheduled.')">Request payout</button>
+            </div>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-4 mb-4">
+            <div class="card p-6">
+                <div class="text-xs uppercase tracking-wider mb-2" style="color: var(--muted);">Received this year</div>
+                <div class="display text-4xl">$4,280</div>
+                <div class="text-sm mt-2" style="color: var(--muted);">Four distributions so far</div>
+            </div>
+            <div class="card p-6">
+                <div class="text-xs uppercase tracking-wider mb-2" style="color: var(--muted);">Next payment</div>
+                <div class="display text-4xl">$1,070</div>
+                <div class="text-sm mt-2" style="color: var(--muted);">Scheduled Oct 1 · Checking ••4821</div>
+            </div>
+            <div class="card p-6">
+                <div class="text-xs uppercase tracking-wider mb-2" style="color: var(--muted);">Your stake</div>
+                <div class="display text-4xl">1.2%</div>
+                <div class="text-sm mt-2" style="color: var(--muted);">Share of the housing pool</div>
+            </div>
+        </div>
+
+        <div class="card p-6 mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4" style="background: var(--surface);">
+            <div>
+                <div class="text-sm font-medium mb-1">October distribution is locked</div>
+                <p class="text-sm" style="color: var(--muted);">$1,070 lands in Maya&rsquo;s checking account on the 1st. No action needed.</p>
+            </div>
+            <span class="pill pill-scheduled w-fit">Scheduled</span>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-4 mb-8">
+            <div class="card p-6 md:col-span-2">
+                <div class="flex items-center justify-between mb-4 px-1">
+                    <h2 class="display text-2xl">Payments</h2>
+                    <span class="text-sm" style="color: var(--muted);">2026</span>
+                </div>
+                <div class="overflow-x-auto">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>For</th>
+                                <th>Status</th>
+                                <th style="text-align:right">Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Oct 1, 2026</td>
+                                <td>Housing pool · Q3 share</td>
+                                <td><span class="pill pill-scheduled">Scheduled</span></td>
+                                <td style="text-align:right;font-weight:600">$1,070</td>
+                            </tr>
+                            <tr>
+                                <td>Jul 1, 2026</td>
+                                <td>Housing pool · Q2 share</td>
+                                <td><span class="pill pill-paid">Paid</span></td>
+                                <td style="text-align:right;font-weight:600">$1,070</td>
+                            </tr>
+                            <tr>
+                                <td>Apr 1, 2026</td>
+                                <td>Housing pool · Q1 share</td>
+                                <td><span class="pill pill-paid">Paid</span></td>
+                                <td style="text-align:right;font-weight:600">$1,070</td>
+                            </tr>
+                            <tr>
+                                <td>Mar 15, 2026</td>
+                                <td>Founding member catch-up</td>
+                                <td><span class="pill pill-paid">Paid</span></td>
+                                <td style="text-align:right;font-weight:600">$1,070</td>
+                            </tr>
+                            <tr>
+                                <td>Mar 1, 2026</td>
+                                <td>Sign-on distribution</td>
+                                <td><span class="pill pill-paid">Paid</span></td>
+                                <td style="text-align:right;font-weight:600">$1,070</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card p-6">
+                <h2 class="display text-2xl mb-4">Where it goes</h2>
+                <div class="flex items-start gap-3 mb-5">
+                    <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background: var(--surface); color: var(--charcoal);">
+                        <i class="fa-solid fa-building-columns"></i>
+                    </div>
+                    <div>
+                        <div class="font-medium">Chase checking</div>
+                        <div class="text-sm" style="color: var(--muted);">ACH · ••4821</div>
+                    </div>
+                </div>
+                <p class="text-sm leading-relaxed mb-5" style="color: var(--muted);">Distributions hit this account on the first business day of each quarter. Maya can change the destination any time before the next lock date.</p>
+                <div class="text-sm space-y-2" style="color: var(--muted);">
+                    <div class="flex justify-between"><span>Member no.</span><span style="color: var(--charcoal);">JN-1048</span></div>
+                    <div class="flex justify-between"><span>Tax form</span><span style="color: var(--charcoal);">1099-MISC</span></div>
+                    <div class="flex justify-between"><span>YTD paid</span><span style="color: var(--charcoal);">$4,280</span></div>
+                </div>
+            </div>
+        </div>
+
+        <p class="text-xs" style="color: var(--muted);">Sandbox prototype. Names, amounts, and the housing pool are illustrative — nothing here moves money.</p>
+
     </main>
 
     <footer class="border-t" style="border-color: var(--border);">
