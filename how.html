@@ -16,10 +16,12 @@ body{font-family:Inter,system-ui,sans-serif;color:var(--charcoal);background:#ff
 .display{font-family:'Playfair Display',Georgia,serif;font-weight:700;letter-spacing:-0.02em}
 #mobile-menu{display:none}#mobile-menu.open{display:block}
 .btn-primary{background:var(--charcoal);color:#fff;border:1px solid var(--charcoal)}.btn-primary:hover{background:#000}
-.stage{border-top:1px solid var(--border);padding:1.25rem 0}
-.stage:first-child{border-top:none;padding-top:0}
-.stage-label{font-family:'Playfair Display',Georgia,serif;font-weight:600;font-size:1.05rem;color:var(--charcoal);margin-bottom:.35rem}
-.stage-line{color:var(--muted);font-size:.975rem;line-height:1.65}
+.clean-list{list-style:none;margin:0;padding:0}
+.clean-list li{position:relative;padding:0 0 1.15rem 1.15rem}
+.clean-list li:last-child{padding-bottom:0}
+.clean-list li::before{content:'';position:absolute;left:0;top:.55rem;width:.4rem;height:.4rem;border-radius:9999px;background:var(--ember)}
+.clean-list strong{display:block;color:var(--charcoal);font-weight:600;margin:0 0 .2rem}
+.clean-list span{display:block;color:var(--muted);line-height:1.65}
 </style>
 </head>
 <body>
@@ -42,36 +44,13 @@ body{font-family:Inter,system-ui,sans-serif;color:var(--charcoal);background:#ff
 <main class="max-w-2xl mx-auto px-6 py-14">
 <h1 class="display text-4xl tracking-tight leading-tight mb-8" style="color:var(--charcoal)">What would I hire you to do?</h1>
 
-<div class="space-y-5 leading-relaxed mb-12" style="color:var(--muted)">
-<p>You hire Junto Nova to lower one slice of the household bill. The work is five things.</p>
-</div>
-
-<div class="mb-12">
-<div class="stage">
-<div class="stage-label">Market research</div>
-<div class="stage-line">Polling, focus groups, and other research that show what changes the market will support.</div>
-</div>
-<div class="stage">
-<div class="stage-label">Strategy</div>
-<div class="stage-line">An investable strategic plan with numbers and next steps you can act on immediately.</div>
-</div>
-<div class="stage">
-<div class="stage-label">Fundraising</div>
-<div class="stage-line">The plans, process, and content to raise the money the strategy needs and help in executing.</div>
-</div>
-<div class="stage">
-<div class="stage-label">Campaigns and new businesses</div>
-<div class="stage-line">Help standing up and running the campaign or the new business.</div>
-</div>
-<div class="stage">
-<div class="stage-label">The board</div>
-<div class="stage-line">Good governance so the organization stays set up for success as it grows and scales.</div>
-</div>
-</div>
-
-<div class="space-y-5 leading-relaxed mb-12" style="color:var(--muted)">
-<p>Keep the work proprietary, or publish the lessons so the next pass is cheaper.</p>
-</div>
+<ul class="clean-list mb-12">
+<li><strong>Market research</strong><span>Polling, focus groups, and other research that show what changes the market will support.</span></li>
+<li><strong>Strategy</strong><span>An investable strategic plan with numbers and next steps you can act on immediately.</span></li>
+<li><strong>Fundraising</strong><span>The plans, process, and content to raise the money the strategy needs and help in executing.</span></li>
+<li><strong>Campaigns and new businesses</strong><span>Help standing up and running the campaign or the new business.</span></li>
+<li><strong>The board</strong><span>Good governance so the organization stays set up for success as it grows and scales.</span></li>
+</ul>
 
 <div class="text-center">
 <a href="/project.html" class="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl font-medium btn-primary">Let's work together</a>
