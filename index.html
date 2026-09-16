@@ -32,6 +32,12 @@ body{font-family:Inter,system-ui,sans-serif;color:var(--charcoal);background:#ff
 .faq-a{display:none;padding:0 0 1.35rem;color:var(--muted);font-size:.975rem;line-height:1.65;max-width:40rem}
 .faq-item.open .faq-a{display:block}
 .pie-hint{font-size:.75rem;color:var(--muted);margin-top:.35rem}
+.clean-list{list-style:none;margin:0;padding:0}
+.clean-list li{position:relative;padding:0 0 1.05rem 1.15rem}
+.clean-list li:last-child{padding-bottom:0}
+.clean-list li::before{content:'';position:absolute;left:0;top:.55rem;width:.4rem;height:.4rem;border-radius:9999px;background:var(--ember)}
+.clean-list strong{display:block;color:var(--charcoal);font-weight:600;margin:0 0 .2rem}
+.clean-list span{display:block;color:var(--muted);line-height:1.65}
 </style>
 </head>
 <body>
@@ -137,12 +143,11 @@ body{font-family:Inter,system-ui,sans-serif;color:var(--charcoal);background:#ff
 </div></div>
 <div class="faq-item"><button type="button" class="faq-q" onclick="toggleFaq(this)"><span>Who do you work with?</span><span class="faq-icon">+</span></button>
 <div class="faq-a">
-<p class="mb-2" style="color:var(--charcoal)"><strong>Foundations, philanthropists, and investors</strong></p>
-<p class="mb-3">Who want to see empirical results and are ready to raise the bar.</p>
-<p class="mb-2" style="color:var(--charcoal)"><strong>Nonprofits and businesses</strong></p>
-<p class="mb-3">Who need to raise money and a clear path to better performance.</p>
-<p class="mb-2" style="color:var(--charcoal)"><strong>Boards</strong></p>
-<p>Who take governance seriously, want one big proof point that can then be scaled, and want to keep that success from sliding backward.</p>
+<ul class="clean-list">
+<li><strong>Foundations, philanthropists, and investors</strong><span>Who want to see empirical results and are ready to raise the bar.</span></li>
+<li><strong>Nonprofits and businesses</strong><span>Who need to raise money and a clear path to better performance.</span></li>
+<li><strong>Boards</strong><span>Who take governance seriously, want one big proof point that can then be scaled, and want to keep that success from sliding backward.</span></li>
+</ul>
 </div></div>
 <div class="faq-item"><button type="button" class="faq-q" onclick="toggleFaq(this)"><span>Why should I hire you?</span><span class="faq-icon">+</span></button>
 <div class="faq-a">
@@ -164,18 +169,13 @@ body{font-family:Inter,system-ui,sans-serif;color:var(--charcoal);background:#ff
 </div></div>
 <div class="faq-item" id="faq-hire"><button type="button" class="faq-q" onclick="toggleFaq(this)"><span>What would I hire you to do?</span><span class="faq-icon">+</span></button>
 <div class="faq-a">
-<p class="mb-3">You hire Junto Nova to lower one slice of the household bill.</p>
-<p class="mb-2" style="color:var(--charcoal)"><strong>Market research</strong></p>
-<p class="mb-3">Polling, focus groups, and other research that show what changes the market will support.</p>
-<p class="mb-2" style="color:var(--charcoal)"><strong>Strategy</strong></p>
-<p class="mb-3">An investable strategic plan with numbers and next steps you can act on immediately.</p>
-<p class="mb-2" style="color:var(--charcoal)"><strong>Fundraising</strong></p>
-<p class="mb-3">The plans, process, and content to raise the money the strategy needs and help in executing.</p>
-<p class="mb-2" style="color:var(--charcoal)"><strong>Campaigns and new businesses</strong></p>
-<p class="mb-3">Help standing up and running the campaign or the new business.</p>
-<p class="mb-2" style="color:var(--charcoal)"><strong>The board</strong></p>
-<p class="mb-3">Good governance so the organization stays set up for success as it grows and scales.</p>
-<p>Keep the work proprietary, or publish the lessons so the next pass is cheaper.</p>
+<ul class="clean-list">
+<li><strong>Market research</strong><span>Polling, focus groups, and other research that show what changes the market will support.</span></li>
+<li><strong>Strategy</strong><span>An investable strategic plan with numbers and next steps you can act on immediately.</span></li>
+<li><strong>Fundraising</strong><span>The plans, process, and content to raise the money the strategy needs and help in executing.</span></li>
+<li><strong>Campaigns and new businesses</strong><span>Help standing up and running the campaign or the new business.</span></li>
+<li><strong>The board</strong><span>Good governance so the organization stays set up for success as it grows and scales.</span></li>
+</ul>
 </div></div>
 <div class="faq-item"><button type="button" class="faq-q" onclick="toggleFaq(this)"><span>Who are you?</span><span class="faq-icon">+</span></button>
 <div class="faq-a"><p>Junto Nova is a startup founded in 2026 and led by <a href="https://www.linkedin.com/in/jandrewclark" target="_blank" rel="noopener" class="underline hover:opacity-80" style="color:var(--charcoal)">Andrew Clark</a>.</p></div></div>
