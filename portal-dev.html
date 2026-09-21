@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Client portal (dev) · Junto Nova</title>
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@600;700&display=swap">
+<style>
+:root{--charcoal:#1a1a1a;--ember:#c45c26;--muted:#64748b;--border:#e2e8f0;--surface:#f8fafc;--ok:#166534;--ok-bg:#ecfdf3;--warn:#92400e;--warn-bg:#fff7ed}
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:Inter,system-ui,sans-serif;color:var(--charcoal);background:#fff;min-height:100vh}
+a{color:inherit;text-decoration:none}
+.display{font-family:"Playfair Display",Georgia,serif;font-weight:700;letter-spacing:-0.02em}
+.dev-banner{background:var(--charcoal);color:#fff;font-size:12px;letter-spacing:.04em;text-align:center;padding:8px 16px}
+.dev-banner strong{color:#f3c9ae}
+.wrap{max-width:64rem;margin:0 auto;padding:0 1.5rem}
+header.app-header{border-bottom:1px solid var(--border);background:#fff}
+header.app-header .row{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:1.1rem 0;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:.75rem}
+.brand img{display:block;width:40px;height:46px}
+.brand span{font-size:1.35rem}
+nav.tabs{display:flex;gap:.35rem;flex-wrap:wrap}
+nav.tabs a,nav.tabs button{padding:.45rem .8rem;border-radius:.7rem;font-size:.875rem;font-weight:500;color:var(--muted);background:none;border:0;cursor:pointer;font-family:inherit}
+nav.tabs a.active,nav.tabs button.active,nav.tabs a:hover,nav.tabs button:hover{background:var(--surface);color:var(--charcoal)}
+.who{font-size:.8rem;color:var(--muted);text-align:right}
+.who b{color:var(--charcoal);font-weight:600}
+.who button{background:none;border:0;padding:0;font:inherit;color:inherit;text-decoration:underline;text-underline-offset:2px;cursor:pointer}
+main{padding:2.25rem 0 4rem}
+.kicker{font-size:.72rem;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:.6rem}
+h1{font-size:2rem;margin:0 0 .5rem}
+.lede{color:var(--muted);max-width:36rem;line-height:1.65;margin:0 0 1.75rem}
+.grid{display:grid;gap:1rem}
+.grid.two{grid-template-columns:repeat(auto-fit,minmax(16rem,1fr))}
+.card{border:1px solid var(--border);border-radius:1rem;padding:1.25rem 1.2rem;background:#fff}
+.card h2{font-family:"Playfair Display",Georgia,serif;font-size:1.15rem;margin:0 0 .35rem}
+.muted{color:var(--muted);font-size:.92rem;line-height:1.6}
+.stat{font-family:"Playfair Display",Georgia,serif;font-size:1.8rem;color:var(--ember)}
+table{width:100%;border-collapse:collapse;font-size:.92rem}
+th{text-align:left;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600;padding:.55rem .4rem;border-bottom:1px solid var(--border)}
+td{padding:.85rem .4rem;border-bottom:1px solid var(--border);vertical-align:top}
+tr:last-child td{border-bottom:none}
+.pill{display:inline-block;font-size:.72rem;font-weight:600;padding:.2rem .5rem;border-radius:999px;background:var(--surface);color:var(--muted)}
+.pill.open{background:var(--warn-bg);color:var(--warn)}
+.pill.paid{background:var(--ok-bg);color:var(--ok)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.4rem;padding:.55rem .95rem;border-radius:.7rem;font-size:.875rem;font-weight:500;border:1px solid var(--charcoal);background:var(--charcoal);color:#fff;cursor:pointer;font-family:inherit}
+.btn:hover{background:#000}
+.btn.ghost{background:transparent;color:var(--charcoal);border-color:var(--border)}
+.btn.ghost:hover{background:var(--surface)}
+.login-shell{min-height:calc(100vh - 36px);display:grid;place-items:center;padding:2rem 1rem}
+.login-card{width:min(26rem,100%)}
+label{display:block;font-size:.8rem;font-weight:600;margin:.85rem 0 .35rem}
+input{width:100%;padding:.65rem .75rem;border:1px solid var(--border);border-radius:.7rem;font:inherit}
+.accounts{margin-top:1.25rem;font-size:.8rem;color:var(--muted);line-height:1.55}
+.accounts code{font-size:.75rem;background:var(--surface);padding:.05rem .3rem;border-radius:.3rem}
+.err{color:#9f1239;background:#fff1f2;border-radius:.6rem;padding:.6rem .75rem;font-size:.85rem;margin-bottom:.75rem}
+.file-meta{font-size:.8rem;color:var(--muted)}
+footer.app-footer{border-top:1px solid var(--border);color:var(--muted);font-size:.85rem}
+footer.app-footer .row{display:flex;justify-content:space-between;gap:1rem;padding:1.5rem 0;flex-wrap:wrap}
+</style>
+</head>
+<body>
+<div class="dev-banner">DEVELOPMENT PREVIEW · seeded fake clients · not production · <strong>do not use real documents here</strong></div>
+<div id="app"></div>
+<script>
+const ORGS = {"org-northstar":"Northstar Foundation","org-oak":"Oak & Iron Housing"};
+const USERS = [
+  {id:"user-andrew", email:"andrew@juntonova.com", password:"dev-admin", name:"Andrew Clark", role:"admin", orgId:null, permissions:["billing"]},
+  {id:"user-maya", email:"maya@northstar.example", password:"dev-billing", name:"Maya Chen", role:"director", orgId:"org-northstar", permissions:["billing"]},
+  {id:"user-robert", email:"robert@northstar.example", password:"dev-board", name:"Robert Hale", role:"board", orgId:"org-northstar", permissions:[]},
+  {id:"user-elena", email:"elena@oakandiron.example", password:"dev-member", name:"Elena Voss", role:"director", orgId:"org-oak", permissions:[]}
+];
+const FILES = [
+  {id:"s1", orgId:null, title:"How we work together", kind:"guide", visibility:"clients", note:"Operating cadence for every client. Not on the public site."},
+  {id:"s2", orgId:null, title:"Public vs proprietary", kind:"guide", visibility:"clients", note:"What can be released later, and what stays inside the engagement."},
+  {id:"s3", orgId:null, title:"Cost-driver continuum primer", kind:"memo", visibility:"clients", note:"Shared method. Client-only until you decide a piece can go public."},
+  {id:"f1", orgId:"org-northstar", title:"Housing continuum memo (client draft)", kind:"memo", visibility:"org", note:"Northstar work product. Oak & Iron must not see this.", named:[]},
+  {id:"f2", orgId:"org-northstar", title:"Board pack — September", kind:"deck", visibility:"board", note:"Governance materials. Board and director.", named:[]},
+  {id:"f3", orgId:"org-northstar", title:"Engagement SOW and fee schedule", kind:"contract", visibility:"billing", note:"Needs the billing permission. Not every director gets this.", named:[]},
+  {id:"f4", orgId:"org-northstar", title:"Polling crosstabs — raw", kind:"data", visibility:"named", note:"Shared only with Maya while the wave is in the field.", named:["user-maya"]},
+  {id:"f5", orgId:"org-oak", title:"Partner map v2", kind:"deck", visibility:"org", note:"Oak & Iron only.", named:[]}
+];
+const ACTIVITY = [
+  {title:"Continuum primer updated", detail:"Shared method note in the client library. Still not public.", visibility:"clients", orgId:null, at:"2026-09-15"},
+  {title:"September board pack posted", detail:"In Your work. Board and director can open it.", visibility:"org", orgId:"org-northstar", at:"2026-09-12"},
+  {title:"Polling wave 1 is in the field", detail:"Raw crosstabs are named to Maya until the wave closes.", visibility:"org", orgId:"org-northstar", at:"2026-09-08"},
+  {title:"Partner map v2 posted", detail:"Oak & Iron only.", visibility:"org", orgId:"org-oak", at:"2026-09-11"}
+];
+const INVOICES = [
+  {orgId:"org-northstar", number:"JN-1007", title:"Cost-driver diagnosis — housing continuum", amount:"$18,500", due:"2026-09-30", status:"open"},
+  {orgId:"org-northstar", number:"JN-1004", title:"Public-opinion package (wave 1)", amount:"$9,200", due:"2026-08-14", status:"paid"},
+  {orgId:"org-oak", number:"JN-1011", title:"Capital structure + partner map", amount:"$24,000", due:"2026-10-10", status:"open"}
+];
+function isAdmin(u){return u && u.role==="admin"}
+function canBill(u){return isAdmin(u) || (u.permissions||[]).includes("billing")}
+function roleLabel(r){return {admin:"Junto Nova",director:"Director",board:"Board",member:"Staff"}[r]||r}
+function visLabel(v){return {clients:"All clients",org:"This organization",director:"Director only",billing:"Billing permission",board:"Board + director",named:"Named people",admin:"Junto Nova only"}[v]||v}
+function canSeeFile(u,f){
+  if(!u) return false;
+  if(f.visibility==="clients") return true;
+  if(isAdmin(u)) return true;
+  if(!f.orgId || f.orgId!==u.orgId) return false;
+  if(f.visibility==="org") return true;
+  if(f.visibility==="director") return u.role==="director";
+  if(f.visibility==="billing") return canBill(u);
+  if(f.visibility==="board") return u.role==="board"||u.role==="director";
+  if(f.visibility==="named") return (f.named||[]).includes(u.id);
+  return false;
+}
+function canSeeActivity(u,a){
+  if(a.visibility==="clients") return true;
+  if(isAdmin(u)) return true;
+  return a.orgId && a.orgId===u.orgId;
+}
+function current(){
+  const id = sessionStorage.getItem("jn_portal_user");
+  const raw = USERS.find(u=>u.id===id);
+  if(!raw) return null;
+  return {...raw, orgName: raw.orgId ? ORGS[raw.orgId] : null};
+}
+let view = "home";
+let loginError = "";
+function go(name){ view = name; render(); }
+function logout(){ sessionStorage.removeItem("jn_portal_user"); view="home"; render(); }
+function login(e){
+  e.preventDefault();
+  const email = e.target.email.value.trim().toLowerCase();
+  const password = e.target.password.value;
+  const found = USERS.find(u=>u.email===email && u.password===password);
+  if(!found){ loginError = "Email or password did not match."; render(); return; }
+  sessionStorage.setItem("jn_portal_user", found.id);
+  loginError = "";
+  view = "home";
+  render();
+}
+function layout(user, active, body){
+  const nav = user ? `<nav class="tabs">
+      <button class="${active==="home"?"active":""}" onclick="go('home')">Home</button>
+      <button class="${active==="work"?"active":""}" onclick="go('work')">Your work</button>
+      <button class="${active==="library"?"active":""}" onclick="go('library')">Client library</button>
+      <button class="${active==="visibility"?"active":""}" onclick="go('visibility')">Visibility</button>
+      ${canBill(user)?`<button class="${active==="billing"?"active":""}" onclick="go('billing')">Billing</button>`:""}
+      ${isAdmin(user)?`<button class="${active==="admin"?"active":""}" onclick="go('admin')">Admin</button>`:""}
+    </nav>` : "";
+  const who = user ? `<div class="who"><b>${user.name}</b><br>${roleLabel(user.role)}${user.orgName?" · "+user.orgName:""}${canBill(user)&&!isAdmin(user)?" · billing":""} · <button onclick="logout()">Sign out</button></div>` : "";
+  return `<header class="app-header"><div class="wrap row">
+    <a class="brand" href="/"><img src="/jn-header.png" width="40" height="46" alt=""><span class="display">JUNTO NOVA</span></a>
+    ${nav}${who}
+  </div></header>
+  <main class="wrap">${body}</main>
+  <footer class="app-footer"><div class="wrap row">
+    <div><div class="display" style="color:var(--charcoal)">JUNTO NOVA</div><div class="muted">Client portal · development preview</div></div>
+    <div><a href="/">Public site</a> · not indexed · © 2026</div>
+  </div></footer>`;
+}
+function fileTable(user, files){
+  const rows = files.map(f=>`<tr><td><b>${f.title}</b><div class="file-meta">${f.kind} · ${f.note}${isAdmin(user)&&f.orgId?" · "+ORGS[f.orgId]:""}</div></td><td><span class="pill">${visLabel(f.visibility)}</span></td></tr>`).join("");
+  return `<div class="card" style="padding:.5rem 1rem"><table><thead><tr><th>Item</th><th>Who can see it</th></tr></thead><tbody>${rows||`<tr><td colspan="2" class="muted">Nothing in view.</td></tr>`}</tbody></table></div>`;
+}
+function page(user){
+  if(!user){
+    return layout(null,"",`<div class="login-shell"><div class="login-card card">
+        <div class="kicker">Client portal</div>
+        <h1 class="display" style="font-size:1.8rem">Sign in</h1>
+        <p class="muted">For directors and staff. Accounting still gets invoices in Mercury or Stripe. Billing on this site is a separate permission.</p>
+        ${loginError?`<div class="err">${loginError}</div>`:""}
+        <form onsubmit="login(event)">
+          <label>Email</label><input name="email" type="email" required>
+          <label>Password</label><input name="password" type="password" required>
+          <div style="margin-top:1rem"><button class="btn" type="submit">Sign in</button></div>
+        </form>
+        <div class="accounts">
+          <div><b>Try these</b></div>
+          <div>Admin — <code>andrew@juntonova.com</code> / <code>dev-admin</code></div>
+          <div>Director + billing, Northstar — <code>maya@northstar.example</code> / <code>dev-billing</code></div>
+          <div>Board, Northstar — <code>robert@northstar.example</code> / <code>dev-board</code></div>
+          <div>Director, no billing, Oak &amp; Iron — <code>elena@oakandiron.example</code> / <code>dev-member</code></div>
+        </div>
+      </div></div>`);
+  }
+  const visible = FILES.filter(f=>canSeeFile(user,f));
+  const work = visible.filter(f=>f.visibility!=="clients");
+  const library = visible.filter(f=>f.visibility==="clients");
+  if(view==="work") return layout(user,"work",`<div class="kicker">Proprietary to this organization</div><h1 class="display">Your work</h1><p class="lede">Unique to ${user.orgName||"each client"}. Another client's director should not see this shelf.</p>${fileTable(user, work)}`);
+  if(view==="library") return layout(user,"library",`<div class="kicker">Every client · not the public</div><h1 class="display">Client library</h1><p class="lede">Logged-in clients share this shelf. It is not on the public homepage.</p>${fileTable(user, library)}`);
+  if(view==="visibility") return layout(user,"visibility",`<div class="kicker">Permissions</div><h1 class="display">What this login can see</h1><p class="lede">Public stays on juntonova.com. Logged-in clients share a library. Each organization has its own shelf. Billing is a granted permission, not implied by director.</p><div class="grid two" style="margin-bottom:1.25rem"><div class="card"><h2>This account</h2><p class="muted">${user.name}<br>${user.email}<br>Role: ${roleLabel(user.role)}${user.orgName?"<br>Organization: "+user.orgName:"<br>All organizations"}<br>Billing permission: ${canBill(user)?"yes":"no"}</p></div><div class="card"><h2>Rules in force</h2><p class="muted">clients — every logged-in client<br>org — this organization only<br>director — director only<br>billing — granted billing permission<br>board — board + director<br>named — specific people</p></div></div>${fileTable(user, visible)}`);
+  if(view==="billing"){
+    if(!canBill(user)) return layout(user,"home","<p class='lede'>Billing permission required.</p>");
+    const rows = INVOICES.filter(i=>isAdmin(user)||i.orgId===user.orgId).map(i=>`<tr><td><b>${i.number}</b><div class="file-meta">${i.title}${isAdmin(user)?" · "+ORGS[i.orgId]:""}</div></td><td>${i.amount}</td><td>${i.due}</td><td><span class="pill ${i.status}">${i.status}</span></td></tr>`).join("");
+    return layout(user,"billing",`<div class="kicker">Record only</div><h1 class="display">Billing record</h1><p class="lede">Accounting still gets the invoice in Mercury or Stripe. This page is a status copy for logins with the billing permission. It is not a place to pay.</p><div class="card" style="padding:.5rem 1rem"><table><thead><tr><th>Invoice</th><th>Amount</th><th>Due</th><th>Status</th></tr></thead><tbody>${rows}</tbody></table></div>`);
+  }
+  if(view==="admin"){
+    if(!isAdmin(user)) return layout(user,"home","<p class='lede'>Admin only.</p>");
+    return layout(user,"admin",`<div class="kicker">Junto Nova</div><h1 class="display">Admin</h1><p class="lede">Invite-only accounts. Billing is a permission you attach to a person, not a side effect of being director.</p><div class="card" style="padding:.5rem 1rem"><table><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Permissions</th><th>Org</th></tr></thead><tbody>${USERS.map(u=>`<tr><td>${u.name}</td><td class="muted">${u.email}</td><td>${roleLabel(u.role)}</td><td class="muted">${(u.permissions||[]).join(", ")||"—"}</td><td class="muted">${u.orgId?ORGS[u.orgId]:"—"}</td></tr>`).join("")}</tbody></table></div>`);
+  }
+  const feed = ACTIVITY.filter(a=>canSeeActivity(user,a)).sort((a,b)=>a.at<b.at?1:-1).map(a=>`<tr><td><b>${a.title}</b><div class="file-meta">${a.detail}</div></td><td><span class="pill">${visLabel(a.visibility)}</span></td><td class="muted">${a.at}</td></tr>`).join("");
+  return layout(user,"home",`<div class="kicker">What's going on</div><h1 class="display">${isAdmin(user)?"All client work":user.orgName}</h1><p class="lede">${isAdmin(user)?"You see every organization and the shared client library. Switch into a director login to confirm they only see their shelf plus the library.":"Two shelves: work that belongs only to this organization, and a client library every logged-in client can see. Neither is on the public site. Billing is optional and permissioned."}</p><div class="grid two" style="margin-bottom:1.25rem"><div class="card"><div class="muted">Your work</div><div class="stat">${work.length}</div><p class="muted">Proprietary to this organization.</p><button class="btn ghost" onclick="go('work')">Open your work</button></div><div class="card"><div class="muted">Client library</div><div class="stat">${library.length}</div><p class="muted">For every client. Not public.</p><button class="btn ghost" onclick="go('library')">Open the library</button></div></div><div class="card" style="padding:.5rem 1rem"><h2 style="padding:.75rem .4rem 0">Latest</h2><table><thead><tr><th>Update</th><th>Audience</th><th>Date</th></tr></thead><tbody>${feed}</tbody></table></div>`);
+}
+function render(){ document.getElementById("app").innerHTML = page(current()); }
+render();
+</script>
+</body>
+</html>
