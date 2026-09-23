@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ventures · Junto Nova</title>
+<link rel="icon" type="image/png" sizes="32x32" href="https://juntonova.com/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="https://juntonova.com/favicon-180.png">
+<meta name="description" content="Live prototypes and sketches from Junto Nova.">
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600&family=Outfit:wght@400;500;600&family=Playfair+Display:wght@600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500&display=swap');
+:root{--charcoal:#1A1A1A;--ember:#C45C26;--muted:#64748B;--border:#E2E8F0;--surface:#F8FAFC}
+body{font-family:Inter,system-ui,sans-serif;color:var(--charcoal);background:#fff}
+.display{font-family:'Playfair Display',Georgia,serif;font-weight:700;letter-spacing:-0.02em}
+#mobile-menu{display:none}#mobile-menu.open{display:block}
+</style>
+</head>
+<body>
+<header class="border-b relative" style="border-color:var(--border);background:#fff">
+<div class="max-w-5xl mx-auto px-6 py-5 flex items-center justify-between">
+<a href="index.html" class="flex items-center gap-3 hover:opacity-80" style="color:var(--charcoal)"><img src="https://juntonova.com/jn-header.png" alt="Junto Nova" width="40" height="46" style="display:block"><span class="display text-2xl tracking-tight">JUNTO NOVA</span></a>
+<div class="relative">
+<button id="menu-toggle" onclick="toggleMenu()" class="p-2 -mr-2" style="color:var(--muted)" aria-label="Open menu">
+<svg id="menu-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+<svg id="close-icon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+</button>
+<div id="mobile-menu" class="absolute top-full right-0 mt-2 w-72 rounded-xl border shadow-lg z-50" style="background:#fff;border-color:var(--border)">
+<div class="px-2 py-2 flex flex-col">
+<a href="index.html#about" onclick="closeMenu()" class="py-3 px-2 rounded-lg hover:bg-slate-50">About Us</a>
+<a href="index.html#costs" onclick="closeMenu()" class="py-3 px-2 rounded-lg hover:bg-slate-50">Cost Drivers</a>
+<a href="index.html#share" onclick="closeMenu()" class="py-3 px-2 rounded-lg hover:bg-slate-50">Your Share</a>
+<a href="issues.html" class="py-3 px-2 rounded-lg hover:bg-slate-50">Issues</a>
+<a href="project.html" class="py-3 px-2 rounded-lg hover:bg-slate-50">Let's work together</a>
+<a href="portal.html" class="py-3 px-2 rounded-lg mt-1 font-medium" style="background:#1A1A1A;color:#fff">Client login</a>
+</div></div></div></div></header>
+<main class="max-w-5xl mx-auto px-6 py-12">
+<div class="mb-8">
+<div class="text-xs font-medium tracking-widest uppercase mb-3" style="color:var(--muted)">Ventures</div>
+</div>
+<div class="grid md:grid-cols-2 gap-4">
+<article class="rounded-2xl overflow-hidden" style="background:#f3eee4;border:1px solid rgba(28,22,18,.14);color:#1c1612">
+<div style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding:22px 22px 0">
+<img src="ventures/garraways-wordmark.svg" alt="Garraways" style="height:56px;width:auto;mix-blend-mode:multiply">
+<span style="font-family:Outfit,sans-serif;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#6b2c2a">Live</span>
+</div>
+<div style="padding:16px 22px 22px">
+<p style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:500;font-size:1.85rem;line-height:1.05;letter-spacing:-.02em;margin:0 0 .55rem">Americans don't wait.</p>
+<p style="font-family:'Source Serif 4',Georgia,serif;font-size:.95rem;line-height:1.5;color:#4a4038;margin:0 0 1rem">Anyone could walk in. Anyone could post what they wanted on the shop wall. No crown. No committee.</p>
+<a href="https://www.garrawayswall.com/" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;background:#6b2c2a;color:#fffdf8;border-radius:999px;padding:10px 16px;font-family:Outfit,sans-serif;font-size:13px;letter-spacing:.04em">Visit</a>
+</div>
+</article>
+<article class="rounded-2xl border p-6" style="border-color:var(--border)">
+<div class="flex items-center gap-3 mb-3"><h2 class="display text-xl">Nuevo Junto</h2><span class="text-xs rounded-full border px-2.5 py-1" style="border-color:var(--border);color:var(--muted)">Sketch</span></div>
+</article>
+<article class="rounded-2xl border p-6" style="border-color:var(--border)">
+<div class="flex items-center gap-3 mb-3"><h2 class="display text-xl">602 Sports</h2><span class="text-xs rounded-full border px-2.5 py-1" style="border-color:var(--border);color:var(--muted)">Live</span></div>
+<p class="text-sm leading-relaxed mb-5" style="color:var(--muted)">Independent Arizona sports. Suns and Cardinals. Not affiliated with the NBA, the NFL, or the teams.</p>
+<div class="flex gap-2"><a href="https://602sports.com" target="_blank" rel="noopener" class="rounded-xl border px-4 py-2 text-sm font-medium" style="border-color:var(--border)">Visit</a><a href="https://buy.stripe.com/fZu5kFgJA1UtdBI8Xlebu00" target="_blank" rel="noopener" class="rounded-xl px-4 py-2 text-sm font-medium text-white" style="background:var(--charcoal)">Support</a></div>
+</article>
+<article class="rounded-2xl border p-6" style="border-color:var(--border)">
+<div class="flex items-center gap-3 mb-3"><h2 class="display text-xl">The Draft Model</h2><span class="text-xs rounded-full border px-2.5 py-1" style="border-color:var(--border);color:var(--muted)">Live</span></div>
+<p class="text-sm leading-relaxed mb-5" style="color:var(--muted)">NBA draft boards, 1947–2029. Independent career-outcome probabilities.</p>
+<a href="https://thedraftmodel.com" target="_blank" rel="noopener" class="rounded-xl border px-4 py-2 text-sm font-medium" style="border-color:var(--border)">Visit</a>
+</article>
+</div>
+<p class="mt-10 max-w-2xl text-sm leading-relaxed" style="color:var(--muted)">If you send money, you are helping pay for more of the work. You are not buying a piece of the company, a share of the profits, or anything you could turn around and sell. Junto Nova LLC, Dallas, Texas.</p>
+</main>
+<footer class="jn-foot" style="border-top:1px solid #E2E8F0">
+<style>.jn-foot a{color:inherit;text-decoration:none}.jn-foot a:hover{opacity:.7}</style>
+<div style="max-width:64rem;margin:0 auto;padding:2rem 1.5rem;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:1rem;font-size:.875rem;color:#64748B">
+<div><div class="display" style="font-size:1.125rem;color:#1A1A1A">JUNTO NOVA</div><div style="font-size:.75rem;margin-top:.25rem">Junto Nova LLC · Dallas, TX</div></div>
+<div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:1.25rem">
+<a href="mailto:andrew@juntonova.com" aria-label="Email"><i class="fa-solid fa-envelope"></i></a>
+<a href="https://x.com/jandrewclark" target="_blank" rel="noopener" aria-label="X"><i class="fa-brands fa-x-twitter"></i></a>
+<a href="https://juntonova.substack.com" target="_blank" rel="noopener" aria-label="Substack"><i class="fa-solid fa-bookmark"></i></a>
+<a href="ventures.html">Ventures</a>
+<a href="involved.html">Get Involved</a>
+<a href="privacy.html">Privacy</a>
+<span>© 2026</span>
+</div></div></footer>
+<script>
+function toggleMenu(){const m=document.getElementById('mobile-menu');const open=m.classList.toggle('open');document.getElementById('menu-icon').classList.toggle('hidden',open);document.getElementById('close-icon').classList.toggle('hidden',!open)}
+function closeMenu(){document.getElementById('mobile-menu').classList.remove('open');document.getElementById('menu-icon').classList.remove('hidden');document.getElementById('close-icon').classList.add('hidden')}
+document.addEventListener('click',function(event){const menu=document.getElementById('mobile-menu');const button=document.getElementById('menu-toggle');if(!menu||!menu.classList.contains('open'))return;if(menu.contains(event.target)||button.contains(event.target))return;closeMenu()})
+</script>
+</body>
+</html>

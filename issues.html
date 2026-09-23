@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Issues · Junto Nova</title>
+<link rel="icon" type="image/png" sizes="32x32" href="https://juntonova.com/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="https://juntonova.com/favicon-180.png">
+<meta name="description" content="Where today's proposals sit: practical, structural, and cultural.">
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@600;700&display=swap');
+:root{--charcoal:#1A1A1A;--ember:#C45C26;--muted:#64748B;--border:#E2E8F0;--surface:#F8FAFC}
+body{font-family:Inter,system-ui,sans-serif;color:var(--charcoal);background:#fff}
+.display{font-family:'Playfair Display',Georgia,serif;font-weight:700;letter-spacing:-0.02em}
+#mobile-menu{display:none}#mobile-menu.open{display:block}
+select.issue-select{height:2.75rem;padding:0 2.5rem 0 1rem;line-height:2.75rem}
+input.issue-search{height:2.75rem;padding:0 2.5rem;line-height:2.75rem;width:100%}
+</style>
+</head>
+<body>
+<header class="border-b relative" style="border-color:var(--border);background:#fff">
+<div class="max-w-5xl mx-auto px-6 py-5 flex items-center justify-between">
+<a href="index.html" class="flex items-center gap-3 hover:opacity-80 transition" style="color:var(--charcoal)"><img src="https://juntonova.com/jn-header.png" alt="Junto Nova" width="40" height="46" style="display:block" /><span class="display text-2xl tracking-tight">JUNTO NOVA</span></a>
+<div class="relative">
+<button id="menu-toggle" onclick="toggleMenu()" class="p-2 -mr-2 focus:outline-none" style="color:var(--muted)" aria-label="Open menu">
+<svg id="menu-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+<svg id="close-icon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+</button>
+<div id="mobile-menu" class="absolute top-full right-0 mt-2 w-72 rounded-xl border shadow-lg z-50" style="background:#fff;border-color:var(--border)">
+<div class="px-2 py-2 flex flex-col gap-0.5">
+<a href="index.html#about" class="text-left py-3 px-2 rounded-lg hover:bg-slate-50" style="color:var(--charcoal)">About Us</a>
+<a href="index.html#costs" class="text-left py-3 px-2 rounded-lg hover:bg-slate-50" style="color:var(--charcoal)">Cost Drivers</a>
+<a href="index.html#share" class="text-left py-3 px-2 rounded-lg hover:bg-slate-50" style="color:var(--charcoal)">Your Share</a>
+<a href="issues.html" class="text-left py-3 px-2 rounded-lg hover:bg-slate-50 font-medium" style="color:var(--charcoal)">Issues</a>
+<a href="project.html" class="text-left py-3 px-2 rounded-lg hover:bg-slate-50" style="color:var(--charcoal)">Let's work together</a>
+<a href="portal.html" class="text-left py-3 px-2 rounded-lg mt-1 font-medium" style="background:#1A1A1A;color:#fff">Client login</a>
+</div></div></div></div></header>
+
+<main class="max-w-5xl mx-auto px-6 pt-6 pb-16">
+<div class="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+<label class="relative block w-full max-w-xs">
+<span class="sr-only">Issue</span>
+<select id="area" class="issue-select w-full appearance-none rounded-xl border bg-white text-base font-medium" style="border-color:var(--border)"></select>
+<svg class="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2" style="color:var(--muted)" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+</label>
+<div class="sm:text-right">
+<div id="lenses" class="flex flex-wrap items-center gap-2 sm:justify-end"></div>
+<p id="caption" class="mt-2 text-sm leading-relaxed sm:text-right" style="color:var(--muted)"></p>
+</div>
+</div>
+<div class="relative mt-3">
+<svg class="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" style="color:var(--muted)" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M11 18a7 7 0 100-14 7 7 0 000 14z"/></svg>
+<input id="q" class="issue-search rounded-xl border bg-white" style="border-color:var(--border)" placeholder="Find a proposal or belief" autocomplete="off" spellcheck="false" aria-label="Find a proposal or belief">
+<button id="clear" type="button" class="absolute top-1/2 right-2 hidden h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full" style="color:var(--muted)" aria-label="Clear search">×</button>
+<ul id="hits" class="absolute z-30 mt-1 hidden max-h-72 w-full overflow-auto rounded-xl border bg-white py-1 shadow-lg" style="border-color:var(--border)"></ul>
+</div>
+<div class="mt-3">
+<div id="bar" class="flex h-1.5 overflow-hidden rounded-full"></div>
+<div class="mt-1.5">
+<div class="text-[10px] tracking-wide" style="color:var(--muted)">Weaker leverage → stronger</div>
+</div>
+</div>
+<div id="matrix" class="mt-5"></div>
+<article id="detail" class="mt-6 rounded-2xl border bg-white p-5 md:p-6" style="border-color:var(--border)"></article>
+</main>
+
+<footer class="jn-foot" style="border-top:1px solid #E2E8F0">
+<style>.jn-foot a{color:inherit;text-decoration:none}.jn-foot a:hover{opacity:.7}</style>
+<div style="max-width:64rem;margin:0 auto;padding:2rem 1.5rem;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:1rem;font-size:.875rem;color:#64748B">
+<div><div class="display" style="font-size:1.125rem;color:#1A1A1A">JUNTO NOVA</div><div style="font-size:.75rem;margin-top:.25rem">Junto Nova LLC · Dallas, TX</div></div>
+<div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:1.25rem">
+<a href="mailto:andrew@juntonova.com" aria-label="Email"><i class="fa-solid fa-envelope"></i></a>
+<a href="https://x.com/jandrewclark" target="_blank" rel="noopener" aria-label="X"><i class="fa-brands fa-x-twitter"></i></a>
+<a href="https://juntonova.substack.com" target="_blank" rel="noopener" aria-label="Substack"><i class="fa-solid fa-bookmark"></i></a>
+<a href="ventures.html">Ventures</a>
+<a href="involved.html">Get Involved</a>
+<a href="privacy.html">Privacy</a>
+<span>© 2026</span>
+</div></div></footer>
+<script>
+const DATA = {"areas":[{"id":"ai","name":"Artificial Intelligence","practical":[{"id":"concern","name":"Ask whether AI worries people","y":78,"x":84,"summary":"Ask whether more AI in daily life makes people more concerned or more excited, and publish the split. 52% are more concerned. 37% are equally both. 9% are more excited. Concern is up from 37% in 2021.","source":"Pew Research Center, June 22–28, 2026.","c":3},{"id":"regulate-trust","name":"Ask if people trust Washington to regulate AI","y":64,"x":60,"summary":"Ask whether people trust the United States government to regulate AI well. In March 2025, 44% trusted it at least some, and 47% did not. Republicans were more trusting (54%) than Democrats (36%).","source":"Pew Research Center, March 2025, reported November 6, 2025.","c":3},{"id":"where-helps","name":"Ask where AI helps and where it hurts","y":70,"x":48,"summary":"Ask, use by use, whether people think AI will help or hurt: medicine, school, and jobs. 44% expect a positive effect on medical care over 20 years, and 19% a negative one. Only 24% expect a positive effect on education, and 23% on how people do their jobs.","source":"Pew Research Center, August 2024.","c":3}],"structural":[{"id":"no-blank-check","name":"Don't hand AI to a regulator by default","y":68,"x":48,"summary":"Do not pass a licensing regime for AI on the assumption that the public wants a regulator in charge. Trust in the government to regulate AI is split, 44% to 47%. A license is not a majority demand. It is also not a rejection.","source":"Pew Research Center, March 2025.","c":3}],"cultural":[{"id":"a1","name":"AI in daily life is more worrying than exciting","y":78,"x":22,"summary":"The belief is that more AI in ordinary life is something to worry about, not welcome.","source":"Pew Research Center, June 22–28, 2026: 52% more concerned than excited, 9% more excited than concerned. Democrats 56%, Republicans 49%.","c":3},{"id":"a2","name":"AI is something to be excited about","y":24,"x":72,"summary":"The belief is that the tool is good news. Very few people hold it.","source":"Pew Research Center, June 2026: 9% are more excited than concerned. The aligned view is a small minority. It does not drive the debate.","c":3},{"id":"a3","name":"Washington should set the pace for AI","y":60,"x":24,"summary":"The belief is that a public authority should decide how fast AI is allowed to move.","source":"Pew Research Center, March 2025: 44% trust the U.S. to regulate AI, 47% do not.","c":3},{"id":"a4","name":"Use AI where it clearly helps, starting with medicine","y":66,"x":70,"summary":"The belief is that AI should be used where people already think it helps, and medicine is the clearest case.","source":"Pew Research Center, August 2024: 44% expect a positive effect on medical care, against 19% negative. Education and jobs do not get that benefit of the doubt.","c":3}]},{"id":"education","name":"Education","practical":[{"id":"would-use","name":"Count who would use a family account","y":84,"x":72,"summary":"Ask parents whether they would actually use an education account if one were offered, and publish that. 65% of school parents say they would enroll their child. 13% say no. 22% are unsure.","source":"EdChoice, 2026 Schooling in America Survey.","c":3},{"id":"esa-aware","name":"Explain the account, then ask","y":76,"x":48,"summary":"Describe an education savings account in plain language, then ask again. Support before the description is the awareness number. Without a description, 54% of Americans support the accounts. With one, support rises to 78%. Parents move from 64% to 84%.","source":"EdChoice, 2026 Schooling in America Survey.","c":3},{"id":"direction","name":"Ask if school is on track","y":28,"x":70,"summary":"Ask parents whether K–12 is headed the right way, and treat that as a satisfaction number, not as proof a family can leave. 41% of school parents say it is on the right track.","source":"EdChoice, 2025 Schooling in America Survey, March 28–April 7, 2025. 2,455 school parents.","c":3},{"id":"universal-pref","name":"Ask if every family gets the account","y":80,"x":66,"summary":"Ask whether the account should be for every student or only for families who meet a needs test, and publish both numbers. 77% support an account for every student. 65% support one limited by income or special needs. Among account supporters in a separate poll, 70% want it universal.","source":"EdChoice, 2026 Schooling in America Survey. yes. every kid. foundation / YouGov, November 19–24, 2025.","c":3}],"structural":[{"id":"esa","name":"Give every family an education account","y":88,"x":74,"summary":"Every child gets an account the family spends on school, a tutor, or another option. It is not limited to low-income families. With a description, 78% of Americans and 84% of school parents support the accounts. 77% support making one universal. Asked differently, 63% support them and 70% of those supporters want every family included.","source":"EdChoice, 2026 Schooling in America Survey. yes. every kid. foundation / YouGov, November 19–24, 2025.","c":3},{"id":"tax-credit","name":"A tax credit a family can spend on school","y":82,"x":68,"summary":"A family gets a tax credit and uses it to buy education, instead of waiting for the state to approve each purchase. 72% of Americans and 82% of school parents support tax-credit scholarships. A separate poll finds 58% support for education tax credits. The size of the majority depends on the wording.","source":"EdChoice, 2026 Schooling in America Survey. yes. every kid. foundation / YouGov, November 19–24, 2025.","c":3},{"id":"open-enroll","name":"Let a child attend any public school in the state","y":64,"x":64,"summary":"A student can attend any public school in the state. The address no longer assigns the school. 64% support that. A year earlier the same question was 68%, including 75% of K–12 parents. It does not yet hand the family the dollar.","source":"yes. every kid. foundation / YouGov, November 19–24, 2025, and December 2024.","c":3},{"id":"charters","name":"Open more charter schools","y":46,"x":66,"summary":"Open more charter schools. 68% of Americans and 75% of school parents support them. A charter is still a public school under a public rulebook. It does not give the family the dollar.","source":"EdChoice, 2026 Schooling in America Survey.","c":3},{"id":"vouchers","name":"A voucher for a private-school seat","y":58,"x":66,"summary":"A voucher pays for a seat at a private school. 69% of Americans and 79% of school parents support vouchers. In 2025, Republican support was 77% and Democratic support was 57%. A voucher is one seat. An account can buy more than that.","source":"EdChoice, 2026 Schooling in America Survey. EdChoice, 2025 Schooling in America, on the party split.","c":3},{"id":"needs","name":"Limit the account to low-income families","y":34,"x":62,"summary":"Only low-income families, or students with special needs, get the account. Everyone else stays assigned. That version is less popular than a universal account: 65% versus 77% in 2026, and 56% versus about three in four in 2025. Among account supporters, only 20% want it limited to low-income families.","source":"EdChoice, 2025 and 2026 Schooling in America Surveys. yes. every kid. foundation / YouGov, December 2024.","c":3}],"cultural":[{"id":"ed1","name":"A family should design a child's education","y":84,"x":86,"summary":"The belief is that a family, not a district, should fit school to the child.","source":"yes. every kid. foundation / YouGov, November 19–24, 2025: 72% say families should be able to customize K–12 to the child, a great deal or some.","c":3},{"id":"ed2","name":"Schools should answer to parents","y":78,"x":84,"summary":"The belief is that a school has to answer to the parent, not only to the system.","source":"yes. every kid. foundation / YouGov, November 19–24, 2025: 76% say K–12 schools need to be more accountable to parents.","c":3},{"id":"ed3","name":"A school is accountable when a child can leave with the money","y":80,"x":88,"summary":"The belief is that accountability means the child can leave and take the public dollars with them.","source":"yes. every kid. foundation / YouGov, November 19–24, 2025: 61% say schools are more accountable when a child can leave and take the funding.","c":3},{"id":"ed4","name":"Every family should get the account, not only poor families","y":74,"x":82,"summary":"The belief is that an education account should be for every family, not a program for the poor.","source":"EdChoice, 2026 Schooling in America: 77% support a universal account, 65% a needs-based one. yes. every kid. foundation / YouGov, December 2024: 71% of account supporters want it universal, 20% want it limited to low-income families.","c":3},{"id":"ed5","name":"A child's address should pick the school","y":68,"x":18,"summary":"The belief is that where a family lives should decide which public school the child attends.","source":"yes. every kid. foundation / YouGov, November 19–24, 2025: 64% support the opposite, access to any public school in the state. The assigned school is still the rule most children live under.","c":3},{"id":"ed6","name":"Only some families should be trusted with the money","y":36,"x":22,"summary":"The belief is that only low-income families, or families the state approves, should control the education dollar.","source":"EdChoice, 2025 Schooling in America: a universal account beats a needs-based one, about three in four versus 56%. The narrower value is the minority position.","c":3}]},{"id":"energy","name":"Energy","practical":[{"id":"bill","name":"Publish the household bill","y":86,"x":90,"summary":"Publish what a household actually pays for power, and whether it went up. That is the number people already use. Three-quarters of adults say home energy costs have gone up, and 42% say they have gone up a lot. A separate voter survey finds 79% say household electricity costs rose over two years, and 83% are concerned.","source":"Pew Research Center, March 16–22, 2026. Inclusive Abundance / Blue Rose Research, May 13–23, 2026.","c":3},{"id":"utility-margin","name":"Show the utility's profit","y":78,"x":74,"summary":"Show the utility's profit as its own line, so a household can see how much of the bill is margin rather than power. Asked why the bill rose, 64% say a major reason is utility companies wanting to make more money.","source":"Pew Research Center, March 16–22, 2026, among adults who say home energy costs have risen.","c":3},{"id":"data-load","name":"Show the data-center share","y":74,"x":66,"summary":"Show the data-center share: how much of new electricity demand, and of the household bill, comes from data centers. 43% say data centers using more energy are a major reason bills rose. In a separate survey, 58% say data centers are very or somewhat responsible for higher household electricity prices.","source":"Pew Research Center, March 16–22, 2026. Morning Consult, November 21–23, 2025.","c":3},{"id":"grid-cost","name":"Price transparency","y":70,"x":58,"summary":"Break the electricity bill into generation, transmission, and distribution, so a household can see what is driving the cost. 40% already say the cost of updating or expanding the grid is a major reason bills rose. Another 30% call it a minor reason.","source":"Pew Research Center, March 16–22, 2026.","c":3},{"id":"source-cost","name":"Compare the cost of each source","y":68,"x":60,"summary":"Publish what wind, solar, gas, coal, and nuclear cost the customer, side by side. Republicans are more likely to say wind (44%) and solar (43%) cost consumers more than other sources. Democrats are more likely to say each costs less (48%).","source":"Pew Research Center, March 16–22, 2026.","c":3},{"id":"home-use","name":"Separate home use on the bill","y":24,"x":64,"summary":"Show home use as its own line, separate from the utility, the grid, and new demand, so people can see whether they are the reason the bill rose. Only 13% say using more energy at home is a major reason. 46% say it is not a reason.","source":"Pew Research Center, March 16–22, 2026.","c":3}],"structural":[{"id":"deadlines","name":"A deadline on every energy permit","y":82,"x":64,"summary":"A permit has a date. If the agency misses it, the project moves. 60% of likely 2026 voters support making energy infrastructure faster and easier to build, including 51% of Harris voters and 71% of Trump voters.","source":"Landscape deck, slide 3. Inclusive Abundance / Blue Rose Research, May 13–23, 2026.","c":3},{"id":"nepa","name":"Put an end date on environmental review","y":76,"x":48,"summary":"State environmental review gets an end date, instead of staying open until someone finds a reason to stop the project. Voters support faster energy permitting at 60%. That question is about speed, not a named repeal of a state environmental law.","source":"Landscape deck, slide 3. Nearest poll: Inclusive Abundance / Blue Rose Research, May 13–23, 2026.","c":2},{"id":"discretion","name":"Replace the hearing with a checklist","y":72,"x":46,"summary":"If a project meets a written checklist, it is approved. A hearing cannot kill it afterward. Voters support making energy projects easier to build. No poll in this set asks about discretionary review by that name.","source":"Landscape deck, slide 3. Nearest poll: Inclusive Abundance / Blue Rose Research, May 2026.","c":2},{"id":"rps","name":"Repeal the renewable quota","y":70,"x":40,"summary":"Repeal the law that says a set share of power must come from a listed set of renewable sources. No national poll in this set asks that question directly. The nearest fight, repealing renewable tax credits, is a split.","source":"Landscape deck, slide 3. Morning Consult, June 6–8, 2025, on tax credits, not portfolio standards.","c":2},{"id":"rofr","name":"Make the utility bid for the line","y":8,"x":80,"summary":"The utility no longer gets the transmission contract automatically. It has to bid, like anyone else. The landscape deck scores this 5–10% transformative and 80% popular. It is a bidding rule, not a rewrite of the system.","source":"Landscape deck, slide 3.","c":2},{"id":"nuclear-new","name":"Allow nuclear plants on new sites","y":80,"x":34,"summary":"Allow a nuclear plant on a site that does not already have one. 59% favor more nuclear plants, and 61% favor nuclear energy. 53% still oppose a plant in their area. A new site is the hard vote.","source":"Landscape deck, slide 3. Pew Research Center, April–May 2025. Gallup, March 2025 and March 2–18, 2026.","c":3},{"id":"nuclear-existing","name":"Renew licenses at existing nuclear plants","y":74,"x":74,"summary":"Renew the license, and add capacity, at plants that are already operating and still meet federal safety rules. 87% support renewing that kind of license. 64% say build more plants.","source":"Landscape deck, slide 3. Bisconti Research, 2025 National Nuclear Energy Public Opinion Survey.","c":3},{"id":"smr","name":"Let states license small reactors","y":80,"x":36,"summary":"Create a state license for small modular reactors, a new kind of plant, instead of running them through the old federal category. 59% favor more nuclear. This license class has not been polled on its own.","source":"Landscape deck, slide 3. Pew Research Center, April–May 2025, on more nuclear plants, not this license class.","c":2},{"id":"btm","name":"Let customers connect their own power","y":68,"x":52,"summary":"Power a customer adds on their own side of the meter should not wait in the queue built for big power plants. 60% want it to be easier to build energy infrastructure. That is the nearest number, not a behind-the-meter question.","source":"Landscape deck, slide 3. Inclusive Abundance / Blue Rose Research, May 2026.","c":2},{"id":"ppa","name":"Let customers buy power directly","y":58,"x":42,"summary":"A customer, a campus, or a town can sign a contract and buy power directly, instead of only through the utility. Not separately polled.","source":"Landscape deck, slide 3.","c":1},{"id":"redundancy","name":"Allow neighborhood backup power","y":64,"x":40,"summary":"Let a neighborhood add backup power, such as storage where the power is used, without a full utility case and without waiting on a new line. The landscape deck calls this local redundancy. Not separately polled.","source":"Landscape deck, slide 3.","c":1},{"id":"sandbox","name":"A trial waiver for a new power model","y":48,"x":44,"summary":"Give a new power model a time-limited waiver so it can operate and be judged, instead of waiting for a permanent rule. Not separately polled.","source":"Landscape deck, slide 3.","c":1},{"id":"threshold","name":"Skip full review for small projects","y":60,"x":48,"summary":"Below a set size, a project skips the full regulatory case. Above it, the ordinary rules apply. Not separately polled.","source":"Landscape deck, slide 3.","c":1},{"id":"backyard","name":"Let households install their own solar","y":55,"x":62,"summary":"A household can put solar on its own roof or yard without a utility veto. 77% favor more solar power. That is support for the source, not a vote on a backyard ordinance.","source":"Landscape deck, slide 3. Pew Research Center, June 2025, on expanding solar power.","c":2}],"cultural":[{"id":"e1","name":"Keep the power bill down","y":86,"x":90,"summary":"The belief is that energy policy should be judged by the household bill, not by a carbon target.","source":"Pew Research Center, December 9, 2024: 59% say keeping consumer costs low is very important in climate policy. It is the top factor for Republicans, at 67%.","c":3},{"id":"e2","name":"Use whatever source keeps power cheap","y":82,"x":84,"summary":"The belief is that the grid should use wind, solar, gas, and nuclear if that is what keeps power affordable.","source":"Inclusive Abundance / Blue Rose Research, May 13–23, 2026: 68% support an all-of-the-above mix, including wind, solar, natural gas, and nuclear. 44% had never heard the phrase.","c":3},{"id":"e3","name":"Build more nuclear plants","y":74,"x":76,"summary":"The belief is that the country should build more nuclear plants.","source":"Pew Research Center, April–May 2025: 59% favor more nuclear plants, up from 43% in 2020. Gallup, March 2025: 61% favor the use of nuclear energy.","c":3},{"id":"e4","name":"Put wind and solar ahead of oil, gas, and coal","y":76,"x":28,"summary":"The belief is that wind and solar should come before oil, gas, and coal, even when that costs more.","source":"Pew Research Center, March 16–22, 2026: 57% say prioritize renewables, down from 79% in 2020. Among Republicans the fossil-fuel priority is now 71%, up from the reverse in 2020.","c":3},{"id":"e5","name":"Get to carbon neutral by 2050","y":70,"x":22,"summary":"The belief is that the goal of energy policy is carbon neutrality by 2050.","source":"Pew Research Center, May 13–19, 2024: 63% support the U.S. taking steps to become carbon neutral by 2050. Fewer call getting to net zero very important than call keeping costs low very important.","c":3},{"id":"e6","name":"No new plant in my neighborhood","y":68,"x":16,"summary":"The belief is that a plant the country says it wants still should not be built near me.","source":"Gallup, March 2–18, 2026: 53% oppose a nuclear plant in their area, even as national support for more emphasis on nuclear is the highest Gallup has measured, at 46%.","c":3},{"id":"e7","name":"I should cut my own carbon use","y":22,"x":20,"summary":"The belief is that each person has a duty to shrink their own carbon use.","source":"Pew Research Center, May 13–19, 2024: 25% say it is extremely or very important to them personally to limit their own carbon footprint.","c":3},{"id":"e8","name":"The government should push wind and solar","y":64,"x":34,"summary":"The belief is that Washington should encourage wind and solar production.","source":"Pew Research Center, March 16–22, 2026: 65% say the federal government should encourage wind and solar production, down from 72% in 2022.","c":3}]},{"id":"healthcare","name":"Healthcare","practical":[{"id":"worry","name":"Publish who cannot afford care","y":86,"x":90,"summary":"Publish how many people are worried they cannot afford care, including insurance and what they pay at the visit. 64% of adults are worried. 30% are very worried.","source":"KFF Health Tracking Poll, April 14–19, 2026.","c":3},{"id":"oop","name":"Cut what people pay out of pocket","y":80,"x":72,"summary":"The change to make first is a lower out-of-pocket bill, not a new network or a new benefit. 46% of insured adults say paying less out of pocket is the most important change. 22% say eliminating prior authorization. 13% say more value. 12% say more choice of providers.","source":"KFF Health Tracking Poll, April 14–19, 2026.","c":3},{"id":"us-cost","name":"Publish satisfaction with the national price","y":74,"x":66,"summary":"Publish whether people are satisfied with the price of care in the country, separate from whether they are satisfied with their own bill. 16% are satisfied with the national cost, the lowest Gallup has recorded since 2001. 57% are satisfied with their own cost. 29% name cost as the most urgent national health problem.","source":"West Health–Gallup, November 3–25, 2025.","c":3}],"structural":[{"id":"transparency","name":"Post the price before the visit","y":76,"x":68,"summary":"A patient sees the price of the visit, the test, or the drug before agreeing to it. 61% say stronger price-transparency rules should be a top priority, and that support shows up in both parties.","source":"KFF Health Tracking Poll, published January 17, 2025.","c":3},{"id":"prior-auth","name":"Limit insurance denials","y":58,"x":60,"summary":"An insurer has to meet a tighter rule before it can deny a treatment or a drug. 55% say regulating those denials should be a top priority. Asked differently, only 22% of insured adults pick ending prior authorization as the change they want most. The bill is the bigger fight.","source":"KFF, January 2025, and KFF Health Tracking Poll, April 14–19, 2026.","c":3},{"id":"negotiate","name":"Let Medicare set more drug prices","y":44,"x":62,"summary":"Medicare negotiates the price of more prescription drugs, instead of paying the sticker price. 55% say expanding that should be a top priority. 28% say rolling it back should be. It is a popular price control. It is not a rule that adds doctors or posts a cash price.","source":"KFF Health Tracking Poll, published January 17, 2025.","c":3}],"cultural":[{"id":"c1","name":"The goal is a medical bill people can pay","y":86,"x":88,"summary":"The belief is that health policy succeeds when people can afford the bill.","source":"KFF Health Tracking Poll, April 14–19, 2026: 64% worry about affording care. West Health–Gallup, November 2025: 16% are satisfied with the national cost.","c":3},{"id":"c2","name":"Show the price before the visit","y":72,"x":82,"summary":"The belief is that a patient should see the price before the visit, the test, or the drug.","source":"KFF, January 2025: 61% say stronger price-transparency rules should be a top priority.","c":3},{"id":"c3","name":"The government should guarantee everyone's coverage","y":76,"x":16,"summary":"The belief is that the federal government is responsible for making sure everyone has coverage.","source":"West Health–Gallup, November 3–25, 2025: 64% say it is the federal government's responsibility to ensure all Americans have coverage.","c":3},{"id":"c4","name":"My own bill is fine. The system is not","y":34,"x":58,"summary":"The belief is that one's own doctor and one's own bill are acceptable, and the national system is the problem.","source":"West Health–Gallup, November 2025: 57% are satisfied with their own costs, 16% with the cost of care in the country.","c":3}]},{"id":"housing","name":"Housing","practical":[{"id":"bad-time","name":"Publish whether a family can buy","y":82,"x":88,"summary":"Publish, for a given place, whether now is a time a family can buy a house. 67% of adults say now is a bad time to buy. It is the fifth straight year a majority has said that. 65% expect prices in their area to rise over the next year.","source":"Gallup, reported April 28, 2026.","c":3},{"id":"will-buy","name":"Count who still expects to buy","y":78,"x":64,"summary":"Count how many people who do not own a home still expect to buy one within five years. 25% do, the lowest Gallup has measured since 2013. Among non-owners 18 to 34, 29% expect to buy in five years, down from 57% in 2013–2015.","source":"Gallup, reported April 28, 2026.","c":3},{"id":"starter","name":"Measure demand for a starter home","y":80,"x":70,"summary":"Ask whether the community wants more starter homes a family can own, and publish the answer. 52% say more affordably priced starter homes are extremely or very important where they live. 81% say at least somewhat important.","source":"AEI Housing Center, Zoning and Land Use Flexibility Survey, May 2026.","c":3},{"id":"own-vs-rent","name":"Homes to own, not small rentals","y":76,"x":58,"summary":"When more housing is proposed, ask whether people want homes they can own or smaller rentals, and build to that answer. 57% want affordably priced starter homes, especially homes people can own. 4.6% choose smaller rentals such as studios.","source":"AEI Housing Center, May 2026.","c":3}],"structural":[{"id":"fast-permit","name":"A deadline on housing permits","y":84,"x":82,"summary":"A housing permit gets a deadline. The city has to say yes or no by that date. 86% support requiring governments to decide building permits faster.","source":"Pew Charitable Trusts, survey published November 30, 2023. AEI Housing Center, May 2026, found the same reforms still broadly supported.","c":3},{"id":"near-jobs","name":"Allow apartments near jobs and transit","y":78,"x":78,"summary":"Allow apartment buildings near train stations, bus stations, job centers, stores, and offices. 81% support apartments near transit or jobs. A 2026 re-ask found 80%.","source":"Pew Charitable Trusts, 2023. AEI Housing Center, May 2026.","c":3},{"id":"adu","name":"Allow a backyard apartment","y":70,"x":72,"summary":"Let an owner add an apartment over a garage, in a backyard, or in a basement. 72% support a garage or backyard apartment. 73% support converting a basement or attic.","source":"Pew Charitable Trusts, 2023. AEI Housing Center, May 2026.","c":3},{"id":"parking","name":"Let the builder decide the parking","y":64,"x":64,"summary":"The builder decides how many off-street parking spaces a new home needs. The city does not set a minimum. 62% support that. A 2026 re-ask found 67%.","source":"Pew Charitable Trusts, 2023. AEI Housing Center, May 2026.","c":3},{"id":"townhouse","name":"Allow a townhouse on any lot","y":72,"x":56,"summary":"A residential lot can hold a townhouse or a small multifamily building, not only a detached house. 58% support it. It is a majority, and it is harder than homes near jobs because it touches the existing block.","source":"Pew Charitable Trusts, 2023.","c":3},{"id":"small-lots","name":"Allow smaller lots","y":48,"x":42,"summary":"Allow smaller lots and houses closer together. 49% support it. It does not clear a majority. People will add a home near a job before they will shrink the yard.","source":"Pew Charitable Trusts, 2023.","c":3}],"cultural":[{"id":"h1","name":"New homes should be starter homes people can own","y":82,"x":88,"summary":"The belief is that if a neighborhood adds homes, they should be starter homes a family can own, not small rentals.","source":"AEI Housing Center, May 2026: 57% prefer affordably priced starter homes people can own. 4.6% prefer smaller rentals.","c":3},{"id":"h2","name":"My town needs more starter homes","y":74,"x":80,"summary":"The belief is that this community needs more affordably priced starter homes.","source":"AEI Housing Center, May 2026: 52% say more affordably priced starter homes are extremely or very important where they live. 81% say at least somewhat important.","c":3},{"id":"h3","name":"Houses should be bigger and farther apart","y":70,"x":26,"summary":"The belief is that the good neighborhood is bigger houses farther apart, even if the store is miles away.","source":"Pew Research Center, January 20–26, 2026: 55% prefer larger houses farther apart, even if stores are miles away. 44% prefer smaller houses closer together.","c":3},{"id":"h4","name":"A family should still be able to buy a house","y":78,"x":86,"summary":"The belief is that buying a house should still be possible for a family that does not own one.","source":"Gallup, reported April 28, 2026: 67% say it is a bad time to buy, and only 25% of non-owners expect to buy within five years.","c":3},{"id":"h5","name":"Don't change the houses already on my block","y":64,"x":20,"summary":"The belief is that new housing should not change the detached houses already on the block.","source":"Pew Charitable Trusts, 2023: apartments near jobs draw 81%, while townhouses on any residential lot draw 58% and smaller lots draw 49%. The block is where support thins.","c":3}]},{"id":"social-security","name":"Social Security","practical":[{"id":"dont-cut-num","name":"Ask if the Social Security check should be cut","y":70,"x":88,"summary":"Ask whether Social Security benefits should be reduced, kept, or expanded, and publish the answer. 79% say benefits should not be reduced in any way. 38% want the program kept as it is. 40% want it to cover more people with greater benefits.","source":"Pew Research Center, 2024 survey, reported May 20, 2025.","c":3},{"id":"expect-cut","name":"Publish whether workers expect a cut","y":76,"x":64,"summary":"Publish what workers think will actually happen to the check, separate from what they want. 70% expect benefits to be cut. 30% believe the program will not exist when they retire. 58% say younger workers get a worse deal than today's retirees. 62% say Congress has mostly broken its promises.","source":"Cato Institute, survey report published December 15, 2025.","c":3}],"structural":[{"id":"no-cut","name":"Don't cut the Social Security check","y":24,"x":78,"summary":"Do not cut benefits for current retirees or for future ones. 77% oppose cuts for both. 67% oppose cuts even if they fall only on future retirees. This would pass. It does not pay for the program.","source":"Cato Institute, published December 15, 2025. Pew Research Center, 2024: 79% say benefits should not be reduced.","c":3},{"id":"age-70","name":"Raise the retirement age to 70","y":62,"x":28,"summary":"Gradually raise the age for full Social Security benefits to 70. 65% oppose it. Democrats and Republicans oppose it at similar rates, 67% and 64%. It would change what the program costs. It is not a near-term vote.","source":"Cato Institute, published December 15, 2025.","c":3},{"id":"need-only","name":"Pay Social Security only to people who need it","y":40,"x":24,"summary":"Pay Social Security only to seniors who need the money, instead of to everyone who paid in. 67% oppose that. Republicans and Democrats oppose it at similar rates.","source":"Cato Institute, published December 15, 2025.","c":3}],"cultural":[{"id":"s1","name":"Don't reduce the Social Security check","y":82,"x":22,"summary":"The belief is that the Social Security check should not be reduced for anyone.","source":"Pew Research Center, 2024: 79% say benefits should not be reduced in any way. Cato, 2025: 77% oppose cuts for current and future retirees.","c":3},{"id":"s2","name":"Younger workers are getting a worse deal","y":68,"x":76,"summary":"The belief is that today's workers pay in more than they will get back, and that is the problem to fix.","source":"Cato Institute, published December 15, 2025: 58% say younger workers get a worse deal than today's retirees. 53% of adults under 30 say younger workers should be protected from higher taxes even if that reduces benefits for current retirees. 89% of adults 65 and older say the opposite.","c":3},{"id":"s3","name":"Congress has not kept the Social Security promise","y":40,"x":64,"summary":"The belief is that Congress already broke the deal it made with workers.","source":"Cato Institute, published December 15, 2025: 62% say Congress has mostly broken its promises in managing Social Security.","c":3},{"id":"s4","name":"Social Security will not be there for me","y":48,"x":30,"summary":"The belief is that the program will be gone, or sharply cut, by the time today's workers retire.","source":"Cato Institute, published December 15, 2025: 30% believe Social Security will not exist when they retire. 70% expect benefits to be cut.","c":3}]},{"id":"taxes","name":"Taxes","practical":[{"id":"too-high","name":"Ask if the income tax is too high","y":84,"x":86,"summary":"Ask whether the federal income tax a household pays is too high, about right, or too low, and publish it by income. 59% say too high. 37% say about right. 3% say too low. It is 63% among lower-income households, 58% among middle-income, and 59% among upper-income.","source":"Gallup, March 2–18, 2026.","c":3},{"id":"fair","name":"Ask if the income tax is fair","y":60,"x":70,"summary":"Ask whether the income tax owed this year feels fair, separate from whether it feels high. 47% say it is fair, near the low of 45% in 1999.","source":"Gallup, March 2–18, 2026.","c":3}],"structural":[{"id":"lower","name":"Cut the federal income tax","y":74,"x":62,"summary":"Cut the federal income tax. 59% already say it is too high, including 60% of Republicans, 64% of independents, and 49% of Democrats. That is support for a lighter tax, not a vote for a specific bill.","source":"Gallup, March 2–18, 2026.","c":3}],"cultural":[{"id":"x1","name":"The federal income tax is too high","y":80,"x":86,"summary":"The belief is that the federal income tax a household pays is too high.","source":"Gallup, March 2–18, 2026: 59% say too high, 37% about right, 3% too low.","c":3},{"id":"x2","name":"The income tax I pay is fair","y":48,"x":30,"summary":"The belief is that the income tax on this year's return is a fair bill.","source":"Gallup, March 2–18, 2026: 47% say the income tax they will pay this year is fair, close to the 1999 low.","c":3},{"id":"x3","name":"Only high earners think the tax is too high","y":24,"x":16,"summary":"The belief is that complaints about taxes come from high earners. They do not.","source":"Gallup, March 2–18, 2026: 63% of lower-income, 58% of middle-income, and 59% of upper-income households say their federal income tax is too high.","c":3}]},{"id":"transportation","name":"Transportation","practical":[{"id":"gas-worry","name":"Publish the cost of getting around","y":84,"x":86,"summary":"Publish how many households are worried they cannot afford gas and the rest of getting around. 64% are worried, tied with health care as the top financial worry in this poll. In January 2026, before the conflict with Iran, gas ranked at the bottom.","source":"KFF Health Tracking Poll, April 14–19, 2026.","c":3},{"id":"ev-consider","name":"Count who would buy an electric car","y":70,"x":62,"summary":"Count how many people would actually consider an electric vehicle for their next car. 29% would, down from 38% in 2023. 43% would consider a hybrid. A sales mandate assumes a buyer this number does not show.","source":"Pew Research Center, May 13–19, 2024.","c":3}],"structural":[{"id":"ev-rule","name":"Repeal the electric-vehicle sales mandate","y":72,"x":64,"summary":"Repeal the rule that electric vehicles must be at least half of new cars and trucks sold by 2032. 58% oppose that rule. Republican opposition is 83%. Among Democrats, 64% support it and 35% oppose it.","source":"Pew Research Center, May 13–19, 2024.","c":3}],"cultural":[{"id":"t1","name":"Getting around should be something a household can afford","y":84,"x":88,"summary":"The belief is that a household should be able to afford the gas and the trip.","source":"KFF Health Tracking Poll, April 14–19, 2026: 64% worry about affording gas and transportation.","c":3},{"id":"t2","name":"The government should pick the kind of car that is sold","y":70,"x":18,"summary":"The belief is that the government should decide what kind of car gets sold.","source":"Pew Research Center, May 13–19, 2024: 58% oppose requiring electric vehicles to be at least half of new sales by 2032. Only 29% would consider buying one.","c":3},{"id":"t3","name":"People will choose an electric car if you offer one","y":28,"x":60,"summary":"The belief is that offering an electric car is enough, and people will choose it.","source":"Pew Research Center, May 13–19, 2024: 29% would consider an electric vehicle, down 9 points in a year. The preference is real and small. It does not carry the policy.","c":3}]}]};
+const LENSES = [
+  { id: "practical", label: "Practical", caption: "Metrics, standards, and resources.", color: "#F97316" },
+  { id: "structural", label: "Structural", caption: "Rules, incentives, and decisions.", color: "#DC2626" },
+  { id: "cultural", label: "Cultural", caption: "Goals, beliefs, and values.", color: "#7F1D1D" },
+];
+const MATRIX = {
+  practical: {
+    yh: "High performing", yl: "Low performing", xl: "Not useful", xh: "Used often", xp: "Used often", yp: "Performance",
+    quads: [
+      ["Find a use", "Performs. Rarely used.", "top-3 left-3 text-left"],
+      ["Invest most here", "Performs. Used often.", "top-3 right-3 text-right"],
+      ["Avoid", "Low performance. Not useful.", "bottom-3 left-3 text-left"],
+      ["Spend little", "Useful. Doesn't perform.", "bottom-3 right-3 text-right"],
+    ],
+  },
+  structural: {
+    yh: "High impact", yl: "Little impact", xl: "Hard to pass", xh: "Likely to pass", xp: "Likely to pass", yp: "Cost & quality",
+    quads: [
+      ["Long-term campaigns", "Hard to pass, high impact", "top-3 left-3 text-left"],
+      ["Pass this legislation now", "Likely to pass, high impact", "top-3 right-3 text-right"],
+      ["Ignore these", "Hard to pass, little impact", "bottom-3 left-3 text-left"],
+      ["Short-term campaigns", "Likely to pass, little impact", "bottom-3 right-3 text-right"],
+    ],
+  },
+  cultural: {
+    yh: "Drives change", yl: "Doesn't drive change", xl: "Not aligned", xh: "Aligned", xp: "Aligned", yp: "Drives change",
+    quads: [
+      ["Run persuasion and messaging campaigns", "Not aligned. It still drives the outcome.", "top-3 left-3 text-left"],
+      ["Run public campaigns", "Aligned, and it drives change.", "top-3 right-3 text-right"],
+      ["Avoid these", "Not aligned. Doesn't change anything.", "bottom-3 left-3 text-left"],
+      ["Appeal to adjacent high-leverage beliefs", "Aligned. This value doesn't move much.", "bottom-3 right-3 text-right"],
+    ],
+  },
+};
+function theory(item, lens) {
+  if (lens !== "cultural") return item.summary;
+  const drives = item.y >= 50, aligned = item.x >= 50;
+  let action;
+  if (drives && aligned) action = "That belief lines up with lower costs, freer markets, and limited government, and it changes the outcome. Run public campaigns.";
+  else if (drives && !aligned) action = "That belief is not on our side, and it still changes the outcome. Run persuasion and messaging campaigns.";
+  else if (!drives && aligned) action = "People who hold this agree with you, but the belief itself does not move much. Appeal to a nearby belief that does.";
+  else action = "People who hold this do not agree, and it does not change the outcome. Leave it alone.";
+  return item.summary ? item.summary + " " + action : action;
+}
+function fold(s) { return String(s || "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim(); }
+function areaBy(id) { return DATA.areas.find((a) => a.id === id) || DATA.areas[0]; }
+function items(area, lens) { return area[lens]; }
+function spread(list) {
+  const pts = list.map((p) => ({ id: p.id, x: p.x, y: p.y }));
+  for (let pass = 0; pass < 4; pass++) {
+    for (let i = 0; i < pts.length; i++) {
+      for (let j = 0; j < i; j++) {
+        const dx = pts[i].x - pts[j].x, dy = pts[i].y - pts[j].y;
+        const d = Math.hypot(dx, dy) || 0.2;
+        if (d >= 8) continue;
+        const push = (8 - d) / 2;
+        pts[i].x += (dx / d) * push; pts[i].y += (dy / d) * push;
+        pts[j].x -= (dx / d) * push; pts[j].y -= (dy / d) * push;
+      }
+    }
+  }
+  const out = {};
+  pts.forEach((p) => { out[p.id] = { x: Math.min(97, Math.max(3, p.x)), y: Math.min(97, Math.max(3, p.y)) }; });
+  return out;
+}
+const params = new URLSearchParams(location.search);
+let areaId = DATA.areas.some((a) => a.id === params.get("area")) ? params.get("area") : "energy";
+let lens = LENSES.some((l) => l.id === params.get("lens")) ? params.get("lens") : "practical";
+let selected = null;
+let query = "";
+let openHits = false;
+let activeHit = 0;
+
+const areaEl = document.getElementById("area");
+const lensesEl = document.getElementById("lenses");
+const qEl = document.getElementById("q");
+const hitsEl = document.getElementById("hits");
+const clearEl = document.getElementById("clear");
+
+DATA.areas.forEach((a) => {
+  const o = document.createElement("option");
+  o.value = a.id; o.textContent = a.name;
+  areaEl.appendChild(o);
+});
+LENSES.forEach((l) => {
+  const b = document.createElement("button");
+  b.type = "button";
+  b.dataset.lens = l.id;
+  b.textContent = l.label;
+  b.className = "rounded-full border px-4 py-2 text-sm font-medium";
+  b.onclick = () => { lens = l.id; selected = null; sync(); };
+  lensesEl.appendChild(b);
+});
+areaEl.onchange = () => { areaId = areaEl.value; selected = null; sync(); };
+qEl.oninput = () => { query = qEl.value; openHits = true; activeHit = 0; renderHits(); paintMatrix(); };
+qEl.onfocus = () => { openHits = true; renderHits(); };
+qEl.onkeydown = (e) => {
+  const hits = search();
+  if (e.key === "ArrowDown") { e.preventDefault(); openHits = true; activeHit = Math.min(activeHit + 1, Math.max(hits.length - 1, 0)); renderHits(); }
+  else if (e.key === "ArrowUp") { e.preventDefault(); activeHit = Math.max(activeHit - 1, 0); renderHits(); }
+  else if (e.key === "Enter" && openHits && hits[activeHit]) { e.preventDefault(); pick(hits[activeHit]); }
+  else if (e.key === "Escape") { openHits = false; renderHits(); }
+};
+clearEl.onclick = () => { query = ""; qEl.value = ""; openHits = false; renderHits(); paintMatrix(); };
+document.addEventListener("mousedown", (e) => {
+  if (!qEl.parentElement.contains(e.target)) { openHits = false; renderHits(); }
+  if (!document.getElementById("menu-toggle").parentElement.contains(e.target)) closeMenu();
+});
+
+function catalog() {
+  const rows = [];
+  DATA.areas.forEach((a) => LENSES.forEach((l) => items(a, l.id).forEach((p) => rows.push({ area: a, lens: l.id, item: p }))));
+  return rows;
+}
+const CATALOG = catalog();
+function search() {
+  const tokens = fold(query).split(" ").filter(Boolean);
+  if (!tokens.length) return [];
+  return CATALOG.map((row) => {
+    const name = fold(row.item.name);
+    const hay = name + " " + fold(row.item.summary) + " " + fold(row.area.name);
+    if (!tokens.every((t) => hay.includes(t))) return null;
+    let score = 0;
+    const joined = tokens.join(" ");
+    if (name.includes(joined)) score += 80;
+    if (name.startsWith(joined)) score += 40;
+    if (row.area.id === areaId) score += 25;
+    if (row.lens === lens) score += 10;
+    return { row, score };
+  }).filter(Boolean).sort((a, b) => b.score - a.score || a.row.item.name.localeCompare(b.row.item.name)).slice(0, 8).map((r) => r.row);
+}
+function pick(row) {
+  areaId = row.area.id;
+  lens = row.lens;
+  selected = row.item.id;
+  query = row.item.name;
+  qEl.value = query;
+  openHits = false;
+  sync();
+}
+function renderHits() {
+  const hits = search();
+  clearEl.classList.toggle("hidden", !query);
+  clearEl.classList.toggle("flex", !!query);
+  if (!openHits || !fold(query)) { hitsEl.classList.add("hidden"); hitsEl.innerHTML = ""; return; }
+  hitsEl.classList.remove("hidden");
+  if (!hits.length) { hitsEl.innerHTML = '<li class="px-3 py-2.5 text-sm" style="color:var(--muted)">Nothing matches.</li>'; return; }
+  hitsEl.innerHTML = hits.map((row, i) => {
+    const label = LENSES.find((l) => l.id === row.lens).label + (row.area.id !== areaId ? " · " + row.area.name : "");
+    return '<li><button type="button" data-i="' + i + '" class="flex w-full flex-col items-start gap-0.5 px-3 py-2.5 text-left ' + (i === activeHit ? "bg-slate-50" : "") + '"><span class="text-sm font-medium">' + esc(row.item.name) + '</span><span class="text-[11px] tracking-wide" style="color:var(--muted)">' + esc(label) + "</span></button></li>";
+  }).join("");
+  hitsEl.querySelectorAll("button").forEach((b) => {
+    b.onmouseenter = () => { activeHit = Number(b.dataset.i); };
+    b.onclick = () => pick(hits[Number(b.dataset.i)]);
+  });
+}
+function esc(s) {
+  return String(s).replace(/[&<>"]/g, (c) => c === "&" ? "\u0026amp;" : c === "<" ? "\u0026lt;" : c === ">" ? "\u0026gt;" : "\u0026quot;");
+}
+function sync() {
+  const url = new URL(location.href);
+  url.searchParams.set("area", areaId);
+  url.searchParams.set("lens", lens);
+  history.replaceState(null, "", url);
+  areaEl.value = areaId;
+  document.querySelectorAll("#lenses button").forEach((b) => {
+    const on = b.dataset.lens === lens;
+    b.style.background = on ? "#1A1A1A" : "#fff";
+    b.style.color = on ? "#fff" : "#64748B";
+    b.style.borderColor = on ? "#1A1A1A" : "#E2E8F0";
+  });
+  const bar = document.getElementById("bar");
+  bar.innerHTML = LENSES.map((l) => '<div class="h-full flex-1" style="background:' + l.color + (l.id === lens ? "" : "40") + '"></div>').join("");
+  document.getElementById("caption").textContent = LENSES.find((l) => l.id === lens).caption;
+  const list = items(areaBy(areaId), lens);
+  if (!selected || !list.some((p) => p.id === selected)) selected = list[0] ? list[0].id : null;
+  renderHits();
+  paintMatrix();
+  paintDetail();
+}
+function paintMatrix() {
+  const area = areaBy(areaId);
+  const list = items(area, lens);
+  const cfg = MATRIX[lens];
+  const pos = spread(list);
+  const tokens = fold(query);
+  const matchIds = tokens ? new Set(search().filter((r) => r.area.id === areaId && r.lens === lens).map((r) => r.item.id)) : null;
+  const quads = cfg.quads.map((q) => '<div class="pointer-events-none absolute z-0 max-w-36 ' + q[2] + '"><div class="text-xs font-semibold" style="color:rgba(26,26,26,.55)">' + esc(q[0]) + '</div><div class="text-[11px] leading-snug" style="color:var(--muted)">' + esc(q[1]) + "</div></div>").join("");
+  const dots = list.map((p) => {
+    const place = pos[p.id];
+    const on = p.id === selected;
+    const matched = matchIds ? matchIds.has(p.id) : false;
+    const dim = matchIds && matchIds.size > 0 && !matched && !on;
+    const show = on || (matched && matchIds.size <= 4);
+    const side = place.x > 58 ? "right:1.25rem" : "left:1.25rem";
+    return '<button type="button" data-id="' + esc(p.id) + '" class="absolute flex -translate-x-1/2 translate-y-1/2 items-center" style="left:' + place.x + "%;bottom:" + place.y + "%;opacity:" + (dim ? ".25" : "1") + ";z-index:" + (on || matched ? 20 : 10) + '" aria-label="' + esc(p.name) + '"><span class="block h-3.5 w-3.5 rounded-full border-2" style="border-color:' + (on || matched ? "var(--ember)" : "var(--charcoal)") + ";background:" + (on ? "var(--ember)" : matched ? "rgba(196,92,38,.3)" : "#fff") + '"></span>' + (show ? '<span class="absolute top-1/2 max-w-52 -translate-y-1/2 rounded-md bg-white/95 px-1.5 py-0.5 text-xs leading-snug ' + (on ? "font-semibold" : "font-medium") + '" style="' + side + ";color:" + (on ? "var(--ember)" : "var(--charcoal)") + '">' + esc(p.name) + "</span>" : "") + "</button>";
+  }).join("");
+  document.getElementById("matrix").innerHTML =
+    '<div class="flex items-stretch gap-2 sm:gap-3"><div class="flex w-24 shrink-0 flex-col text-right text-[11px] font-medium leading-tight sm:w-28 sm:text-xs" style="color:var(--muted)"><div class="flex flex-1 items-center justify-end">' + esc(cfg.yh) + '</div><div class="flex flex-1 items-center justify-end">' + esc(cfg.yl) + "</div></div>" +
+    '<div class="relative min-h-80 w-full flex-1 overflow-hidden rounded-2xl border sm:min-h-[28rem]" style="border-color:var(--border);background:var(--surface)">' + quads +
+    '<div class="pointer-events-none absolute inset-y-10 left-1/2 w-px" style="background:var(--border)"></div><div class="pointer-events-none absolute inset-x-10 top-1/2 h-px" style="background:var(--border)"></div>' +
+    '<div class="absolute inset-10">' + dots + "</div></div></div>" +
+    '<div class="mt-2 flex gap-2 sm:gap-3"><div class="w-24 shrink-0 sm:w-28"></div><div class="flex min-w-0 flex-1 justify-between gap-3 text-[11px] font-medium sm:text-xs" style="color:var(--muted)"><span>' + esc(cfg.xl) + "</span><span>" + esc(cfg.xh) + "</span></div></div>";
+  document.querySelectorAll("#matrix button").forEach((b) => { b.onclick = () => { selected = b.dataset.id; paintMatrix(); paintDetail(); }; });
+}
+function paintDetail() {
+  const area = areaBy(areaId);
+  const item = items(area, lens).find((p) => p.id === selected);
+  const cfg = MATRIX[lens];
+  const el = document.getElementById("detail");
+  if (!item) { el.innerHTML = ""; return; }
+  const level = item.c || 1;
+  const bars = level === 3 ? 5 : level === 2 ? 3 : 1;
+  const label = level === 3 ? "High" : level === 2 ? "Medium" : "Low";
+  const note = level === 3
+    ? "National opinion, in the aggregate. Not a forecast of a particular vote."
+    : level === 2
+      ? "Direction from conversations. Not a national count."
+      : "A sketch. Not yet replaced by opinion research.";
+  el.innerHTML =
+    '<h2 class="display text-2xl">' + esc(item.name) + "</h2>" +
+    '<div class="mt-3 flex flex-wrap gap-2"><span class="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs" style="background:var(--surface);color:var(--muted)">' + esc(cfg.yp) + ' <span class="font-semibold" style="color:var(--ember)">' + item.y + '%</span></span>' +
+    '<span class="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs" style="background:var(--surface);color:var(--muted)">' + esc(cfg.xp) + ' <span class="font-semibold" style="color:var(--ember)">' + item.x + '%</span></span></div>' +
+    '<div class="mt-5"><div class="text-[11px] tracking-widest uppercase" style="color:var(--muted)">Theory</div><p class="mt-2 text-sm leading-relaxed" style="color:var(--muted)">' + esc(theory(item, lens)) + "</p>" + (item.source ? '<p class="mt-2 text-xs leading-relaxed" style="color:var(--muted)">' + esc(item.source) + "</p>" : "") + "</div>" +
+    '<div class="mt-5 border-t pt-5" style="border-color:var(--border)"><div class="text-[11px] tracking-widest uppercase" style="color:var(--muted)">Confidence</div>' +
+    '<div class="mt-2 flex items-center gap-3"><span class="inline-flex gap-1">' + [1,2,3,4,5].map((n) => '<span class="h-2 w-5 rounded-sm" style="background:' + (n <= bars ? "var(--ember)" : "var(--border)") + '"></span>').join("") + '</span><span class="text-sm font-medium">' + label + '</span></div>' +
+    '<p class="mt-2 text-sm leading-relaxed" style="color:var(--muted)">' + note + '</p>' +
+    '<a href="project.html" class="mt-4 inline-flex rounded-xl px-5 py-2.5 text-sm font-medium text-white" style="background:var(--charcoal)">Let\'s work together</a></div>';
+}
+function toggleMenu() {
+  const m = document.getElementById("mobile-menu");
+  const open = m.classList.toggle("open");
+  document.getElementById("menu-icon").classList.toggle("hidden", open);
+  document.getElementById("close-icon").classList.toggle("hidden", !open);
+}
+function closeMenu() {
+  document.getElementById("mobile-menu").classList.remove("open");
+  document.getElementById("menu-icon").classList.remove("hidden");
+  document.getElementById("close-icon").classList.add("hidden");
+}
+sync();
+</script>
+</body>
+</html>

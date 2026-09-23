@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Client portal · Junto Nova</title>
+<link rel="icon" type="image/png" sizes="32x32" href="https://juntonova.com/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="https://juntonova.com/favicon-180.png">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@600;700&display=swap">
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script src="https://accounts.google.com/gsi/client" async onload="window.onGsi && window.onGsi()"></script>
+<style>
+:root{--charcoal:#1a1a1a;--ember:#c45c26;--muted:#64748b;--border:#e2e8f0;--surface:#f8fafc;--ok:#166534;--ok-bg:#ecfdf3;--warn:#92400e;--warn-bg:#fff7ed}
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:Inter,system-ui,sans-serif;color:var(--charcoal);background:#fff;min-height:100vh;display:flex;flex-direction:column}
+#app{flex:1;display:flex;flex-direction:column}
+#mobile-menu{display:none}#mobile-menu.open{display:block}
+.portal-tools{border-bottom:1px solid var(--border)}
+.portal-tools .row{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:.9rem 0;flex-wrap:wrap}
+a{color:inherit;text-decoration:none}
+.display{font-family:"Playfair Display",Georgia,serif;font-weight:700;letter-spacing:-.02em}
+.bar{background:#1A1A1A;color:#fff;font-size:11px;letter-spacing:.08em;text-align:center;padding:6px 12px}
+.wrap{max-width:64rem;margin:0 auto;padding:0 1.5rem}
+header.app{border-bottom:1px solid var(--border)}
+header.app .row{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:1.1rem 0;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:.75rem}
+.brand img{width:40px;height:46px;display:block}
+.brand span{font-size:1.35rem}
+nav.tabs{display:flex;gap:.35rem;flex-wrap:wrap}
+nav.tabs button{padding:.45rem .8rem;border-radius:.7rem;font-size:.875rem;font-weight:500;color:var(--muted);background:none;border:0;cursor:pointer;font-family:inherit}
+nav.tabs button.active,nav.tabs button:hover{background:var(--surface);color:var(--charcoal)}
+.who{font-size:.8rem;color:var(--muted);text-align:right}
+.who b{color:var(--charcoal)}
+.who button{background:none;border:0;padding:0;font:inherit;text-decoration:underline;text-underline-offset:2px;cursor:pointer;color:inherit}
+main{padding:2.25rem 0 4rem}
+.kicker{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:.6rem}
+h1{font-size:2rem;margin:0 0 .5rem}
+.grid{display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(16rem,1fr))}
+.card{border:1px solid var(--border);border-radius:1rem;padding:1.25rem 1.2rem}
+.muted{color:var(--muted);font-size:.92rem;line-height:1.6}
+.stat{font-family:"Playfair Display",Georgia,serif;font-size:1.8rem;color:var(--ember)}
+table{width:100%;border-collapse:collapse;font-size:.92rem}
+th{text-align:left;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:.55rem .4rem;border-bottom:1px solid var(--border)}
+td{padding:.85rem .4rem;border-bottom:1px solid var(--border);vertical-align:top}
+.pill{display:inline-block;font-size:.72rem;font-weight:600;padding:.2rem .5rem;border-radius:999px;background:var(--surface);color:var(--muted)}
+.pill.open{background:var(--warn-bg);color:var(--warn)}
+.pill.paid{background:var(--ok-bg);color:var(--ok)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;padding:.55rem .95rem;border-radius:.7rem;font-size:.875rem;font-weight:500;border:1px solid var(--charcoal);background:var(--charcoal);color:#fff;cursor:pointer;font-family:inherit}
+.btn.ghost{background:transparent;color:var(--charcoal);border-color:var(--border)}
+.btn.google{width:100%;background:#fff;color:var(--charcoal);border-color:var(--border);padding:.7rem 1rem}
+.btn.google:hover{background:var(--surface)}
+.login-shell{min-height:70vh;display:grid;place-items:center}
+.login-card{width:min(24rem,100%)}
+.err{color:#9f1239;background:#fff1f2;border-radius:.6rem;padding:.6rem .75rem;font-size:.85rem;margin-bottom:.75rem}
+.form{display:grid;gap:.75rem;margin:1rem 0 1.25rem}
+.form label{display:grid;gap:.3rem;font-size:.8rem;color:var(--muted)}
+.form input,.form select,.form textarea{border:1px solid var(--border);border-radius:.7rem;padding:.65rem .8rem;font:inherit;color:var(--charcoal);background:#fff;width:100%}
+.form input[type=file]{padding:.45rem .6rem}
+.form .row2{display:grid;gap:.75rem;grid-template-columns:1fr 1fr}
+@media(max-width:640px){.form .row2{grid-template-columns:1fr}}
+.check{display:flex;align-items:center;gap:.5rem;font-size:.9rem;color:var(--charcoal)}
+.file-meta{font-size:.8rem;color:var(--muted)}
+.preview-bar{background:#fff7ed;color:#92400e;font-size:.8rem;text-align:center;padding:.45rem 1rem}
+.preview-bar button{background:none;border:0;font:inherit;color:inherit;text-decoration:underline;cursor:pointer}
+footer{border-top:1px solid var(--border);color:var(--muted);font-size:.85rem}
+footer .row{display:flex;justify-content:space-between;gap:1rem;padding:1.5rem 0;flex-wrap:wrap}
+#google-btn{display:flex;justify-content:center;min-height:44px}
+</style>
+</head>
+<body>
+<header class="border-b relative" style="border-color:var(--border);background:#fff">
+<div class="max-w-5xl mx-auto px-6 py-5 flex items-center justify-between">
+<a href="index.html" class="flex items-center gap-3 hover:opacity-80 transition" style="color:var(--charcoal)"><img src="https://juntonova.com/jn-header.png" alt="Junto Nova" width="40" height="46" style="display:block" /><span class="display text-2xl tracking-tight">JUNTO NOVA</span></a>
+<div class="relative">
+<button id="menu-toggle" onclick="toggleMenu()" class="p-2 -mr-2 focus:outline-none" style="color:var(--muted)" aria-label="Open menu">
+<svg id="menu-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+<svg id="close-icon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+</button>
+<div id="mobile-menu" class="absolute top-full right-0 mt-2 w-72 rounded-xl border shadow-lg z-50" style="background:#fff;border-color:var(--border)">
+<div class="px-2 py-2 flex flex-col gap-0.5">
+<a href="index.html#about" onclick="closeMenu()" class="block text-left py-3 px-2 rounded-lg hover:bg-slate-50" style="color:var(--charcoal)">About Us</a>
+<a href="index.html#costs" onclick="closeMenu()" class="block text-left py-3 px-2 rounded-lg hover:bg-slate-50" style="color:var(--charcoal)">Cost Drivers</a>
+<a href="index.html#share" onclick="closeMenu()" class="block text-left py-3 px-2 rounded-lg hover:bg-slate-50" style="color:var(--charcoal)">Your Share</a>
+<a href="issues.html" class="block text-left py-3 px-2 rounded-lg hover:bg-slate-50" style="color:var(--charcoal)">Issues</a>
+<a href="project.html" class="block text-left py-3 px-2 rounded-lg hover:bg-slate-50" style="color:var(--charcoal)">Let's work together</a>
+<a href="portal.html" class="block text-left py-3 px-2 rounded-lg mt-1 font-medium" style="background:#1A1A1A;color:#fff">Client login</a>
+</div></div></div></div></header>
+<div id="preview-host"></div>
+<div id="app"></div>
+<footer class="jn-foot" style="border-top:1px solid #E2E8F0">
+<style>.jn-foot a{color:inherit;text-decoration:none}.jn-foot a:hover{opacity:.7}</style>
+<div style="max-width:64rem;margin:0 auto;padding:2rem 1.5rem;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:1rem;font-size:.875rem;color:#64748B">
+<div><div class="display" style="font-size:1.125rem;color:#1A1A1A">JUNTO NOVA</div><div style="font-size:.75rem;margin-top:.25rem">Junto Nova LLC · Dallas, TX</div></div>
+<div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:1.25rem">
+<a href="mailto:andrew@juntonova.com" aria-label="Email"><i class="fa-solid fa-envelope"></i></a>
+<a href="https://x.com/jandrewclark" target="_blank" rel="noopener" aria-label="X"><i class="fa-brands fa-x-twitter"></i></a>
+<a href="https://juntonova.substack.com" target="_blank" rel="noopener" aria-label="Substack"><i class="fa-solid fa-bookmark"></i></a>
+<a href="ventures.html">Ventures</a>
+<a href="involved.html">Get Involved</a>
+<a href="privacy.html">Privacy</a>
+<span>© 2026</span>
+</div></div></footer>
+<script>
+const GOOGLE_CLIENT_ID = "696574706151-9qjv11se3a3us5k86o2fodtktb4m5r2d.apps.googleusercontent.com";
+const API = "https://mins-reseller-municipal-bishop.trycloudflare.com";
+let token = "";
+let room = null;
+let view = "home";
+let error = "";
+let reading = null;
+try { token = sessionStorage.getItem("jn_google") || ""; } catch (e) {}
+
+function esc(s) {
+  return String(s || "").replace(/[&<>"']/g, function (c) {
+    if (c === "&") return "&" + "amp;";
+    if (c === "<") return "&" + "lt;";
+    if (c === ">") return "&" + "gt;";
+    if (c === '"') return "&" + "quot;";
+    return "&" + "#39;";
+  });
+}
+function logout() {
+  token = "";
+  room = null;
+  try { sessionStorage.removeItem("jn_google"); } catch (e) {}
+  render();
+}
+async function api(body) {
+  const res = await fetch(API + "/api/portal", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Authorization: "Bearer " + token },
+    body: JSON.stringify(body),
+  });
+  const data = await res.json().catch(function () { return { error: "The portal can't be reached." }; });
+  if (res.status === 401) { logout(); throw new Error("Sign in again."); }
+  return data;
+}
+async function refresh() {
+  const data = await api({ action: "load" });
+  if (data.access === "none") { room = null; error = data.email || ""; return; }
+  room = data;
+  error = data.error || "";
+}
+function parseJwt(raw) {
+  const payload = raw.split(".")[1].replace(/-/g, "+").replace(/_/g, "/");
+  return JSON.parse(decodeURIComponent(Array.from(atob(payload)).map(function (c) {
+    return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+  }).join("")));
+}
+function onGoogle(response) {
+  token = response.credential;
+  try { sessionStorage.setItem("jn_google", token); } catch (e) {}
+  error = "";
+  refresh().then(render).catch(function (e) { error = e.message; render(); });
+}
+function initGoogle() {
+  var host = document.getElementById("google-btn");
+  if (!host || host.dataset.ready === "1") return;
+  if (!window.google || !window.google.accounts || !window.google.accounts.id) return;
+  var width = Math.max(200, Math.min(320, (host.parentElement ? host.parentElement.clientWidth : 320) - 8));
+  window.google.accounts.id.initialize({
+    client_id: GOOGLE_CLIENT_ID,
+    callback: onGoogle,
+    ux_mode: "popup",
+    auto_select: false,
+    context: "signin",
+    itp_support: true,
+  });
+  window.google.accounts.id.renderButton(host, {
+    theme: "outline",
+    size: "large",
+    text: "signin_with",
+    shape: "rectangular",
+    logo_alignment: "left",
+    width: width,
+  });
+  host.dataset.ready = "1";
+  var fallback = document.getElementById("google-fallback");
+  if (fallback) fallback.hidden = true;
+}
+function signInGoogle() {
+  if (!window.google || !window.google.accounts) {
+    error = "Sign-in is still loading. Try again in a second.";
+    render();
+    return;
+  }
+  initGoogle();
+  window.google.accounts.id.prompt();
+}
+window.onGsi = initGoogle;
+function docs(section) {
+  return (room.documents || []).filter(function (doc) { return doc.section === section; });
+}
+function layer(person) {
+  const names = { director: "Director", board: "Board", member: "Member", jn: "Junto Nova", admin: "Junto Nova" };
+  const base = names[person.role] || person.role;
+  return person.billing && person.role !== "jn" && person.role !== "admin" ? base + " · Billing" : base;
+}
+function nav() {
+  return ["home", "proposals", "research", "billing", "admin"].map(function (id) {
+    const label = id[0].toUpperCase() + id.slice(1);
+    return '<button class="' + (view === id ? "active" : "") + '" onclick="setView(\'' + id + '\')">' + label + "</button>";
+  }).join("");
+}
+function setView(id) { view = id; reading = null; render(); }
+function table(headers, rows) {
+  const head = headers.map(function (h) { return "<th>" + h + "</th>"; }).join("");
+  const body = rows.length ? rows.map(function (row) {
+    return "<tr>" + row.map(function (cell, i) { return "<td" + (i ? "" : "") + ">" + cell + "</td>"; }).join("") + "</tr>";
+  }).join("") : '<tr><td colspan="' + headers.length + '">Nothing in view.</td></tr>';
+  return "<table><thead><tr>" + head + "</tr></thead><tbody>" + body + "</tbody></table>";
+}
+function docTable(section) {
+  return table(["Item", "Who can see it"], docs(section).map(function (doc) {
+    const who = { clients: "All clients", org: "This organization", director: "Director", board: "Board", billing: "Billing" }[doc.visibility] || doc.visibility;
+    return ['<button onclick="openDoc(\'' + doc.id + '\')"><b>' + esc(doc.title) + "</b></button>", esc(who)];
+  }));
+}
+function offerCard(doc) {
+  const bits = [];
+  if (doc.city) bits.push(esc(doc.city));
+  if (doc.when) bits.push(esc(doc.when));
+  if (doc.cost) bits.push(esc(doc.cost));
+  const link = /^https:\/\/\S+$/i.test(doc.link || "") ? esc(doc.link) : "";
+  return '<article class="card" style="margin-bottom:.75rem"><h2 class="display" style="font-size:1.35rem">' + esc(doc.title) + "</h2>" +
+    (bits.length ? "<p><b>" + bits.join(" · ") + "</b></p>" : "") +
+    (doc.body ? '<p class="muted" style="white-space:pre-wrap">' + esc(doc.body) + "</p>" : "") +
+    (link ? '<p style="margin-top:.75rem"><a class="btn" href="' + link + '" target="_blank" rel="noopener">Fund this</a></p>' : "") +
+    (doc.hasFile ? '<p style="margin-top:.5rem"><button class="btn ghost" type="button" onclick="openDoc(\'' + doc.id + '\')">Open file</button></p>' : "") +
+    "</article>";
+}
+function addForm(section) {
+  if (!room.staff) return "";
+  const offer = section === "proposals" || section === "research";
+  const orgs = Object.keys(room.orgs || {}).map(function (id) {
+    return '<option value="' + esc(id) + '">' + esc(room.orgs[id]) + "</option>";
+  }).join("") + '<option value="new">New organization</option>';
+  const extra = offer
+    ? '<label>City<input id="d-city" placeholder="Phoenix"></label><label>Days it can be done<input id="d-when" placeholder="March 12–14"></label><label>Cost<input id="d-cost" placeholder="$18,500" required></label><label>Link to fund it<input id="d-link" type="url" placeholder="https://"></label>'
+    : "";
+  return '<form class="form" onsubmit="saveDoc(event,\'' + section + '\')"><div class="kicker">' + (offer ? "Add something they can fund" : "Add a document") + '</div><label>' + (offer ? "What" : "Title") + '<input id="d-title" required placeholder="' + (offer ? "Focus group" : "") + '"></label>' + extra + '<label>Who can see it<select id="d-vis" onchange="document.getElementById(\'d-org-wrap\').hidden=this.value===\'clients\'"><option value="clients">All clients</option><option value="org">This organization</option><option value="director">Director</option><option value="board">Board</option><option value="billing">Billing</option></select></label><div id="d-org-wrap" hidden><label>Organization<select id="d-org">' + orgs + '</select></label><label>New organization name<input id="d-org-name" placeholder="Only if you chose New organization"></label></div><label>Comment<textarea id="d-body" rows="4" placeholder="' + (offer ? "What they get, and why it is worth funding." : "") + '"></textarea></label><label>File, if there is one<input id="d-file" type="file"></label><button class="btn" type="submit">' + (offer ? "Post this" : "Save document") + "</button></form>";
+}
+function page() {
+  if (!token) {
+    return '<main class="wrap"><div class="login-shell"><div class="login-card card"><div class="kicker">Client portal</div><h1 class="display" style="font-size:1.8rem">Sign in</h1><p class="muted">Use the Google account you were given.</p>' + (error ? '<div class="err">' + esc(error) + "</div>" : "") + '<div id="google-btn"></div><button type="button" class="btn google" id="google-fallback" onclick="signInGoogle()">Sign in with Google</button></div></div></main>';
+  }
+  if (!room) {
+    return '<main class="wrap"><div class="login-card card"><h1 class="display" style="font-size:1.8rem">This account isn\'t on the list</h1><p class="muted">' + esc(error || "Ask Junto Nova to add this Google account.") + '</p><button class="btn ghost" onclick="logout()">Sign out</button></div></main>';
+  }
+  const org = room.staff ? "All clients" : (room.person.orgName || "Your organization");
+  let main = "";
+  if (view === "home") {
+    main = '<div class="kicker">Workspace</div><h1 class="display">' + esc(org) + '</h1><div class="grid">' +
+      card("Proposals", docs("proposals").length, "proposals") +
+      card("Research", docs("research").length, "research") +
+      card("Billing", room.person.billing || room.staff ? docs("billing").length : "—", "billing") +
+      card("Admin", room.directory ? room.directory.length : 1, "admin") + "</div>";
+  } else if (view === "billing" && !(room.person.billing || room.staff)) {
+    main = '<div class="kicker">' + esc(org) + '</div><h1 class="display">Billing</h1><p class="muted">This login does not have the billing layer.</p>';
+  } else if (view === "admin") {
+    main = admin();
+  } else {
+    const titles = { proposals: "Proposals", research: "Research", billing: "Billing" };
+    const list = view === "proposals" || view === "research" ? (docs(view).map(offerCard).join("") || '<p class="muted">Nothing posted yet.</p>') : docTable(view);
+    main = '<div class="kicker">' + esc(org) + '</div><h1 class="display">' + titles[view] + "</h1>" + list + addForm(view);
+  }
+  if (reading) {
+    var download = "";
+    if (reading.contentB64) {
+      download = '<p style="margin-top:.75rem"><a class="btn" download="' + esc(reading.filename || "document") + '" href="data:' + esc(reading.mime || "application/octet-stream") + ";base64," + reading.contentB64 + '">Download</a></p>';
+    }
+    main += '<article class="card" style="margin-top:1rem"><h2 class="display" style="font-size:1.4rem">' + esc(reading.title) + "</h2><p class=\"muted\" style=\"white-space:pre-wrap\">" + esc(reading.body) + "</p>" + download + "</article>";
+  }
+  return '<div class="portal-tools"><div class="wrap row"><nav class="tabs">' + nav() + '</nav><div class="who"><b>' + esc(room.person.name) + '</b><br>' + esc(room.person.email) + ' · <button onclick="logout()">Sign out</button></div></div></div><main class="wrap">' + (error ? '<div class="err">' + esc(error) + "</div>" : "") + main + "</main>";
+}
+function card(label, n, id) {
+  return '<div class="card"><div class="muted">' + label + '</div><div class="stat">' + n + '</div><button class="btn ghost" onclick="setView(\'' + id + '\')">Open</button></div>';
+}
+function admin() {
+  if (!room.staff) {
+    return '<div class="kicker">' + esc(room.person.orgName || "") + '</div><h1 class="display">Admin</h1><p class="muted">Your access. Junto Nova changes it.</p>' + table(["Person", "Layer"], [[esc(room.person.name), esc(layer(room.person))]]);
+  }
+  const orgs = Object.keys(room.orgs || {}).map(function (id) {
+    return '<option value="' + esc(id) + '">' + esc(room.orgs[id]) + "</option>";
+  }).join("") + '<option value="new">New organization</option>';
+  const rows = (room.directory || []).map(function (person) {
+    return [esc(person.name) + '<div class="file-meta">' + esc(person.email) + "</div>", esc(person.orgId ? room.orgs[person.orgId] : "—"), esc(layer(person)), '<button class="btn ghost" onclick="removePerson(\'' + person.id + '\')">Remove</button>'];
+  });
+  return '<div class="kicker">Junto Nova</div><h1 class="display">Admin</h1><p class="muted">Add a client\'s Google account and what they can see.</p><form class="form" onsubmit="savePerson(event)"><div class="row2"><label>Name<input id="c-name" required></label><label>Email<input id="c-email" type="email" required></label></div><label>Permission layer<select id="c-role"><option value="director">Director</option><option value="board">Board</option><option value="member">Member</option><option value="jn">Junto Nova staff</option></select></label><label>Organization<select id="c-org">' + orgs + '</select></label><label>New organization name<input id="c-org-name" placeholder="Only if you chose New organization"></label><label class="check"><input id="c-bill" type="checkbox"> Billing</label><button class="btn" type="submit">Give access</button></form>' + table(["Client", "Organization", "Layer", ""], rows) + addForm("admin");
+}
+function render() {
+  document.getElementById("app").innerHTML = page();
+  if (!token) initGoogle();
+}
+async function savePerson(event) {
+  event.preventDefault();
+  const data = await api({
+    action: "savePerson",
+    name: document.getElementById("c-name").value,
+    email: document.getElementById("c-email").value,
+    role: document.getElementById("c-role").value,
+    orgId: document.getElementById("c-org").value,
+    orgName: document.getElementById("c-org-name").value,
+    billing: document.getElementById("c-bill").checked,
+  });
+  if (data.error) { error = data.error; render(); return; }
+  room = data; error = ""; render();
+}
+async function removePerson(id) {
+  const data = await api({ action: "removePerson", id: id });
+  if (data.error) { error = data.error; render(); return; }
+  room = data; render();
+}
+async function saveDoc(event, section) {
+  event.preventDefault();
+  const fileEl = document.getElementById("d-file");
+  const file = fileEl && fileEl.files ? fileEl.files[0] : null;
+  let contentB64 = "";
+  let filename = null;
+  let mime = null;
+  if (file) {
+    if (file.size > 2.4 * 1024 * 1024) {
+      error = "That file is too large. Keep it under 2 megabytes.";
+      render();
+      return;
+    }
+    contentB64 = await new Promise(function (resolve, reject) {
+      const reader = new FileReader();
+      reader.onload = function () {
+        const raw = String(reader.result || "");
+        const cut = raw.indexOf(",");
+        resolve(cut >= 0 ? raw.slice(cut + 1) : raw);
+      };
+      reader.onerror = function () { reject(new Error("Couldn't read that file.")); };
+      reader.readAsDataURL(file);
+    });
+    filename = file.name;
+    mime = file.type || "application/octet-stream";
+  }
+  try {
+    const data = await api({
+      action: "saveDocument",
+      title: document.getElementById("d-title").value,
+      section: section,
+      visibility: document.getElementById("d-vis").value,
+      orgId: document.getElementById("d-org") ? document.getElementById("d-org").value : "new",
+      orgName: document.getElementById("d-org-name") ? document.getElementById("d-org-name").value : "",
+      body: document.getElementById("d-body").value,
+      city: document.getElementById("d-city") ? document.getElementById("d-city").value : "",
+      when: document.getElementById("d-when") ? document.getElementById("d-when").value : "",
+      cost: document.getElementById("d-cost") ? document.getElementById("d-cost").value : "",
+      link: document.getElementById("d-link") ? document.getElementById("d-link").value : "",
+      contentB64: contentB64,
+      filename: filename,
+      mime: mime,
+    });
+    if (data.error) { error = data.error; render(); return; }
+    room = data;
+    error = "";
+    reading = null;
+    render();
+  } catch (e) {
+    error = e.message || "Couldn't save that.";
+    render();
+  }
+}
+async function openDoc(id) {
+  const data = await api({ action: "open", id: id });
+  if (data.error) { error = "That document isn't available."; render(); return; }
+  reading = data;
+  error = "";
+  render();
+}
+window.setView = setView;
+window.logout = logout;
+window.savePerson = savePerson;
+window.removePerson = removePerson;
+window.saveDoc = saveDoc;
+function toggleMenu() {
+  const menu = document.getElementById("mobile-menu");
+  const open = menu.classList.toggle("open");
+  document.getElementById("menu-icon").classList.toggle("hidden", open);
+  document.getElementById("close-icon").classList.toggle("hidden", !open);
+}
+function closeMenu() {
+  document.getElementById("mobile-menu").classList.remove("open");
+  document.getElementById("menu-icon").classList.remove("hidden");
+  document.getElementById("close-icon").classList.add("hidden");
+}
+document.addEventListener("click", function (event) {
+  const menu = document.getElementById("mobile-menu");
+  const button = document.getElementById("menu-toggle");
+  if (!menu || !menu.classList.contains("open")) return;
+  if (menu.contains(event.target) || button.contains(event.target)) return;
+  closeMenu();
+});
+window.toggleMenu = toggleMenu;
+window.closeMenu = closeMenu;
+window.signInGoogle = signInGoogle;
+function boot() {
+  if (!token) { render(); return; }
+  refresh().then(render).catch(function () { error = "The portal can't be reached. Try again."; token = ""; render(); });
+}
+boot();
+var gsiTries = 0;
+var gsiTimer = setInterval(function () {
+  var host = document.getElementById("google-btn");
+  if (host && host.dataset.ready === "1") { clearInterval(gsiTimer); return; }
+  initGoogle();
+  if (++gsiTries > 40) clearInterval(gsiTimer);
+}, 250);
+
+</script>
+</body>
+</html>
