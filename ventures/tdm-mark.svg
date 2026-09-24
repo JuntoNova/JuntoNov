@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="The Draft Model">
+  <rect x="1" y="1" width="30" height="30" rx="8" fill="#111318" stroke="#2A2E38" stroke-width="1"/>
+  <rect x="7" y="18" width="4.2" height="7" rx="0.8" fill="#D8FF3E"/>
+  <rect x="13.9" y="13" width="4.2" height="12" rx="0.8" fill="#D8FF3E"/>
+  <rect x="20.8" y="8" width="4.2" height="17" rx="0.8" fill="#D8FF3E"/>
+  <circle cx="24.2" cy="7.2" r="1.35" fill="#D8FF3E"/>
+</svg>
