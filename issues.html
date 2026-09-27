@@ -17,12 +17,16 @@ body{font-family:Inter,system-ui,sans-serif;color:var(--charcoal);background:#ff
 #mobile-menu{display:none}#mobile-menu.open{display:block}
 select.issue-select{height:2.75rem;padding:0 2.5rem 0 1rem;line-height:2.75rem}
 input.issue-search{height:2.75rem;padding:0 2.5rem;line-height:2.75rem;width:100%}
+@media (max-width:639px){
+  .issue-quad,.issue-chip{display:none}
+  #caption{max-width:100%}
+}
 </style>
 </head>
 <body>
 <header class="border-b relative" style="border-color:var(--border);background:#fff">
 <div class="max-w-5xl mx-auto px-6 py-5 flex items-center justify-between">
-<a href="index.html" class="flex items-center gap-3 hover:opacity-80 transition" style="color:var(--charcoal)"><img src="https://juntonova.com/jn-header.png" alt="Junto Nova" width="40" height="46" style="display:block" /><span class="display text-2xl tracking-tight">JUNTO NOVA</span></a>
+<a href="index.html" class="flex items-center gap-3 hover:opacity-80 transition" style="color:var(--charcoal)"><img src="https://juntonova.com/jn-header.png" alt="Junto Nova" width="40" height="46" style="display:block" /><span class="display text-xl tracking-tight sm:text-2xl">JUNTO NOVA</span></a>
 <div class="relative">
 <button id="menu-toggle" onclick="toggleMenu()" class="p-2 -mr-2 focus:outline-none" style="color:var(--muted)" aria-label="Open menu">
 <svg id="menu-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
@@ -268,7 +272,7 @@ function paintMatrix() {
   const pos = spread(list);
   const tokens = fold(query);
   const matchIds = tokens ? new Set(search().filter((r) => r.area.id === areaId && r.lens === lens).map((r) => r.item.id)) : null;
-  const quads = cfg.quads.map((q) => '<div class="pointer-events-none absolute z-0 max-w-36 ' + q[2] + '"><div class="text-xs font-semibold" style="color:rgba(26,26,26,.55)">' + esc(q[0]) + '</div><div class="text-[11px] leading-snug" style="color:var(--muted)">' + esc(q[1]) + "</div></div>").join("");
+  const quads = cfg.quads.map((q) => '<div class="issue-quad pointer-events-none absolute z-0 hidden max-w-36 sm:block ' + q[2] + '"><div class="text-xs font-semibold" style="color:rgba(26,26,26,.55)">' + esc(q[0]) + '</div><div class="text-[11px] leading-snug" style="color:var(--muted)">' + esc(q[1]) + "</div></div>").join("");
   const dots = list.map((p) => {
     const place = pos[p.id];
     const on = p.id === selected;
@@ -276,14 +280,14 @@ function paintMatrix() {
     const dim = matchIds && matchIds.size > 0 && !matched && !on;
     const show = on || (matched && matchIds.size <= 4);
     const side = place.x > 58 ? "right:1.25rem" : "left:1.25rem";
-    return '<button type="button" data-id="' + esc(p.id) + '" class="absolute flex -translate-x-1/2 translate-y-1/2 items-center" style="left:' + place.x + "%;bottom:" + place.y + "%;opacity:" + (dim ? ".25" : "1") + ";z-index:" + (on || matched ? 20 : 10) + '" aria-label="' + esc(p.name) + '"><span class="block h-3.5 w-3.5 rounded-full border-2" style="border-color:' + (on || matched ? "var(--ember)" : "var(--charcoal)") + ";background:" + (on ? "var(--ember)" : matched ? "rgba(196,92,38,.3)" : "#fff") + '"></span>' + (show ? '<span class="absolute top-1/2 max-w-52 -translate-y-1/2 rounded-md bg-white/95 px-1.5 py-0.5 text-xs leading-snug ' + (on ? "font-semibold" : "font-medium") + '" style="' + side + ";color:" + (on ? "var(--ember)" : "var(--charcoal)") + '">' + esc(p.name) + "</span>" : "") + "</button>";
+    return '<button type="button" data-id="' + esc(p.id) + '" class="absolute flex -translate-x-1/2 translate-y-1/2 items-center" style="left:' + place.x + "%;bottom:" + place.y + "%;opacity:" + (dim ? ".25" : "1") + ";z-index:" + (on || matched ? 20 : 10) + '" aria-label="' + esc(p.name) + '"><span class="block h-3.5 w-3.5 rounded-full border-2" style="border-color:' + (on || matched ? "var(--ember)" : "var(--charcoal)") + ";background:" + (on ? "var(--ember)" : matched ? "rgba(196,92,38,.3)" : "#fff") + '"></span>' + (show ? '<span class="issue-chip absolute top-1/2 hidden max-w-52 -translate-y-1/2 rounded-md bg-white/95 px-1.5 py-0.5 text-xs leading-snug sm:block ' + (on ? "font-semibold" : "font-medium") + '" style="' + side + ";color:" + (on ? "var(--ember)" : "var(--charcoal)") + '">' + esc(p.name) + "</span>" : "") + "</button>";
   }).join("");
   document.getElementById("matrix").innerHTML =
-    '<div class="flex items-stretch gap-2 sm:gap-3"><div class="flex w-24 shrink-0 flex-col text-right text-[11px] font-medium leading-tight sm:w-28 sm:text-xs" style="color:var(--muted)"><div class="flex flex-1 items-center justify-end">' + esc(cfg.yh) + '</div><div class="flex flex-1 items-center justify-end">' + esc(cfg.yl) + "</div></div>" +
-    '<div class="relative min-h-80 w-full flex-1 overflow-hidden rounded-2xl border sm:min-h-[28rem]" style="border-color:var(--border);background:var(--surface)">' + quads +
+    '<div class="flex items-stretch gap-2 sm:gap-3"><div class="flex w-16 shrink-0 flex-col text-right text-[10px] font-medium leading-tight sm:w-28 sm:text-xs" style="color:var(--muted)"><div class="flex flex-1 items-center justify-end">' + esc(cfg.yh) + '</div><div class="flex flex-1 items-center justify-end">' + esc(cfg.yl) + "</div></div>" +
+    '<div class="relative min-h-96 w-full flex-1 overflow-hidden rounded-2xl border sm:min-h-[28rem]" style="border-color:var(--border);background:var(--surface)">' + quads +
     '<div class="pointer-events-none absolute inset-y-10 left-1/2 w-px" style="background:var(--border)"></div><div class="pointer-events-none absolute inset-x-10 top-1/2 h-px" style="background:var(--border)"></div>' +
     '<div class="absolute inset-10">' + dots + "</div></div></div>" +
-    '<div class="mt-2 flex gap-2 sm:gap-3"><div class="w-24 shrink-0 sm:w-28"></div><div class="flex min-w-0 flex-1 justify-between gap-3 text-[11px] font-medium sm:text-xs" style="color:var(--muted)"><span>' + esc(cfg.xl) + "</span><span>" + esc(cfg.xh) + "</span></div></div>";
+    '<div class="mt-2 flex gap-2 sm:gap-3"><div class="w-16 shrink-0 sm:w-28"></div><div class="flex min-w-0 flex-1 justify-between gap-2 text-[10px] font-medium leading-tight sm:gap-3 sm:text-xs" style="color:var(--muted)"><span class="max-w-[46%]">' + esc(cfg.xl) + '</span><span class="max-w-[46%] text-right">' + esc(cfg.xh) + "</span></div></div>";
   document.querySelectorAll("#matrix button").forEach((b) => { b.onclick = () => { selected = b.dataset.id; paintMatrix(); paintDetail(); }; });
 }
 function paintDetail() {
