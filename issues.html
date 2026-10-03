@@ -150,15 +150,23 @@ DATA.areas.forEach((a) => {
   o.value = a.id; o.textContent = a.name;
   areaEl.appendChild(o);
 });
-LENSES.forEach((l) => {
-  const b = document.createElement("button");
-  b.type = "button";
-  b.dataset.lens = l.id;
-  b.textContent = l.label;
-  b.className = "rounded-full border px-4 py-2 text-sm font-medium";
-  b.onclick = () => { lens = l.id; selected = null; sync(); };
-  lensesEl.appendChild(b);
-});
+function lensesFor(area) { return LENSES.filter((l) => items(area, l.id).length); }
+function fixLens() {
+  const have = lensesFor(areaBy(areaId));
+  if (have.length && !have.some((l) => l.id === lens)) lens = have[0].id;
+}
+function buildTabs() {
+  lensesEl.innerHTML = "";
+  lensesFor(areaBy(areaId)).forEach((l) => {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.dataset.lens = l.id;
+    b.textContent = l.label;
+    b.className = "rounded-full border px-4 py-2 text-sm font-medium";
+    b.onclick = () => { lens = l.id; selected = null; sync(); };
+    lensesEl.appendChild(b);
+  });
+}
 areaEl.onchange = () => { areaId = areaEl.value; selected = null; sync(); };
 qEl.oninput = () => { query = qEl.value; openHits = true; activeHit = 0; renderHits(); paintMatrix(); };
 qEl.onfocus = () => { openHits = true; renderHits(); };
@@ -226,6 +234,8 @@ function esc(s) {
   return String(s).replace(/[&<>"]/g, (c) => c === "&" ? "\u0026amp;" : c === "<" ? "\u0026lt;" : c === ">" ? "\u0026gt;" : "\u0026quot;");
 }
 function sync() {
+  fixLens();
+  buildTabs();
   const url = new URL(location.href);
   url.searchParams.set("area", areaId);
   url.searchParams.set("lens", lens);
@@ -250,6 +260,7 @@ function paintMatrix() {
   const area = areaBy(areaId);
   const list = items(area, lens);
   const cfg = MATRIX[lens];
+  if (!list.length) { document.getElementById("matrix").innerHTML = ""; return; }
   const pos = spread(list);
   const tokens = fold(query);
   const matchIds = tokens ? new Set(search().filter((r) => r.area.id === areaId && r.lens === lens).map((r) => r.item.id)) : null;
