@@ -1,0 +1,79 @@
+/* jn-polish.css  (PR-A, with header section used by PR-B)
+   Link as the LAST element in <head>:  <link rel="stylesheet" href="/jn-polish.css">
+   Tailwind CDN appends its <style> at runtime AFTER this link, so every rule that
+   must beat a Tailwind utility uses element+class (0,1,1) specificity, never order.
+   Service pages (capital, diagnose, govern, organization, strategy) are NOT covered:
+   their rules live in jn-service-pages.css (after Monday). */
+
+:root{--ember-ink:#A8481A;--paper:#F0E6D3;--oxidized:#2A3A4A;--muted:#64748B;--border:#E2E8F0;--light:#F8FAFC;--measure:50ch}
+
+/* 2. Ember on white is 4.28:1. Small ember text uses ember-ink (5.82:1 on white). Ember stays for dots, rules, marks, large display. */
+body .text-xs[style*="--ember"],body .text-sm[style*="--ember"],body p.text-xs[style*="--ember"]{color:var(--ember-ink)!important}
+body .faq-q:hover{color:var(--ember-ink)}
+body .faq-item.open .faq-icon{color:var(--ember-ink);border-color:var(--ember-ink)}
+
+/* 3. Type floor: nothing under 12px, table heads and labels 13px */
+body .text-\[10px\],body .text-\[11px\],body .pill{font-size:12px}
+body th{font-size:13px}
+[style*="font-size:10px"],[style*="font-size:11px"],[style*="font-size: 10px"],[style*="font-size: 11px"]{font-size:12px!important}
+
+/* 4. h1: only the mobile size comes down (text-4xl 36px -> 30px under 480px). From 480px up every h1 keeps the size it has on main. */
+@media (max-width:479px){body h1.display.text-4xl{font-size:1.875rem;line-height:1.12}}
+
+/* 5. Tap targets (>=44px tall). Visual change kept to padding / hit box only. */
+#menu-toggle{min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center}
+footer a{display:inline-flex;align-items:center;justify-content:center;min-height:44px;margin-top:-11px;margin-bottom:-11px}
+footer a[aria-label],footer a:has(> i){min-width:44px;margin-left:-.5rem;margin-right:-.5rem}
+header a.text-sm{display:inline-flex;align-items:center;min-height:44px}
+body .nav-btn,body #lenses > button,body #detail > a,body main button.rounded-xl,body main article a{min-height:44px}
+body #detail > a.inline-flex,body main article a{align-items:center}
+input:not([type=checkbox]):not([type=radio]):not([type=hidden]),select{min-height:44px}
+body input:not([type=checkbox]):not([type=radio]):not([type=hidden]),body select,body textarea{padding:.5rem 1rem}
+label:has(> input[type=checkbox]),label:has(> input[type=radio]){min-height:44px;align-items:center}
+
+/* 5b. Grid items may shrink: stops wide tables/charts from pushing the page past the viewport (sandbox: 71px overflow at 390 today) */
+main .grid > *{min-width:0}
+
+/* 6. Reading measure: about 68 characters per line (50ch measures ~63-71 characters depending on font size) */
+main p:not([class*="text-center"]),main .clean-list span,main .clean-list li,#detail li,#detail p{max-width:var(--measure)}
+
+/* 7. Shared header (PR-B). Self-contained: also works on pages without Tailwind. */
+header.jn-header{position:relative;display:block;max-width:none;margin:0;padding:0;background:#fff;border-bottom:1px solid var(--border);z-index:40}
+header.jn-header *,header.jn-header *::before,header.jn-header *::after{box-sizing:border-box}
+.jn-header__in{max-width:64rem;margin:0 auto;padding:1.25rem 1.5rem;display:flex;align-items:center;justify-content:space-between;gap:1rem}
+.jn-brand{display:flex;align-items:center;gap:.75rem;color:#1A1A1A;text-decoration:none;flex:none}
+.jn-brand img{display:block;width:40px;height:auto}
+.jn-brand span{font-family:'Playfair Display',Georgia,serif;font-weight:700;font-size:1.5rem;line-height:2rem;letter-spacing:-.025em}
+.jn-nav{display:none}
+.jn-menu-btn{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;margin:0 -10px 0 0;padding:0;border:0;border-radius:.5rem;background:none;color:var(--muted);cursor:pointer}
+.jn-menu-btn svg{width:24px;height:24px;display:block}
+.jn-menu-btn .jn-x{display:none}
+.jn-menu-btn[aria-expanded="true"] .jn-x{display:block}
+.jn-menu-btn[aria-expanded="true"] .jn-bars{display:none}
+.jn-menu{position:absolute;right:1.5rem;top:100%;margin-top:.5rem;width:18rem;max-width:calc(100vw - 3rem);padding:.5rem;background:#fff;border:1px solid var(--border);border-radius:.75rem;box-shadow:0 10px 15px -3px rgba(0,0,0,.1),0 4px 6px -4px rgba(0,0,0,.1);z-index:50}
+.jn-menu[hidden]{display:none}
+.jn-menu:not([hidden]){display:flex;flex-direction:column;gap:2px}
+.jn-menu a{display:flex;align-items:center;min-height:48px;padding:0 .5rem;border-radius:.5rem;color:#1A1A1A;text-decoration:none;font-size:1rem;line-height:1.5}
+.jn-menu a:hover{background:var(--light)}
+.jn-menu a.jn-cta{margin-top:.25rem;background:#1A1A1A;color:#fff;font-weight:500}
+.jn-menu a.jn-cta:hover{background:#000}
+.jn-nav a,.jn-nav a:visited{color:var(--muted);text-decoration:none}
+.jn-nav a[aria-current]{color:#1A1A1A;text-decoration:underline;text-decoration-color:#C45C26;text-decoration-thickness:2px;text-underline-offset:8px}
+.jn-nav a:hover{color:#1A1A1A}
+.jn-nav a.jn-cta,.jn-nav a.jn-cta:visited{background:#1A1A1A;color:#fff;border-radius:.75rem;padding:0 1.125rem;font-weight:500}
+.jn-nav a.jn-cta:hover{background:#000;color:#fff}
+/* Inline nav (8 links incl. About Us) + wordmark: probed at 760-1320px in 8px steps (data/header_bp_probe.json). Fits on one row from 1024px with a 1rem gap (1016px overflows by 3px; gap 1.25rem overflows at every width up to 1320). Below 1024px the menu button is used. */
+@media (min-width:1024px){
+  .jn-nav{display:flex;align-items:center;gap:1rem;font-size:.875rem;line-height:1.25rem}
+  .jn-nav a{display:inline-flex;align-items:center;min-height:44px;white-space:nowrap}
+  .jn-menu-btn,.jn-menu,.jn-menu:not([hidden]){display:none}
+}
+
+/* 7b. Focus ring on dark surfaces. PR #13 draws a #1A1A1A ring, which is not visible on a dark background. Inside dark containers the ring is warm paper #F0E6D3.
+   Dark containers today: .debt-card (index), the three dark ventures cards (inline background #141110 / #0E1A24 / #090A0C). For a new dark block add class="jn-dark". */
+.jn-dark :focus-visible,.debt-card :focus-visible,[style*="background:#141110"] :focus-visible,[style*="background:#0E1A24"] :focus-visible,[style*="background:#090A0C"] :focus-visible{outline:2px solid var(--paper);outline-offset:2px}
+
+/* 8. Motion: only when the visitor has not asked for less */
+@media (prefers-reduced-motion:no-preference){
+  .jn-nav a,.jn-menu a,.jn-menu-btn{transition:color .15s ease,background-color .15s ease}
+}
