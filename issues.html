@@ -254,7 +254,7 @@ function search() {
   if (!tokens.length) return [];
   return CATALOG.map((row) => {
     const name = fold(row.item.name);
-    const hay = name + " " + fold(row.item.why + " " + row.item.proof.join(" ")) + " " + fold(row.area.name);
+    const hay = name + " " + fold(row.item.proof.join(" ")) + " " + fold(row.area.name);
     if (!tokens.every((t) => hay.includes(t))) return null;
     let score = 0;
     const joined = tokens.join(" ");
@@ -340,7 +340,7 @@ function paintMatrix() {
     '<div class="relative min-h-96 w-full flex-1 overflow-hidden rounded-2xl border sm:min-h-[28rem]" style="border-color:var(--border);background:var(--surface)">' + quads +
     '<div class="pointer-events-none absolute inset-y-10 left-1/2 w-px" style="background:var(--border)"></div><div class="pointer-events-none absolute inset-x-10 top-1/2 h-px" style="background:var(--border)"></div>' +
     '<div class="absolute inset-10">' + dots + "</div></div></div>" +
-    '<div class="mt-2 flex gap-2 sm:gap-3"><div class="w-12 shrink-0 sm:w-28"></div><div class="flex min-w-0 flex-1 justify-between gap-2 text-[10px] font-medium leading-tight sm:gap-3 sm:text-xs" style="color:var(--muted)"><span class="max-w-[46%]">' + esc(cfg.xl) + '</span><span class="max-w-[46%] text-right">' + esc(cfg.xh) + '</span></div></div><p class="mt-2 text-[10px] font-medium leading-tight sm:hidden" style="color:var(--charcoal)">' + esc((list.find((p) => p.id === selected) || {}).name || "") + "</p>";
+    '<div class="mt-2 flex gap-2 sm:gap-3"><div class="w-12 shrink-0 sm:w-28"></div><div class="flex min-w-0 flex-1 justify-between gap-2 text-[10px] font-medium leading-tight sm:gap-3 sm:text-xs" style="color:var(--muted)"><span class="max-w-[46%]">' + esc(cfg.xl) + '</span><span class="max-w-[46%] text-right">' + esc(cfg.xh) + '</span></div></div>';
   placeChips();
   document.querySelectorAll("#matrix button").forEach((b) => { b.onclick = () => { selected = b.dataset.id; paintMatrix(); paintDetail(); }; });
 }
@@ -406,7 +406,6 @@ function paintDetail() {
   el.classList.toggle("hidden", !item);
   if (!item) { el.innerHTML = ""; return; }
   const none = item.ev === "none";
-  const note = none || item.ev !== "indirect" ? "" : "The closest evidence points this way. It does not measure this directly.";
   const quad = quadName(item);
   const chip = (txt, strong) => '<span class="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs' + (strong ? " font-semibold" : "") + '" style="background:var(--surface);color:' + (strong ? "var(--charcoal)" : "var(--muted)") + '">' + txt + "</span>";
   const pos = (name, v) => chip(esc(name) + ' <span class="font-semibold" style="color:var(--charcoal)">' + (none ? "not confirmed" : level(v)) + "</span>");
@@ -415,11 +414,9 @@ function paintDetail() {
     '<h2 class="display text-2xl">' + esc(item.name) + "</h2>" +
     '<div class="mt-3 flex flex-wrap gap-2">' + chip(esc(STANCES[item.stance]), true) + (none ? "" : chip(esc(quad))) + (loud && !none ? chip("Say it loudly", true) : "") + (item.shared ? chip("Shared with " + esc(item.shared)) : "") + "</div>" +
     '<div class="mt-2 flex flex-wrap gap-2">' + pos(cfg.yp, item.y) + pos(cfg.xp, item.x) + "</div>" +
-    (item.why ? '<p class="mt-5 text-sm leading-relaxed" style="color:var(--muted)">' + esc(item.why) + "</p>" : "") +
     '<div class="mt-5">' + head("Proof points") + (item.proof.length ? '<ul class="mt-2 list-disc pl-5 text-sm leading-relaxed" style="color:var(--muted)">' + item.proof.map((x) => "<li>" + esc(x) + "</li>").join("") + "</ul>" : '<p class="mt-2 text-sm" style="color:var(--muted)">Not confirmed.</p>') +
     (item.sources.length ? '<p class="mt-2 text-xs leading-relaxed" style="color:var(--muted)">' + item.sources.map((x) => typeof x === "string" ? esc(x) : '<a href="' + esc(x.u) + '" target="_blank" rel="noopener" class="underline">' + esc(x.t) + "</a>").join(". ") + ".</p>" : "") +
     (item.need ? '<p class="mt-2 text-xs leading-relaxed" style="color:var(--muted)">Not confirmed: ' + esc(item.need) + "</p>" : "") + "</div>" +
-    (note ? '<p class="mt-5 text-sm leading-relaxed" style="color:var(--muted)">' + note + "</p>" : "") +
     '<a href="project.html" class="mt-5 inline-flex rounded-xl px-5 py-2.5 text-sm font-medium text-white" style="background:var(--charcoal)">Let\'s work together</a>';
 }
 sync();
