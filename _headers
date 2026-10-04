@@ -8,3 +8,6 @@
 
 /portal
   X-Robots-Tag: noindex
+
+/portal.html
+  X-Robots-Tag: noindex
