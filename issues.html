@@ -2,6 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<style>.jn-skip{position:absolute;left:-9999px;top:0;z-index:1000;background:#1A1A1A;color:#fff;padding:.75rem 1rem;border-radius:.5rem;font:500 .875rem/1 Inter,system-ui,sans-serif;text-decoration:none}
+.jn-skip:focus{left:.75rem;top:.75rem;outline:2px solid #C45C26;outline-offset:2px}</style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Issues · Junto Nova</title>
 <link rel="icon" type="image/png" sizes="32x32" href="https://juntonova.com/favicon-32.png">
@@ -24,6 +26,7 @@ input.issue-search{height:2.75rem;padding:0 2.5rem;line-height:2.75rem;width:100
 </style>
 </head>
 <body>
+<a class="jn-skip" href="#main">Skip to main content</a>
 <header class="border-b relative" style="border-color:var(--border);background:#fff">
 <div class="max-w-5xl mx-auto px-6 py-5 flex items-center justify-between">
 <a href="index.html" class="flex items-center gap-3 hover:opacity-80 transition" style="color:var(--charcoal)"><img src="https://juntonova.com/jn-header.png" alt="Junto Nova" width="40" height="46" style="display:block" /><span class="display text-xl tracking-tight sm:text-2xl">JUNTO NOVA</span></a>
@@ -42,7 +45,7 @@ input.issue-search{height:2.75rem;padding:0 2.5rem;line-height:2.75rem;width:100
 <a href="portal.html" class="text-left py-3 px-2 rounded-lg mt-1 font-medium" style="background:#1A1A1A;color:#fff">Client login</a>
 </div></div></div></div></header>
 
-<main class="max-w-5xl mx-auto px-6 pt-6 pb-16">
+<main id="main" class="max-w-5xl mx-auto px-6 pt-6 pb-16">
 <div class="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
 <label class="relative block w-full max-w-xs">
 <span class="sr-only">Issue</span>
