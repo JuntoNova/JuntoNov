@@ -246,8 +246,8 @@ async function saveDoc(section) {
   var filename = null;
   var mime = null;
   if (file) {
-    if (file.size > 2.4 * 1024 * 1024) {
-      error = "That file is too large. Keep it under 2 megabytes.";
+    if (file.size > 5 * 1024 * 1024) {
+      error = "That file is too large. Keep it under 5 megabytes.";
       render();
       return;
     }
