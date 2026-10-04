@@ -1,0 +1,6 @@
+Inter (inter-latin.woff2) is Copyright (c) 2016 The Inter Project Authors (https://github.com/rsms/inter).
+Playfair Display (playfair-display-latin.woff2) is Copyright (c) 2017 The Playfair Display Project Authors (https://github.com/clauseggers/Playfair-Display).
+
+Both are licensed under the SIL Open Font License, Version 1.1, available with a FAQ at https://openfontlicense.org
+
+The files here are Latin subsets of the variable fonts, limited to the weights this site uses.
