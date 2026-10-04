@@ -10,6 +10,8 @@
 <meta name="description" content="You don't have to be a client to help. Tell Junto Nova how you can help drive down costs.">
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>:focus-visible{outline:2px solid #1A1A1A;outline-offset:2px}
+html input::placeholder,html textarea::placeholder{color:#64748B;opacity:1}</style>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@600;700&display=swap');
 :root{--charcoal:#1A1A1A;--ember:#C45C26;--muted:#64748B;--border:#E2E8F0;--surface:#F8FAFC}
@@ -25,12 +27,12 @@ body{font-family:Inter,system-ui,sans-serif;color:var(--charcoal);background:#ff
 <div class="max-w-5xl mx-auto px-6 py-5 flex items-center justify-between">
 <a href="index.html" class="flex items-center gap-3 hover:opacity-80 transition" style="color:var(--charcoal)"><img src="https://juntonova.com/jn-header.png" alt="Junto Nova" width="40" height="46" style="display:block" /><span class="display text-2xl tracking-tight">JUNTO NOVA</span></a>
 <div class="relative">
-<button id="menu-toggle" onclick="toggleMenu()" class="p-2 -mr-2 focus:outline-none" style="color:var(--muted)" aria-label="Open menu">
+<button id="menu-toggle" onclick="toggleMenu()" class="p-2 -mr-2" style="color:var(--muted)" aria-label="Open menu">
 <svg id="menu-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
 <svg id="close-icon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
 </button>
 <div id="mobile-menu" class="absolute top-full right-0 mt-2 w-72 rounded-xl border shadow-lg z-50" style="background:#fff;border-color:var(--border)">
-<div class="px-2 py-2 flex flex-col gap-0.5">
+<div class="px-2 py-2 flex flex-col gap-0.5" role="navigation" aria-label="Main">
 <a href="index.html#about" onclick="closeMenu()" class="block text-left py-3 px-2 rounded-lg hover:bg-slate-50" style="color:var(--charcoal)">About Us</a>
 <a href="index.html#costs" onclick="closeMenu()" class="block text-left py-3 px-2 rounded-lg hover:bg-slate-50" style="color:var(--charcoal)">Cost Drivers</a>
 <a href="index.html#share" onclick="closeMenu()" class="block text-left py-3 px-2 rounded-lg hover:bg-slate-50" style="color:var(--charcoal)">Your Share</a>
@@ -50,12 +52,12 @@ body{font-family:Inter,system-ui,sans-serif;color:var(--charcoal);background:#ff
 <p class="leading-relaxed" style="color:var(--muted)">Otherwise, use the form below.</p>
 </div>
 <form id="involved-form" class="max-w-xl space-y-6" onsubmit="return submitInvolved(event)">
-<div><label class="block text-sm font-medium mb-2" style="color:var(--charcoal)">Your name</label>
-<input type="text" id="inv-name" required placeholder="Jane Smith" style="width:100%;border:1px solid var(--border);border-radius:0.75rem;padding:0.75rem 1rem"></div>
-<div><label class="block text-sm font-medium mb-2" style="color:var(--charcoal)">Email</label>
-<input type="email" id="inv-email" required placeholder="jane@org.org" style="width:100%;border:1px solid var(--border);border-radius:0.75rem;padding:0.75rem 1rem"></div>
-<div><label class="block text-sm font-medium mb-2" style="color:var(--charcoal)">Organization (optional)</label>
-<input type="text" id="inv-org" placeholder="Your firm or campaign" style="width:100%;border:1px solid var(--border);border-radius:0.75rem;padding:0.75rem 1rem"></div>
+<div><label for="inv-name" class="block text-sm font-medium mb-2" style="color:var(--charcoal)">Your name</label>
+<input type="text" id="inv-name" required placeholder="Jane Smith" style="width:100%;border:1px solid #8091A7;border-radius:0.75rem;padding:0.75rem 1rem"></div>
+<div><label for="inv-email" class="block text-sm font-medium mb-2" style="color:var(--charcoal)">Email</label>
+<input type="email" id="inv-email" required placeholder="jane@org.org" style="width:100%;border:1px solid #8091A7;border-radius:0.75rem;padding:0.75rem 1rem"></div>
+<div><label for="inv-org" class="block text-sm font-medium mb-2" style="color:var(--charcoal)">Organization (optional)</label>
+<input type="text" id="inv-org" placeholder="Your firm or campaign" style="width:100%;border:1px solid #8091A7;border-radius:0.75rem;padding:0.75rem 1rem"></div>
 <div><label class="block text-sm font-medium mb-3" style="color:var(--charcoal)">Areas you know</label>
 <div class="space-y-1">
 <label class="flex gap-3 py-1"><input type="checkbox" name="area" value="Housing" style="accent-color:var(--charcoal)"><span class="text-sm" style="color:var(--muted)">Housing</span></label>
@@ -65,10 +67,10 @@ body{font-family:Inter,system-ui,sans-serif;color:var(--charcoal);background:#ff
 <label class="flex gap-3 py-1"><input type="checkbox" name="area" value="Healthcare" style="accent-color:var(--charcoal)"><span class="text-sm" style="color:var(--muted)">Healthcare</span></label>
 <label class="flex gap-3 py-1"><input type="checkbox" name="area" value="Taxes" style="accent-color:var(--charcoal)"><span class="text-sm" style="color:var(--muted)">Taxes</span></label>
 </div></div>
-<div><label class="block text-sm font-medium mb-2" style="color:var(--charcoal)">How you can help</label>
-<textarea id="inv-help" rows="3" required style="width:100%;border:1px solid var(--border);border-radius:0.75rem;padding:0.75rem 1rem"></textarea></div>
-<div><label class="block text-sm font-medium mb-2" style="color:var(--charcoal)">Anything else? (optional)</label>
-<textarea id="inv-notes" rows="2" style="width:100%;border:1px solid var(--border);border-radius:0.75rem;padding:0.75rem 1rem"></textarea></div>
+<div><label for="inv-help" class="block text-sm font-medium mb-2" style="color:var(--charcoal)">How you can help</label>
+<textarea id="inv-help" rows="3" required style="width:100%;border:1px solid #8091A7;border-radius:0.75rem;padding:0.75rem 1rem"></textarea></div>
+<div><label for="inv-notes" class="block text-sm font-medium mb-2" style="color:var(--charcoal)">Anything else? (optional)</label>
+<textarea id="inv-notes" rows="2" style="width:100%;border:1px solid #8091A7;border-radius:0.75rem;padding:0.75rem 1rem"></textarea></div>
 <button type="submit" class="w-full py-3.5 rounded-xl font-medium btn-primary">Open email to send</button>
 <p class="text-xs text-center" style="color:var(--muted)">Opens your email client. Nothing is stored on this site.</p>
 </form>
