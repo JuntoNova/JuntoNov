@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>:focus-visible{outline:2px solid #1A1A1A;outline-offset:2px}
+html input::placeholder,html textarea::placeholder{color:#64748B;opacity:1}</style>
     <title>Let's work together · Junto Nova</title>
     <link rel="icon" type="image/png" sizes="32x32" href="https://juntonova.com/favicon-32.png">
     <link rel="apple-touch-icon" sizes="180x180" href="https://juntonova.com/favicon-180.png">
@@ -53,7 +55,7 @@
 
         input, select, textarea {
             width: 100%;
-            border: 1px solid var(--border);
+            border: 1px solid #8091A7;
             border-radius: 0.75rem;
             padding: 0.75rem 1rem;
             font-size: 0.95rem;
@@ -77,12 +79,12 @@
                 <span class="display text-2xl tracking-tight">JUNTO NOVA</span>
             </a>
             <div class="relative">
-                <button id="menu-toggle" onclick="toggleMenu()" class="p-2 -mr-2 focus:outline-none" style="color: var(--muted);" aria-label="Open menu">
+                <button id="menu-toggle" onclick="toggleMenu()" class="p-2 -mr-2" style="color: var(--muted);" aria-label="Open menu">
                     <svg id="menu-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
                     <svg id="close-icon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                 </button>
                 <div id="mobile-menu" class="absolute top-full right-0 mt-2 w-72 rounded-xl border shadow-lg z-50" style="background:#fff;border-color:var(--border)">
-                    <div class="px-2 py-2 flex flex-col gap-0.5">
+                    <div class="px-2 py-2 flex flex-col gap-0.5" role="navigation" aria-label="Main">
                         <a href="index.html#about" onclick="closeMenu()" class="block text-left py-3 px-2 rounded-lg hover:bg-slate-50" style="color:var(--charcoal)">About Us</a>
                         <a href="index.html#costs" onclick="closeMenu()" class="block text-left py-3 px-2 rounded-lg hover:bg-slate-50" style="color:var(--charcoal)">Cost Drivers</a>
                         <a href="index.html#share" onclick="closeMenu()" class="block text-left py-3 px-2 rounded-lg hover:bg-slate-50" style="color:var(--charcoal)">Your Share</a>
@@ -103,22 +105,22 @@
 
         <form id="project-form" class="space-y-7" onsubmit="return submitProject(event)">
             <div>
-                <label class="block text-sm font-medium mb-2" style="color: var(--charcoal);">Your name</label>
+                <label for="name" class="block text-sm font-medium mb-2" style="color: var(--charcoal);">Your name</label>
                 <input type="text" id="name" name="name" required placeholder="Jane Smith" autocomplete="name">
             </div>
 
             <div>
-                <label class="block text-sm font-medium mb-2" style="color: var(--charcoal);">Email</label>
+                <label for="email" class="block text-sm font-medium mb-2" style="color: var(--charcoal);">Email</label>
                 <input type="email" id="email" name="email" required placeholder="jane@org.org" autocomplete="email">
             </div>
 
             <div>
-                <label class="block text-sm font-medium mb-2" style="color: var(--charcoal);">Organization (optional)</label>
+                <label for="org" class="block text-sm font-medium mb-2" style="color: var(--charcoal);">Organization (optional)</label>
                 <input type="text" id="org" name="org" placeholder="Foundation, firm, or operator">
             </div>
 
             <div>
-                <label class="block text-sm font-medium mb-2" style="color: var(--charcoal);">Area you're focused on</label>
+                <label for="area" class="block text-sm font-medium mb-2" style="color: var(--charcoal);">Area you're focused on</label>
                 <select id="area" name="area" required>
                     <option value="" disabled selected>Select one</option>
                     <option value="All / cross-cutting">All / cross-cutting</option>
@@ -135,7 +137,7 @@
             </div>
 
             <div>
-                <label class="block text-sm font-medium mb-2" style="color: var(--charcoal);">Anything else we should know? <span class="font-normal" style="color: var(--muted);">(optional)</span></label>
+                <label for="notes" class="block text-sm font-medium mb-2" style="color: var(--charcoal);">Anything else we should know? <span class="font-normal" style="color: var(--muted);">(optional)</span></label>
                 <textarea id="notes" name="notes" rows="4" placeholder="Timeline, geography, constraints, or a one-line description of the problem."></textarea>
             </div>
 

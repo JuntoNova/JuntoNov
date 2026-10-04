@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>:focus-visible{outline:2px solid #1A1A1A;outline-offset:2px}
+html input::placeholder,html textarea::placeholder{color:#64748B;opacity:1}</style>
 <title>Junto Nova - A stake in the dream</title>
 <link rel="icon" type="image/png" sizes="32x32" href="https://juntonova.com/favicon-32.png">
 <link rel="apple-touch-icon" sizes="180x180" href="https://juntonova.com/favicon-180.png">
@@ -46,12 +48,12 @@ body{font-family:Inter,system-ui,sans-serif;color:var(--charcoal);background:#ff
 <div class="max-w-5xl mx-auto px-6 py-5 flex items-center justify-between">
 <a href="#" onclick="goHome();return false" class="flex items-center gap-3 hover:opacity-80 transition" style="color:var(--charcoal)"><img src="https://juntonova.com/jn-header.png" alt="Junto Nova" width="40" height="46" style="display:block" /><span class="display text-2xl tracking-tight">JUNTO NOVA</span></a>
 <div class="relative">
-<button id="menu-toggle" onclick="toggleMenu()" class="p-2 -mr-2 focus:outline-none" style="color:var(--muted)" aria-label="Open menu">
+<button id="menu-toggle" onclick="toggleMenu()" class="p-2 -mr-2" style="color:var(--muted)" aria-label="Open menu">
 <svg id="menu-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
 <svg id="close-icon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
 </button>
 <div id="mobile-menu" class="absolute top-full right-0 mt-2 w-72 rounded-xl border shadow-lg z-50" style="background:#fff;border-color:var(--border)">
-<div class="px-2 py-2 flex flex-col gap-0.5">
+<div class="px-2 py-2 flex flex-col gap-0.5" role="navigation" aria-label="Main">
 <button onclick="showTab('about');closeMenu()" class="text-left py-3 px-2 rounded-lg hover:bg-slate-50" style="color:var(--charcoal)">About Us</button>
 <button onclick="showTab('costs');closeMenu()" class="text-left py-3 px-2 rounded-lg hover:bg-slate-50" style="color:var(--charcoal)">Cost Drivers</button>
 <button onclick="showTab('share');closeMenu()" class="text-left py-3 px-2 rounded-lg hover:bg-slate-50" style="color:var(--charcoal)">Your Share</button>
@@ -59,6 +61,7 @@ body{font-family:Inter,system-ui,sans-serif;color:var(--charcoal);background:#ff
 <a href="project.html" class="text-left py-3 px-2 rounded-lg hover:bg-slate-50" style="color:var(--charcoal)">Let's work together</a>
 <a href="portal.html" class="text-left py-3 px-2 rounded-lg mt-1 font-medium" style="background:#1A1A1A;color:#fff">Client login</a>
 </div></div></div></div></header>
+<main id="main">
 <section class="max-w-5xl mx-auto px-6 pt-16 pb-8"><div class="max-w-3xl">
 <div class="text-xs font-medium tracking-widest uppercase mb-4" style="color:var(--muted)">A stake in the dream</div>
 <h1 class="display text-4xl md:text-5xl tracking-tight leading-tight mb-6" style="color:var(--charcoal)">The American Dream works best when every citizen owns a real stake in the country's future.</h1>
@@ -176,6 +179,7 @@ body{font-family:Inter,system-ui,sans-serif;color:var(--charcoal);background:#ff
 <div class="faq-item"><button type="button" class="faq-q" onclick="toggleFaq(this)"><span>Who are you?</span><span class="faq-icon">+</span></button>
 <div class="faq-a"><p>Junto Nova is a startup founded in 2026 and led by <a href="https://www.linkedin.com/in/jandrewclark" target="_blank" rel="noopener" class="underline hover:opacity-80" style="color:var(--charcoal)">Andrew Clark</a>.</p></div></div>
 </div></section>
+</main>
 <footer class="jn-foot" style="border-top:1px solid #E2E8F0">
 <style>.jn-foot a{color:inherit;text-decoration:none}.jn-foot a:hover{opacity:.7}</style>
 <div style="max-width:64rem;margin:0 auto;padding:2rem 1.5rem;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:1rem;font-size:.875rem;color:#64748B">
