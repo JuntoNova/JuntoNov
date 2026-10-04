@@ -70,10 +70,28 @@ header.jn-header *,header.jn-header *::before,header.jn-header *::after{box-sizi
 }
 
 /* 7b. Focus ring on dark surfaces. PR #13 draws a #1A1A1A ring, which is not visible on a dark background. Inside dark containers the ring is warm paper #F0E6D3.
-   Dark containers today: .debt-card (index), the three dark ventures cards (inline background #141110 / #0E1A24 / #090A0C). For a new dark block add class="jn-dark". */
-.jn-dark :focus-visible,.debt-card :focus-visible,[style*="background:#141110"] :focus-visible,[style*="background:#0E1A24"] :focus-visible,[style*="background:#090A0C"] :focus-visible{outline:2px solid var(--paper);outline-offset:2px}
+   Dark containers today: .debt-card (index), the three dark ventures cards (inline background #141110 / #0E1A24 / #090A0C), the charcoal footer (section 10). For a new dark block add class="jn-dark". */
+.jn-dark :focus-visible,.debt-card :focus-visible,[style*="background:#141110"] :focus-visible,[style*="background:#0E1A24"] :focus-visible,[style*="background:#090A0C"] :focus-visible,body > footer :focus-visible{outline:2px solid var(--paper);outline-offset:2px}
 
 /* 8. Motion: only when the visitor has not asked for less */
 @media (prefers-reduced-motion:no-preference){
   .jn-nav a,.jn-menu a,.jn-menu-btn{transition:color .15s ease,background-color .15s ease}
 }
+
+/* 9. Home bands: Cost Drivers and Your Share panels sit on warm paper, full-bleed.
+   The panels are max-w-5xl, so the paper is extended sideways with a clipped box-shadow (no markup or layout change).
+   Variables are re-pointed inside the band so existing inline var(--muted)/var(--surface) follow without !important:
+   muted text directly on paper becomes charcoal at 85% (7+:1 on paper; #64748B would be 3.8:1), cards stay white, and cards keep the original muted grey. */
+#content-costs,#content-share{background-color:var(--paper);box-shadow:0 0 0 100vmax var(--paper);clip-path:inset(0 -100vmax);--muted:rgba(26,26,26,.85);--surface:#fff}
+#content-costs .rounded-2xl,#content-share .rounded-2xl{--muted:#64748B}
+#content-costs .btn-outline,#content-share .btn-outline{background-color:#fff}
+#content-costs .btn-outline:hover,#content-share .btn-outline:hover{background-color:var(--light)}
+
+/* 10. Footer: charcoal with warm paper text. !important is only used where an inline style on the page has to be overridden
+   (footer border-top, outer div colour, wordmark colour). The wordmark is text (there is no image mark in the footer), rendered white. */
+body > footer{background-color:#1A1A1A;color:var(--paper);border-top:0!important}
+body > footer > div{color:var(--paper)!important}
+body > footer .display{color:#fff!important}
+body > footer .display + div{color:rgba(240,230,211,.8)!important}
+body > footer a,body > footer a:visited{color:inherit}
+body > footer a:hover{text-decoration:underline;text-underline-offset:3px}
