@@ -47,23 +47,55 @@ input.issue-search{height:2.75rem;padding:0 2.5rem;line-height:2.75rem;width:100
 </head>
 <body>
 <a class="jn-skip" href="#main">Skip to main content</a>
-<header class="border-b relative" style="border-color:var(--border);background:#fff">
-<div class="max-w-5xl mx-auto px-6 py-5 flex items-center justify-between">
-<a href="index.html" class="flex items-center gap-3 hover:opacity-80 transition" style="color:var(--charcoal)"><img src="https://juntonova.com/jn-header.png" alt="Junto Nova" width="40" height="46" style="display:block" /><span class="display text-xl tracking-tight sm:text-2xl">JUNTO NOVA</span></a>
-<div class="relative">
-<button id="menu-toggle" onclick="toggleMenu()" class="p-2 -mr-2" style="color:var(--muted)" aria-label="Open menu">
-<svg id="menu-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
-<svg id="close-icon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+<header class="jn-header">
+<div class="jn-header__in">
+<a class="jn-brand" href="/"><img src="https://juntonova.com/jn-header.png" alt="Junto Nova" width="40" height="46"><span>JUNTO NOVA</span></a>
+<nav class="jn-nav" aria-label="Primary">
+<a href="/#about">About Us</a>
+<a href="/#costs">Cost Drivers</a>
+<a href="/#share">Your Share</a>
+<a href="/issues">Issues</a>
+<a href="/ventures">Ventures</a>
+<a class="jn-cta" href="/project">Let's work together</a>
+</nav>
+<button type="button" id="jn-menu-btn" class="jn-menu-btn" aria-expanded="false" aria-controls="jn-menu" aria-label="Open menu">
+<svg class="jn-bars" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+<svg class="jn-x" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
 </button>
-<div id="mobile-menu" class="absolute top-full right-0 mt-2 w-72 rounded-xl border shadow-lg z-50" style="background:#fff;border-color:var(--border)">
-<div class="px-2 py-2 flex flex-col gap-0.5" role="navigation" aria-label="Main">
-<a href="index.html#about" class="text-left py-3 px-2 rounded-lg hover:bg-slate-50" style="color:var(--charcoal)">About Us</a>
-<a href="index.html#costs" class="text-left py-3 px-2 rounded-lg hover:bg-slate-50" style="color:var(--charcoal)">Cost Drivers</a>
-<a href="index.html#share" class="text-left py-3 px-2 rounded-lg hover:bg-slate-50" style="color:var(--charcoal)">Your Share</a>
-<a href="issues.html" class="text-left py-3 px-2 rounded-lg hover:bg-slate-50 font-medium" style="color:var(--charcoal)">Issues</a>
-<a href="project.html" class="text-left py-3 px-2 rounded-lg hover:bg-slate-50" style="color:var(--charcoal)">Let's work together</a>
-<a href="portal.html" class="text-left py-3 px-2 rounded-lg mt-1 font-medium" style="background:#1A1A1A;color:#fff">Client login</a>
-</div></div></div></div></header>
+</div>
+<div id="jn-menu" class="jn-menu" hidden>
+<a href="/#about">About Us</a>
+<a href="/#costs">Cost Drivers</a>
+<a href="/#share">Your Share</a>
+<a href="/issues">Issues</a>
+<a href="/ventures">Ventures</a>
+<a class="jn-cta" href="/project">Let's work together</a>
+</div>
+</header>
+<script>
+(function(){
+var b=document.getElementById('jn-menu-btn'),m=document.getElementById('jn-menu');
+if(!b||!m)return;
+function set(o,f){b.setAttribute('aria-expanded',o?'true':'false');b.setAttribute('aria-label',o?'Close menu':'Open menu');m.hidden=!o;if(!o&&f)b.focus()}
+function open(){return b.getAttribute('aria-expanded')==='true'}
+b.addEventListener('click',function(){set(!open(),false)});
+document.addEventListener('keydown',function(e){if(e.key==='Escape'&&open())set(false,true)});
+document.addEventListener('click',function(e){if(open()&&!m.contains(e.target)&&!b.contains(e.target))set(false,false)});
+m.addEventListener('click',function(e){if(e.target.closest('a'))set(false,true)});
+m.addEventListener('focusout',function(e){if(open()&&e.relatedTarget&&!m.contains(e.relatedTarget)&&e.relatedTarget!==b)set(false,false)});
+var mq=window.matchMedia('(min-width:1024px)');
+(mq.addEventListener?mq.addEventListener('change',function(e){if(e.matches)set(false,false)}):mq.addListener(function(e){if(e.matches)set(false,false)}));
+function mark(){
+  var p=location.pathname.replace(/\/$/,'')||'/',h=location.hash||(p==='/'?'#about':'');
+  document.querySelectorAll('.jn-nav a,.jn-menu a').forEach(function(a){
+    if(a.classList.contains('jn-cta'))return;
+    var u=new URL(a.getAttribute('href'),location.origin),ap=u.pathname.replace(/\/$/,'')||'/',on=ap===p&&(ap!=='/'||u.hash===h);
+    if(on)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current');
+  });
+}
+mark();window.addEventListener('hashchange',mark);
+})();
+</script>
 
 <main id="main" class="max-w-5xl mx-auto px-6 pt-6 pb-16">
 <div class="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
@@ -209,7 +241,6 @@ qEl.onkeydown = (e) => {
 clearEl.onclick = () => { query = ""; qEl.value = ""; openHits = false; renderHits(); paintMatrix(); };
 document.addEventListener("mousedown", (e) => {
   if (!qEl.parentElement.contains(e.target)) { openHits = false; renderHits(); }
-  if (!document.getElementById("menu-toggle").parentElement.contains(e.target)) closeMenu();
 });
 
 function catalog() {
@@ -390,17 +421,6 @@ function paintDetail() {
     (item.need ? '<p class="mt-2 text-xs leading-relaxed" style="color:var(--muted)">Not confirmed: ' + esc(item.need) + "</p>" : "") + "</div>" +
     (note ? '<p class="mt-5 text-sm leading-relaxed" style="color:var(--muted)">' + note + "</p>" : "") +
     '<a href="project.html" class="mt-5 inline-flex rounded-xl px-5 py-2.5 text-sm font-medium text-white" style="background:var(--charcoal)">Let\'s work together</a>';
-}
-function toggleMenu() {
-  const m = document.getElementById("mobile-menu");
-  const open = m.classList.toggle("open");
-  document.getElementById("menu-icon").classList.toggle("hidden", open);
-  document.getElementById("close-icon").classList.toggle("hidden", !open);
-}
-function closeMenu() {
-  document.getElementById("mobile-menu").classList.remove("open");
-  document.getElementById("menu-icon").classList.remove("hidden");
-  document.getElementById("close-icon").classList.add("hidden");
 }
 sync();
 </script>
