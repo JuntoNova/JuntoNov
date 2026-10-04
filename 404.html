@@ -1,47 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Page not found - Junto Nova</title>
-    <link rel="icon" type="image/png" sizes="32x32" href="https://juntonova.com/favicon-32.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="https://juntonova.com/favicon-180.png">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap');
-        :root {
-            --charcoal: #1A1A1A;
-            --muted: #64748B;
-            --border: #E2E8F0;
-        }
-        body {
-            font-family: 'Inter', system-ui, sans-serif;
-            color: var(--charcoal);
-            background: #fff;
-        }
-        .display {
-            font-family: 'Playfair Display', Georgia, serif;
-            font-weight: 700;
-            letter-spacing: -0.02em;
-        }
-    </style>
-    <style>:focus-visible{outline:2px solid #1A1A1A;outline-offset:2px}</style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Page not found | Junto Nova</title>
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<style>
+:root{--charcoal:#1A1A1A;--paper:#F0E6D3;--ember:#C45C26}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%}
+body{font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:var(--charcoal);color:var(--paper);line-height:1.6;display:flex;flex-direction:column;min-height:100vh;border-bottom:6px solid var(--ember)}
+main{flex:1;display:flex;flex-direction:column;justify-content:center;max-width:40rem;width:100%;margin:0 auto;padding:4rem 1.5rem}
+.mark{display:block;width:88px;height:auto;margin-bottom:2.5rem}
+.eyebrow{font-size:.75rem;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:var(--paper);opacity:.75;margin-bottom:1rem}
+h1{font-family:"Playfair Display",Georgia,serif;font-weight:700;letter-spacing:-.02em;line-height:1.1;font-size:clamp(2rem,6vw,3rem);margin-bottom:1rem}
+p{font-size:1.125rem;max-width:30rem;opacity:.9;margin-bottom:2.25rem}
+.rule{width:3.5rem;height:3px;background:var(--ember);margin-bottom:1.75rem}
+.actions{display:flex;flex-wrap:wrap;gap:.75rem}
+.btn{display:inline-flex;align-items:center;min-height:48px;padding:0 1.5rem;border-radius:.75rem;font-weight:500;font-size:1rem;text-decoration:none;border:1px solid var(--paper)}
+.btn-primary{background:var(--paper);color:var(--charcoal)}
+.btn-primary:hover{background:#fff}
+.btn-ghost{background:transparent;color:var(--paper)}
+.btn-ghost:hover{background:rgba(240,230,211,.12)}
+.btn:focus-visible{outline:3px solid var(--paper);outline-offset:3px}
+@media (prefers-reduced-motion:no-preference){.btn{transition:background-color .15s ease}}
+</style>
 </head>
 <body>
-
-    <header class="border-b" style="border-color: var(--border); background: #fff;">
-        <div class="max-w-3xl mx-auto px-6 py-5 flex items-center justify-between">
-            <a href="/" class="flex items-center gap-3 hover:opacity-80 transition" style="color: var(--charcoal);">
-                <img src="https://juntonova.com/jn-header.png" alt="Junto Nova" width="40" height="46" style="display:block" />
-                <span class="display text-2xl tracking-tight">JUNTO NOVA</span>
-            </a>
-        </div>
-    </header>
-
-    <main class="max-w-3xl mx-auto px-6 py-16">
-        <h1 class="display text-4xl mb-6" style="color: var(--charcoal);">Page not found</h1>
-        <a href="/" class="text-sm hover:opacity-70 underline" style="color: var(--muted);">Back to home</a>
-    </main>
-
+<main>
+<img class="mark" src="/jn-mark-paper.png" alt="Junto Nova" width="88" height="101">
+<div class="eyebrow">Error 404</div>
+<h1>That page does not exist.</h1>
+<div class="rule"></div>
+<p>The address may have moved or never existed. Start from the home page, or tell us what you came to find.</p>
+<div class="actions">
+<a class="btn btn-primary" href="/">Go to the home page</a>
+<a class="btn btn-ghost" href="/project">Let's work together</a>
+</div>
+</main>
 </body>
 </html>
