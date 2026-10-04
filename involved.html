@@ -78,8 +78,8 @@ body{font-family:Inter,system-ui,sans-serif;color:var(--charcoal);background:#ff
 <div style="max-width:64rem;margin:0 auto;padding:2rem 1.5rem;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:1rem;font-size:.875rem;color:#64748B">
 <div><div class="display" style="font-size:1.125rem;color:#1A1A1A">JUNTO NOVA</div><div style="font-size:.75rem;margin-top:.25rem">Junto Nova LLC · Dallas, TX</div></div>
 <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:1.25rem">
-<a href="mailto:andrew@juntonova.com" aria-label="Email"><i class="fa-solid fa-envelope"></i></a>
-<a href="https://x.com/jandrewclark" target="_blank" rel="noopener" aria-label="X"><i class="fa-brands fa-x-twitter"></i></a>
+<a href="mailto:info@juntonova.com" aria-label="Email"><i class="fa-solid fa-envelope"></i></a>
+<a href="https://x.com/JuntoNov" target="_blank" rel="noopener" aria-label="X"><i class="fa-brands fa-x-twitter"></i></a>
 <a href="https://juntonova.substack.com" target="_blank" rel="noopener" aria-label="Substack"><i class="fa-solid fa-bookmark"></i></a>
 <a href="ventures.html">Ventures</a>
 <a href="involved.html">Get Involved</a>
@@ -87,7 +87,7 @@ body{font-family:Inter,system-ui,sans-serif;color:var(--charcoal);background:#ff
 <span>© 2026</span>
 </div></div></footer>
 <script>
-function submitInvolved(e){e.preventDefault();const name=document.getElementById('inv-name').value.trim(),email=document.getElementById('inv-email').value.trim(),org=document.getElementById('inv-org').value.trim(),areas=[...document.querySelectorAll('input[name=area]:checked')].map(c=>c.value),help=document.getElementById('inv-help').value.trim(),notes=document.getElementById('inv-notes').value.trim();const body=['Name: '+name,'Email: '+email,org?'Organization: '+org:null,areas.length?'Areas: '+areas.join(', '):null,'','How I can help:',help,notes?('\nNotes:\n'+notes):null].filter(Boolean).join('\n');window.location.href='mailto:andrew@juntonova.com?subject='+encodeURIComponent('Get involved — '+name)+'&body='+encodeURIComponent(body);return false}
+function submitInvolved(e){e.preventDefault();const name=document.getElementById('inv-name').value.trim(),email=document.getElementById('inv-email').value.trim(),org=document.getElementById('inv-org').value.trim(),areas=[...document.querySelectorAll('input[name=area]:checked')].map(c=>c.value),help=document.getElementById('inv-help').value.trim(),notes=document.getElementById('inv-notes').value.trim();const body=['Name: '+name,'Email: '+email,org?'Organization: '+org:null,areas.length?'Areas: '+areas.join(', '):null,'','How I can help:',help,notes?('\nNotes:\n'+notes):null].filter(Boolean).join('\n');window.location.href='mailto:info@juntonova.com?subject='+encodeURIComponent('Get involved — '+name)+'&body='+encodeURIComponent(body);return false}
 function toggleMenu(){const menu=document.getElementById('mobile-menu');const open=menu.classList.toggle('open');document.getElementById('menu-icon').classList.toggle('hidden',open);document.getElementById('close-icon').classList.toggle('hidden',!open)}
 function closeMenu(){document.getElementById('mobile-menu').classList.remove('open');document.getElementById('menu-icon').classList.remove('hidden');document.getElementById('close-icon').classList.add('hidden')}
 document.addEventListener('click',function(event){const menu=document.getElementById('mobile-menu');const button=document.getElementById('menu-toggle');if(!menu||!menu.classList.contains('open'))return;if(menu.contains(event.target)||button.contains(event.target))return;closeMenu()});
