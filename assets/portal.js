@@ -105,7 +105,7 @@ function table(headers, rows) {
   var head = headers.map(function (h) { return "<th>" + h + "</th>"; }).join("");
   var body = rows.length ? rows.map(function (row) {
     return "<tr>" + row.map(function (cell) { return "<td>" + cell + "</td>"; }).join("") + "</tr>";
-  }).join("") : '<tr><td colspan="' + headers.length + '">Nothing in view.</td></tr>';
+  }).join("") : '<tr><td colspan="' + headers.length + '">Nothing here yet.</td></tr>';
   return '<div class="tbl-wrap"><table><thead><tr>' + head + "</tr></thead><tbody>" + body + "</tbody></table></div>";
 }
 function docTable(section) {
@@ -138,7 +138,7 @@ function addForm(section) {
   if (!room.staff) return "";
   var offer = section === "proposals" || section === "research";
   var extra = offer
-    ? '<label>City<input id="d-city" placeholder="Phoenix"></label><label>Days it can be done<input id="d-when" placeholder="March 12–14"></label><label>Cost<input id="d-cost" placeholder="$18,500" required></label><label>Link to fund it<input id="d-link" type="url" placeholder="https://"></label>'
+    ? '<label>City<input id="d-city" placeholder="Phoenix"></label><label>Dates<input id="d-when" placeholder="March 12–14"></label><label>Cost<input id="d-cost" placeholder="$18,500" required></label><label>Link to fund it<input id="d-link" type="url" placeholder="https://"></label>'
     : "";
   return '<form class="form" data-form="doc" data-section="' + esc(section) + '"><div class="kicker">' + (offer ? "Add something they can fund" : "Add a document") + '</div><label>' + (offer ? "What" : "Title") + '<input id="d-title" required placeholder="' + (offer ? "Focus group" : "") + '"></label>' + extra +
     '<label>Who can see it<select id="d-vis"><option value="clients">All clients</option><option value="org" selected>This organization</option><option value="director">Director</option><option value="board">Board</option><option value="billing">Billing</option></select></label>' +
@@ -182,7 +182,7 @@ function page() {
       card("Billing", room.person.billing || room.staff ? docs("billing").length : "None", "billing") +
       card("Admin", room.directory ? room.directory.length : 1, "admin") + "</div>";
   } else if (view === "billing" && !(room.person.billing || room.staff)) {
-    main = '<div class="kicker">' + esc(org) + '</div><h1 class="display">Billing</h1><p class="muted">This login does not have the billing layer.</p>';
+    main = '<div class="kicker">' + esc(org) + '</div><h1 class="display">Billing</h1><p class="muted">This login can\'t see billing.</p>';
   } else if (view === "admin") {
     main = admin();
   } else {
@@ -204,7 +204,7 @@ function card(label, n, id) {
 }
 function admin() {
   if (!room.staff) {
-    return '<div class="kicker">' + esc(room.person.orgName || "") + '</div><h1 class="display">Admin</h1><p class="muted">Your access. Junto Nova changes it.</p>' + table(["Person", "Layer"], [[esc(room.person.name), esc(layer(room.person))]]);
+    return '<div class="kicker">' + esc(room.person.orgName || "") + '</div><h1 class="display">Admin</h1><p class="muted">This is the access Junto Nova has given you.</p>' + table(["Person", "Access"], [[esc(room.person.name), esc(layer(room.person))]]);
   }
   // Only an admin can grant or remove staff (the Worker enforces it; the page just doesn't offer it).
   var admin = isAdmin();
@@ -213,7 +213,7 @@ function admin() {
     var action = staffRow && !admin ? "" : '<button type="button" class="btn ghost" data-act="remove-person" data-id="' + esc(person.id) + '">Remove</button>';
     return [esc(person.name) + '<div class="file-meta">' + esc(person.email) + "</div>", esc(person.orgId ? room.orgs[person.orgId] : "None"), esc(layer(person)), action];
   });
-  return '<div class="kicker">Junto Nova</div><h1 class="display">Admin</h1><p class="muted">Add a client\'s Google account and what they can see.</p><form class="form" data-form="person"><div class="row2"><label>Name<input id="c-name" required></label><label>Email<input id="c-email" type="email" required></label></div><label>Permission layer<select id="c-role"><option value="director">Director</option><option value="board">Board</option><option value="member">Member</option>' + (admin ? '<option value="jn">Junto Nova staff</option>' : "") + '</select></label><label>Organization<select id="c-org">' + orgOptions(false) + '</select></label><label>New organization name<input id="c-org-name" placeholder="Only if you chose New organization"></label><label class="check"><input id="c-bill" type="checkbox"> Billing</label><button class="btn" type="submit">Give access</button></form>' + table(["Client", "Organization", "Layer", ""], rows) + addForm("admin");
+  return '<div class="kicker">Junto Nova</div><h1 class="display">Admin</h1><p class="muted">Add a client\'s Google account and what they can see.</p><form class="form" data-form="person"><div class="row2"><label>Name<input id="c-name" required></label><label>Email<input id="c-email" type="email" required></label></div><label>Access<select id="c-role"><option value="director">Director</option><option value="board">Board</option><option value="member">Member</option>' + (admin ? '<option value="jn">Junto Nova staff</option>' : "") + '</select></label><label>Organization<select id="c-org">' + orgOptions(false) + '</select></label><label>New organization name<input id="c-org-name" placeholder="Only if you chose New organization"></label><label class="check"><input id="c-bill" type="checkbox"> Billing</label><button class="btn" type="submit">Give access</button></form>' + table(["Client", "Organization", "Access", ""], rows) + addForm("admin");
 }
 function render() {
   document.getElementById("app").innerHTML = page();
