@@ -251,10 +251,7 @@ function disclosureBlock() {
     return head + table(["Client", "Setting"], ids.map(function (id) { return [esc(room.orgs[id] || id), esc(map[id].label)]; })) + "</div>";
   }
   const d = map[room.person.orgId] || map[ids[0]];
-  const note = d.setting === "named_ok"
-    ? "We may list your name. We will ask you before we use your logo, a quote, a case study, or your name in a proposal to anyone else."
-    : "We will not name you or describe you in a way people could recognize.";
-  return head + '<p><span class="pill">' + esc(d.label) + '</span></p><p class="muted">' + note + "</p></div>";
+  return head + '<p><span class="pill">' + esc(d.label) + '</span></p><p class="muted">We will not name you or describe you in a way people could recognize.</p></div>';
 }
 function page() {
   if (!token) {
