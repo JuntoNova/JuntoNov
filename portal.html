@@ -103,7 +103,7 @@ footer .row{display:flex;justify-content:space-between;gap:1rem;padding:1.5rem 0
 </div></div></footer>
 <script>
 const GOOGLE_CLIENT_ID = "696574706151-9qjv11se3a3us5k86o2fodtktb4m5r2d.apps.googleusercontent.com";
-const API = "https://mins-reseller-municipal-bishop.trycloudflare.com";
+const API = "https://portal-api.juntonova.com";
 let token = "";
 let room = null;
 let view = "home";
@@ -232,6 +232,7 @@ function offerCard(doc) {
 }
 function addForm(section) {
   if (!room.staff) return "";
+  const priv = section === "research";
   const offer = section === "proposals" || section === "research";
   const orgs = Object.keys(room.orgs || {}).map(function (id) {
     return '<option value="' + esc(id) + '">' + esc(room.orgs[id]) + "</option>";
@@ -239,7 +240,21 @@ function addForm(section) {
   const extra = offer
     ? '<label>City<input id="d-city" placeholder="Phoenix"></label><label>Days it can be done<input id="d-when" placeholder="March 12–14"></label><label>Cost<input id="d-cost" placeholder="$18,500" required></label><label>Link to fund it<input id="d-link" type="url" placeholder="https://"></label>'
     : "";
-  return '<form class="form" onsubmit="saveDoc(event,\'' + section + '\')"><div class="kicker">' + (offer ? "Add something they can fund" : "Add a document") + '</div><label>' + (offer ? "What" : "Title") + '<input id="d-title" required placeholder="' + (offer ? "Focus group" : "") + '"></label>' + extra + '<label>Who can see it<select id="d-vis" onchange="document.getElementById(\'d-org-wrap\').hidden=this.value===\'clients\'"><option value="clients">All clients</option><option value="org">This organization</option><option value="director">Director</option><option value="board">Board</option><option value="billing">Billing</option></select></label><div id="d-org-wrap" hidden><label>Organization<select id="d-org">' + orgs + '</select></label><label>New organization name<input id="d-org-name" placeholder="Only if you chose New organization"></label></div><label>Comment<textarea id="d-body" rows="4" placeholder="' + (offer ? "What they get, and why it is worth funding." : "") + '"></textarea></label><label>File, if there is one<input id="d-file" type="file"></label><button class="btn" type="submit">' + (offer ? "Post this" : "Save document") + "</button></form>";
+  return '<form class="form" onsubmit="saveDoc(event,\'' + section + '\')"><div class="kicker">' + (offer ? "Add something they can fund" : "Add a document") + '</div><label>' + (offer ? "What" : "Title") + '<input id="d-title" required placeholder="' + (offer ? "Focus group" : "") + '"></label>' + extra + '<label>Who can see it<select id="d-vis" onchange="document.getElementById(\'d-org-wrap\').hidden=this.value===\'clients\'"><option value="clients">All clients</option><option value="org"' + (priv ? " selected" : "") + '>This organization</option><option value="director">Director</option><option value="board">Board</option><option value="billing">Billing</option></select></label><div id="d-org-wrap"' + (priv ? "" : " hidden") + '><label>Organization<select id="d-org">' + orgs + '</select></label><label>New organization name<input id="d-org-name" placeholder="Only if you chose New organization"></label></div><label>Comment<textarea id="d-body" rows="4" placeholder="' + (offer ? "What they get, and why it is worth funding." : "") + '"></textarea></label><label>File, if there is one<input id="d-file" type="file"></label><button class="btn" type="submit">' + (offer ? "Post this" : "Save document") + "</button></form>";
+}
+function disclosureBlock() {
+  const map = room.disclosures || {};
+  const ids = Object.keys(map);
+  if (!ids.length) return "";
+  const head = '<div class="card" style="margin-bottom:1rem"><div class="kicker">' + (room.staff ? "Client identity" : "Can Junto Nova say you are a client?") + "</div>";
+  if (room.staff) {
+    return head + table(["Client", "Setting"], ids.map(function (id) { return [esc(room.orgs[id] || id), esc(map[id].label)]; })) + "</div>";
+  }
+  const d = map[room.person.orgId] || map[ids[0]];
+  const note = d.setting === "named_ok"
+    ? "We may list your name. We will ask you before we use your logo, a quote, a case study, or your name in a proposal to anyone else."
+    : "We will not name you or describe you in a way people could recognize.";
+  return head + '<p><span class="pill">' + esc(d.label) + '</span></p><p class="muted">' + note + "</p></div>";
 }
 function page() {
   if (!token) {
@@ -263,7 +278,7 @@ function page() {
   } else {
     const titles = { proposals: "Proposals", research: "Research", billing: "Billing" };
     const list = view === "proposals" || view === "research" ? (docs(view).map(offerCard).join("") || '<p class="muted">Nothing posted yet.</p>') : docTable(view);
-    main = '<div class="kicker">' + esc(org) + '</div><h1 class="display">' + titles[view] + "</h1>" + list + addForm(view);
+    main = '<div class="kicker">' + esc(org) + '</div><h1 class="display">' + titles[view] + "</h1>" + (view === "research" ? disclosureBlock() : "") + list + addForm(view);
   }
   if (reading) {
     var download = "";
