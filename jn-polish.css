@@ -95,3 +95,13 @@ body > footer .display{color:#fff!important}
 body > footer .display + div{color:rgba(240,230,211,.8)!important}
 body > footer a,body > footer a:visited{color:inherit}
 body > footer a:hover{text-decoration:underline;text-underline-offset:3px}
+
+/* 11. Issues page repairs.
+   (a) PR #17's global input padding (section 5) outranked .issue-search, so the magnifier overlapped the placeholder. Restore the 2.5rem icon gutters.
+   (b) Phones hide the quadrant descriptions, so show the four quadrant names (name line only) in the plot corners. At 640px and up nothing changes. */
+body input#q.issue-search{padding-left:2.5rem;padding-right:2.5rem}
+@media (max-width:639px){
+  #matrix .issue-quad{display:block}
+  #matrix .issue-quad > div:last-child{display:none}
+  #matrix .issue-quad > div:first-child{font-size:10px;line-height:1.2}
+}
