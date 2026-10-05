@@ -94,3 +94,21 @@ body input#q.issue-search{padding-left:2.5rem;padding-right:2.5rem}
   #matrix .issue-quad > div:last-child{display:none}
   #matrix .issue-quad > div:first-child{font-size:10px;line-height:1.2}
 }
+
+/* 12. Home tab pills stay on one line at phone width.
+   About Us / Cost Drivers / Your Share sit in a flex-wrap row (px-5, gap-3, 14px).
+   With Inter, the widest set (Cost Drivers semibold) is 369px, so the row wraps below a 420px viewport: two rows at 414px, one row at 420px. From 420px up the original padding is unchanged.
+   360px to 419px keeps 14px type, with 10px inline padding and an 8px gap. The 360px row is 312px; the buttons need 301px.
+   Under 360px, 13px type, 8px inline padding, and a 4px gap fit the 320px row (272px wide; the buttons need about 266px). Min height stays 44px, so the hit target does not shrink vertically.
+   Under 320px the same labels do not fit at 13px, so the row scrolls sideways instead of wrapping. */
+@media (max-width:419px){
+  body .jn-tabs{flex-wrap:nowrap;gap:8px}
+  body .jn-tabs>.nav-btn{padding-left:10px;padding-right:10px;white-space:nowrap}
+}
+@media (max-width:359px){
+  body .jn-tabs{gap:4px}
+  body .jn-tabs>.nav-btn{padding-left:8px;padding-right:8px;font-size:13px}
+}
+@media (max-width:319px){
+  body .jn-tabs{overflow-x:auto;margin:-4px;padding:4px}
+}
