@@ -53,27 +53,19 @@ body{font-family:Inter,system-ui,sans-serif;color:var(--charcoal);background:#ff
 <header class="jn-header">
 <div class="jn-header__in">
 <a class="jn-brand" href="/"><img src="https://juntonova.com/jn-header.png" alt="Junto Nova" width="40" height="46"><span>JUNTO NOVA</span></a>
-<nav class="jn-nav" aria-label="Primary">
-<a href="/#about">About Us</a>
-<a href="/#costs">Cost Drivers</a>
-<a href="/#share">Your Share</a>
-<a href="/issues">Issues</a>
-<a href="/ventures">Ventures</a>
-<a class="jn-cta" href="/project">Let's work together</a>
-</nav>
 <button type="button" id="jn-menu-btn" class="jn-menu-btn" aria-expanded="false" aria-controls="jn-menu" aria-label="Open menu">
 <svg class="jn-bars" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
 <svg class="jn-x" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
 </button>
 </div>
-<div id="jn-menu" class="jn-menu" hidden>
+<nav id="jn-menu" class="jn-menu" aria-label="Primary" hidden>
 <a href="/#about">About Us</a>
 <a href="/#costs">Cost Drivers</a>
 <a href="/#share">Your Share</a>
 <a href="/issues">Issues</a>
 <a href="/ventures">Ventures</a>
-<a class="jn-cta" href="/project">Let's work together</a>
-</div>
+<a href="/project">Let's work together</a>
+</nav>
 </header>
 <script>
 (function(){
@@ -86,12 +78,9 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape'&&open())set(
 document.addEventListener('click',function(e){if(open()&&!m.contains(e.target)&&!b.contains(e.target))set(false,false)});
 m.addEventListener('click',function(e){if(e.target.closest('a'))set(false,true)});
 m.addEventListener('focusout',function(e){if(open()&&e.relatedTarget&&!m.contains(e.relatedTarget)&&e.relatedTarget!==b)set(false,false)});
-var mq=window.matchMedia('(min-width:1024px)');
-(mq.addEventListener?mq.addEventListener('change',function(e){if(e.matches)set(false,false)}):mq.addListener(function(e){if(e.matches)set(false,false)}));
 function mark(){
   var p=location.pathname.replace(/\/$/,'')||'/',h=location.hash||(p==='/'?'#about':'');
-  document.querySelectorAll('.jn-nav a,.jn-menu a').forEach(function(a){
-    if(a.classList.contains('jn-cta'))return;
+  m.querySelectorAll('a').forEach(function(a){
     var u=new URL(a.getAttribute('href'),location.origin),ap=u.pathname.replace(/\/$/,'')||'/',on=ap===p&&(ap!=='/'||u.hash===h);
     if(on)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current');
   });

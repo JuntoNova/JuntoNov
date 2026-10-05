@@ -55,19 +55,8 @@ header.jn-header *,header.jn-header *::before,header.jn-header *::after{box-sizi
 .jn-menu:not([hidden]){display:flex;flex-direction:column;gap:2px}
 .jn-menu a{display:flex;align-items:center;min-height:48px;padding:0 .5rem;border-radius:.5rem;color:#1A1A1A;text-decoration:none;font-size:1rem;line-height:1.5}
 .jn-menu a:hover{background:var(--light)}
-.jn-menu a.jn-cta{margin-top:.25rem;background:#1A1A1A;color:#fff;font-weight:500}
-.jn-menu a.jn-cta:hover{background:#000}
-.jn-nav a,.jn-nav a:visited{color:var(--muted);text-decoration:none}
-.jn-nav a[aria-current]{color:#1A1A1A;text-decoration:underline;text-decoration-color:#C45C26;text-decoration-thickness:2px;text-underline-offset:8px}
-.jn-nav a:hover{color:#1A1A1A}
-.jn-nav a.jn-cta,.jn-nav a.jn-cta:visited{background:#1A1A1A;color:#fff;border-radius:.75rem;padding:0 1.125rem;font-weight:500}
-.jn-nav a.jn-cta:hover{background:#000;color:#fff}
-/* Inline nav (8 links incl. About Us) + wordmark: probed at 760-1320px in 8px steps (data/header_bp_probe.json). Fits on one row from 1024px with a 1rem gap (1016px overflows by 3px; gap 1.25rem overflows at every width up to 1320). Below 1024px the menu button is used. */
-@media (min-width:1024px){
-  .jn-nav{display:flex;align-items:center;gap:1rem;font-size:.875rem;line-height:1.25rem}
-  .jn-nav a{display:inline-flex;align-items:center;min-height:44px;white-space:nowrap}
-  .jn-menu-btn,.jn-menu,.jn-menu:not([hidden]){display:none}
-}
+.jn-menu a[aria-current]{text-decoration:underline;text-decoration-color:#C45C26;text-decoration-thickness:2px;text-underline-offset:6px}
+/* Header stays the compact sandwich at every width: wordmark plus the three-line button. Links live in the menu, not in an always-visible bar. */
 
 /* 7b. Focus ring on dark surfaces. PR #13 draws a #1A1A1A ring, which is not visible on a dark background. Inside dark containers the ring is warm paper #F0E6D3.
    Dark containers today: .debt-card (index), the three dark ventures cards (inline background #141110 / #0E1A24 / #090A0C), the charcoal footer (section 10). For a new dark block add class="jn-dark". */
@@ -75,7 +64,7 @@ header.jn-header *,header.jn-header *::before,header.jn-header *::after{box-sizi
 
 /* 8. Motion: only when the visitor has not asked for less */
 @media (prefers-reduced-motion:no-preference){
-  .jn-nav a,.jn-menu a,.jn-menu-btn{transition:color .15s ease,background-color .15s ease}
+  .jn-menu a,.jn-menu-btn{transition:color .15s ease,background-color .15s ease}
 }
 
 /* 9. Home bands: Cost Drivers and Your Share panels sit on warm paper, full-bleed.
