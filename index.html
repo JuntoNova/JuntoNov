@@ -26,6 +26,7 @@ body{font-family:Inter,system-ui,sans-serif;color:var(--charcoal);background:#ff
 .tab-content{display:none}.tab-content.active{display:block}
 #mobile-menu{display:none}#mobile-menu.open{display:block}
 .btn-primary{background:var(--charcoal);color:#fff;border:1px solid var(--charcoal)}.btn-primary:hover{background:#000}
+.nav-btn.btn-primary{background:#fff;color:#1A1A1A;border-color:#1A1A1A;font-weight:600}.nav-btn.btn-primary:hover{background:#F8FAFC}
 .btn-outline{background:transparent;color:var(--charcoal);border:1px solid var(--border)}.btn-outline:hover{background:var(--surface)}
 .service-card{border:1px solid var(--border);border-radius:1rem;padding:1.75rem 1.5rem;background:#fff}a.service-card{cursor:pointer}a.service-card:hover{border-color:#cbd5e1}
 .service-num{font-family:'Playfair Display',Georgia,serif;font-weight:700;font-size:1.35rem;letter-spacing:.04em;color:var(--ember);margin-bottom:.6rem}
@@ -69,27 +70,19 @@ body{font-family:Inter,system-ui,sans-serif;color:var(--charcoal);background:#ff
 <header class="jn-header">
 <div class="jn-header__in">
 <a class="jn-brand" href="/"><img src="https://juntonova.com/jn-header.png" alt="Junto Nova" width="40" height="46"><span>JUNTO NOVA</span></a>
-<nav class="jn-nav" aria-label="Primary">
-<a href="/#about">About Us</a>
-<a href="/#costs">Cost Drivers</a>
-<a href="/#share">Your Share</a>
-<a href="/issues">Issues</a>
-<a href="/ventures">Ventures</a>
-<a class="jn-cta" href="/project">Let's work together</a>
-</nav>
 <button type="button" id="jn-menu-btn" class="jn-menu-btn" aria-expanded="false" aria-controls="jn-menu" aria-label="Open menu">
 <svg class="jn-bars" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
 <svg class="jn-x" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
 </button>
 </div>
-<div id="jn-menu" class="jn-menu" hidden>
+<nav id="jn-menu" class="jn-menu" aria-label="Primary" hidden>
 <a href="/#about">About Us</a>
 <a href="/#costs">Cost Drivers</a>
 <a href="/#share">Your Share</a>
 <a href="/issues">Issues</a>
 <a href="/ventures">Ventures</a>
-<a class="jn-cta" href="/project">Let's work together</a>
-</div>
+<a href="/project">Let's work together</a>
+</nav>
 </header>
 <script>
 (function(){
@@ -102,12 +95,9 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape'&&open())set(
 document.addEventListener('click',function(e){if(open()&&!m.contains(e.target)&&!b.contains(e.target))set(false,false)});
 m.addEventListener('click',function(e){if(e.target.closest('a'))set(false,true)});
 m.addEventListener('focusout',function(e){if(open()&&e.relatedTarget&&!m.contains(e.relatedTarget)&&e.relatedTarget!==b)set(false,false)});
-var mq=window.matchMedia('(min-width:1024px)');
-(mq.addEventListener?mq.addEventListener('change',function(e){if(e.matches)set(false,false)}):mq.addListener(function(e){if(e.matches)set(false,false)}));
 function mark(){
   var p=location.pathname.replace(/\/$/,'')||'/',h=location.hash||(p==='/'?'#about':'');
-  document.querySelectorAll('.jn-nav a,.jn-menu a').forEach(function(a){
-    if(a.classList.contains('jn-cta'))return;
+  m.querySelectorAll('a').forEach(function(a){
     var u=new URL(a.getAttribute('href'),location.origin),ap=u.pathname.replace(/\/$/,'')||'/',on=ap===p&&(ap!=='/'||u.hash===h);
     if(on)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current');
   });
@@ -119,17 +109,16 @@ mark();window.addEventListener('hashchange',mark);
 <section class="max-w-5xl mx-auto px-6 pt-16 pb-8"><div class="max-w-3xl">
 <div class="text-xs font-medium tracking-widest uppercase mb-4" style="color:var(--muted)">A stake in the dream</div>
 <h1 class="display text-4xl md:text-5xl tracking-tight leading-tight mb-6" style="color:var(--charcoal)">The American Dream works best when every citizen owns a real stake in the country's future.</h1>
-<style>.nav-btn.btn-primary{background:#fff;color:#1A1A1A;border-color:#1A1A1A;font-weight:600}.nav-btn.btn-primary:hover{background:#F8FAFC}</style>
-<div class="mb-8"><a href="/project" class="inline-flex items-center justify-center px-7 rounded-xl font-medium btn-primary" style="min-height:48px">Let's work together</a></div>
 <div class="text-lg leading-relaxed space-y-5" style="color:var(--muted)">
 <p>When household costs stay too high, ownership slips out of reach. People stop building and start renting just to survive. And when Americans cannot own their future, they begin to lose their connection to America, to its key institutions, and ultimately to themselves.</p>
 <p>Junto Nova reveals what keeps those costs high and does the work that lowers prices. You can hire Junto Nova and keep your work proprietary. If you let the key insights and lessons be publicly released, no one else will need to pay to learn the same lessons later.</p>
 <p>Publicly available research and insights make the whole market smarter and more cost-effective, and raise the odds of a future every American can own.</p>
 </div></div></section>
-<section class="max-w-5xl mx-auto px-6 pt-10 pb-4"><div class="flex flex-wrap gap-3">
+<section class="max-w-5xl mx-auto px-6 pt-10 pb-4"><div class="flex flex-wrap items-center gap-3">
 <button id="btn-about" onclick="showTab('about')" class="nav-btn px-5 py-2.5 rounded-xl text-sm font-medium transition btn-primary">About Us</button>
 <button id="btn-costs" onclick="showTab('costs')" class="nav-btn px-5 py-2.5 rounded-xl text-sm font-medium transition btn-outline">Cost Drivers</button>
 <button id="btn-share" onclick="showTab('share')" class="nav-btn px-5 py-2.5 rounded-xl text-sm font-medium transition btn-outline">Your Share</button>
+<a href="/project" class="inline-flex items-center justify-center px-5 py-2.5 rounded-xl text-sm font-medium btn-primary ml-auto" style="min-height:44px">Let's work together</a>
 </div></section>
 <section id="content-share" class="tab-content max-w-5xl mx-auto px-6 py-12">
 <div class="mb-10 max-w-2xl"><h2 class="display text-3xl mb-4" style="color:var(--charcoal)">Your share of America</h2>
