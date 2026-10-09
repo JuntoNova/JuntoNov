@@ -95,12 +95,12 @@ mark();window.addEventListener('hashchange',mark);
 
     <main id="main" class="max-w-3xl mx-auto px-6 py-16">
         <h1 class="display text-4xl mb-2" style="color: var(--charcoal);">Privacy Policy</h1>
-        <p class="text-sm mb-10" style="color: var(--muted);">Last updated: October 4, 2026</p>
+        <p class="text-sm mb-10" style="color: var(--muted);">Last updated: October 9, 2026</p>
 
         <div class="space-y-8 text-[15px] leading-relaxed" style="color: #334155;">
             <div>
                 <h2 class="font-semibold mb-2" style="color: var(--charcoal);">What this site does</h2>
-                <p>Junto Nova is a strategy consulting firm. This website is primarily informational. We do not run user accounts, online stores, or complex tracking systems.</p>
+                <p>Junto Nova is a strategy consulting firm. This website is primarily informational. The only user accounts are in our client portal, which is open to invited clients and our staff. We do not run online stores or complex tracking systems.</p>
             </div>
 
             <div>
@@ -120,6 +120,19 @@ mark();window.addEventListener('hashchange',mark);
                 <p class="mt-3">We use Cloudflare Web Analytics to count visits and see which pages get read. It does not use cookies and does not follow you across other sites. We do not use it to identify individual visitors.</p>
                 <p class="mt-3">Pages load fonts, icons and code libraries from outside providers, currently Google Fonts, jsDelivr, cdnjs and the Tailwind CSS content network, and the client login page also loads Google sign-in. When your browser fetches those files, those providers receive your IP address and browser details under their own privacy policies.</p>
                 <p class="mt-3">If we add other analytics, we will update this page first.</p>
+            </div>
+
+            <div>
+                <h2 class="font-semibold mb-2" style="color: var(--charcoal);">Client portal</h2>
+                <p>Our client portal at juntonova.com/portal is for invited clients and Junto Nova staff. There is no public sign-up. You can sign in only if our staff have added your email address to the portal's access list.</p>
+                <p class="mt-3">You sign in with your Google account. Google sends the portal a signed sign-in token. The portal uses only your verified email address from that token, to check the access list. Our servers do not store your Google account ID, your profile photo or the sign-in token.</p>
+                <p class="mt-3">For each person on the access list, we store the name and email address our staff enter, your organization, your access level, and whether you can see billing documents. We also store the documents our staff share in the portal, including attached files. Clients cannot upload files. This data is kept in a Cloudflare D1 database and served by a Cloudflare Worker at portal-api.juntonova.com.</p>
+                <p class="mt-3">After you sign in, your browser keeps the Google sign-in token in session storage for that tab and sends the token with each portal request. The portal stops accepting the token when Google's expiry time passes. The portal clears the token when you sign out. Browsers normally discard session storage when you close the tab. The portal does not set cookies.</p>
+                <p class="mt-3">The portal keeps an activity log of sign-in failures, visits, documents opened and changes made by staff. Each entry records the time, the action, the result and the account. If you are on the access list, the entry shows your email address. If a Google account that is not on the list tries to use the portal, we record only a keyed hash of that email address. We record a keyed hash of your IP address, not the address itself. We do not record your browser type.</p>
+                <p class="mt-3">A job runs once a day and deletes activity log entries older than 24 months. Rate-limit counters, which hold only keyed hashes, are deleted after about 2 hours. Your access-list record stays until our staff remove you. Shared documents and files stay until our staff delete those items. Removing a person does not change older log entries. Those entries keep the email address until they reach 24 months.</p>
+                <p class="mt-3">Clients see only documents shared with their own organization, based on their access level, plus a shared library for all clients. Junto Nova staff with portal staff access can see all client records and documents. People with access to our Cloudflare account can read the database, including the activity log.</p>
+                <p class="mt-3">Google handles sign-in under its own privacy policy. Cloudflare hosts the portal and its database, and processes request data, such as IP address, to deliver and protect the site under its own terms. We do not sell portal data or use the data for ads.</p>
+                <p class="mt-3">To see what the portal holds about you, correct it, or ask for deletion, email info@juntonova.com. We can delete your access-list record and the documents shared with you. Activity log entries stay until the daily job deletes them at 24 months, because the log is kept as a tamper-evident record of portal activity.</p>
             </div>
 
             <div>
