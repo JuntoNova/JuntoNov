@@ -2,42 +2,87 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<style>.jn-skip{position:absolute;left:-9999px;top:0;z-index:1000;background:#1A1A1A;color:#fff;padding:.75rem 1rem;border-radius:.5rem;font:500 .875rem/1 Inter,system-ui,sans-serif;text-decoration:none}
+.jn-skip:focus{left:.75rem;top:.75rem;outline:2px solid #C45C26;outline-offset:2px}</style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>:focus-visible{outline:2px solid #1A1A1A;outline-offset:2px}
+html input::placeholder,html textarea::placeholder{color:#64748B;opacity:1}</style>
 <title>Ventures · Junto Nova</title>
-<link rel="icon" type="image/png" sizes="32x32" href="https://juntonova.com/favicon-32.png">
-<link rel="apple-touch-icon" sizes="180x180" href="https://juntonova.com/favicon-180.png">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#1A1A1A">
 <meta name="description" content="Live prototypes and sketches from Junto Nova.">
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500&family=Inter:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,500&family=Outfit:wght@400;500;600&family=Playfair+Display:wght@600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500&family=Inter:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,500&family=Outfit:wght@400;500;600&family=Playfair+Display:wght@600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500&display=swap');
 :root{--charcoal:#1A1A1A;--ember:#C45C26;--muted:#64748B;--border:#E2E8F0;--surface:#F8FAFC}
 body{font-family:Inter,system-ui,sans-serif;color:var(--charcoal);background:#fff}
 .display{font-family:'Playfair Display',Georgia,serif;font-weight:700;letter-spacing:-0.02em}
 #mobile-menu{display:none}#mobile-menu.open{display:block}
 </style>
+<link rel="canonical" href="https://juntonova.com/ventures">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Junto Nova">
+<meta property="og:title" content="Ventures · Junto Nova">
+<meta property="og:description" content="Live prototypes and sketches from Junto Nova.">
+<meta property="og:url" content="https://juntonova.com/ventures">
+<meta property="og:image" content="https://juntonova.com/og-default.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Junto Nova. A stake in the dream.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Ventures · Junto Nova">
+<meta name="twitter:description" content="Live prototypes and sketches from Junto Nova.">
+<meta name="twitter:image" content="https://juntonova.com/og-default.png">
+<link rel="stylesheet" href="/jn-polish.css">
 </head>
 <body>
-<header class="border-b relative" style="border-color:var(--border);background:#fff">
-<div class="max-w-5xl mx-auto px-6 py-5 flex items-center justify-between">
-<a href="index.html" class="flex items-center gap-3 hover:opacity-80" style="color:var(--charcoal)"><img src="https://juntonova.com/jn-header.png" alt="Junto Nova" width="40" height="46" style="display:block"><span class="display text-2xl tracking-tight">JUNTO NOVA</span></a>
-<div class="relative">
-<button id="menu-toggle" onclick="toggleMenu()" class="p-2 -mr-2" style="color:var(--muted)" aria-label="Open menu">
-<svg id="menu-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
-<svg id="close-icon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+<a class="jn-skip" href="#main">Skip to main content</a>
+<header class="jn-header">
+<div class="jn-header__in">
+<a class="jn-brand" href="/"><img src="https://juntonova.com/jn-header.png" alt="Junto Nova" width="40" height="46"><span>JUNTO NOVA</span></a>
+<button type="button" id="jn-menu-btn" class="jn-menu-btn" aria-expanded="false" aria-controls="jn-menu" aria-label="Open menu">
+<svg class="jn-bars" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+<svg class="jn-x" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
 </button>
-<div id="mobile-menu" class="absolute top-full right-0 mt-2 w-72 rounded-xl border shadow-lg z-50" style="background:#fff;border-color:var(--border)">
-<div class="px-2 py-2 flex flex-col">
-<a href="index.html#about" onclick="closeMenu()" class="py-3 px-2 rounded-lg hover:bg-slate-50">About Us</a>
-<a href="index.html#costs" onclick="closeMenu()" class="py-3 px-2 rounded-lg hover:bg-slate-50">Cost Drivers</a>
-<a href="index.html#share" onclick="closeMenu()" class="py-3 px-2 rounded-lg hover:bg-slate-50">Your Share</a>
-<a href="issues.html" class="py-3 px-2 rounded-lg hover:bg-slate-50">Issues</a>
-<a href="project.html" class="py-3 px-2 rounded-lg hover:bg-slate-50">Let's work together</a>
-<a href="portal.html" class="py-3 px-2 rounded-lg mt-1 font-medium" style="background:#1A1A1A;color:#fff">Client login</a>
-</div></div></div></div></header>
-<main class="max-w-5xl mx-auto px-6 py-12">
+</div>
+<nav id="jn-menu" class="jn-menu" aria-label="Primary" hidden>
+<a href="/#about">About Us</a>
+<a href="/#costs">Cost Drivers</a>
+<a href="/#share">Your Share</a>
+<a href="/issues">Issues</a>
+<a href="/ventures">Ventures</a>
+<a href="/portal">Client login</a>
+<a href="/project">Let's work together</a>
+</nav>
+</header>
+<script>
+(function(){
+var b=document.getElementById('jn-menu-btn'),m=document.getElementById('jn-menu');
+if(!b||!m)return;
+function set(o,f){b.setAttribute('aria-expanded',o?'true':'false');b.setAttribute('aria-label',o?'Close menu':'Open menu');m.hidden=!o;if(!o&&f)b.focus()}
+function open(){return b.getAttribute('aria-expanded')==='true'}
+b.addEventListener('click',function(){set(!open(),false)});
+document.addEventListener('keydown',function(e){if(e.key==='Escape'&&open())set(false,true)});
+document.addEventListener('click',function(e){if(open()&&!m.contains(e.target)&&!b.contains(e.target))set(false,false)});
+m.addEventListener('click',function(e){if(e.target.closest('a'))set(false,true)});
+m.addEventListener('focusout',function(e){if(open()&&e.relatedTarget&&!m.contains(e.relatedTarget)&&e.relatedTarget!==b)set(false,false)});
+function mark(){
+  var p=location.pathname.replace(/\/$/,'')||'/',h=location.hash||(p==='/'?'#about':'');
+  m.querySelectorAll('a').forEach(function(a){
+    var u=new URL(a.getAttribute('href'),location.origin),ap=u.pathname.replace(/\/$/,'')||'/',on=ap===p&&(ap!=='/'||u.hash===h);
+    if(on)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current');
+  });
+}
+mark();window.addEventListener('hashchange',mark);
+})();
+</script>
+<main id="main" class="max-w-5xl mx-auto px-6 py-12">
 <div class="mb-8">
-<div class="text-xs font-medium tracking-widest uppercase mb-3" style="color:var(--muted)">Ventures</div>
+<h1 class="text-xs font-medium tracking-widest uppercase mb-3" style="color:var(--muted)">Ventures</h1>
 </div>
 <div class="grid md:grid-cols-2 gap-4">
 <article class="rounded-2xl overflow-hidden" style="background:#141110;border:1px solid rgba(242,236,228,.12);color:#F2ECE4">
@@ -51,11 +96,11 @@ body{font-family:Inter,system-ui,sans-serif;color:var(--charcoal);background:#ff
 </article>
 <article class="rounded-2xl overflow-hidden" style="background:#F4EDE3;border:1px solid rgba(14,12,11,.12);color:#0E0C0B">
 <div style="padding:22px 22px 0">
-<div style="font-family:Inter,Helvetica Neue,Arial,sans-serif;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#1AA39A;margin-bottom:10px">Un Junto para las Américas</div>
-<img src="https://www.nuevajunto.com/brand/logos/lockup-horizontal-light.svg" alt="nueva junto" style="height:52px;width:auto;display:block">
+<div style="font-family:Inter,Helvetica Neue,Arial,sans-serif;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:#0B4F4B;margin-bottom:10px">Un Junto para las Américas</div>
+<img src="ventures/nueva-junto-lockup-light.svg" alt="nueva junto" style="height:52px;width:auto;display:block">
 </div>
 <div style="padding:16px 22px 22px">
-<p style="font-family:Inter,Helvetica Neue,Arial,sans-serif;font-size:1rem;line-height:1.5;color:#8A8178;margin:0 0 1rem">Help countries in the Americas write basic rights into law so the next government cannot take them back.</p>
+<p style="font-family:Inter,Helvetica Neue,Arial,sans-serif;font-size:1rem;line-height:1.5;color:#6B6359;margin:0 0 1rem">Help countries in the Americas write basic rights into law so the next government cannot take them back.</p>
 <a href="https://www.nuevajunto.com/" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;background:#0E0C0B;color:#F4EDE3;border-radius:999px;padding:10px 16px;font-family:Inter,Helvetica Neue,Arial,sans-serif;font-size:13px;letter-spacing:.04em">Visit</a>
 </div>
 </article>
@@ -77,7 +122,7 @@ body{font-family:Inter,system-ui,sans-serif;color:var(--charcoal);background:#ff
 <img src="ventures/tdm-mark.svg" alt="" width="40" height="40">
 <div>
 <div style="font-family:Fraunces,Georgia,serif;font-weight:600;font-size:1.35rem;letter-spacing:-.02em;color:#EFECE4">The Draft Model</div>
-<div style="font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#D8FF3E;margin-top:4px">Probabilities, not opinions</div>
+<div style="font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#D8FF3E;margin-top:4px">Probabilities, not opinions</div>
 </div>
 </div>
 </div>
@@ -93,18 +138,13 @@ body{font-family:Inter,system-ui,sans-serif;color:var(--charcoal);background:#ff
 <div style="max-width:64rem;margin:0 auto;padding:2rem 1.5rem;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:1rem;font-size:.875rem;color:#64748B">
 <div><div class="display" style="font-size:1.125rem;color:#1A1A1A">JUNTO NOVA</div><div style="font-size:.75rem;margin-top:.25rem">Junto Nova LLC · Dallas, TX</div></div>
 <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:1.25rem">
-<a href="mailto:andrew@juntonova.com" aria-label="Email"><i class="fa-solid fa-envelope"></i></a>
-<a href="https://x.com/jandrewclark" target="_blank" rel="noopener" aria-label="X"><i class="fa-brands fa-x-twitter"></i></a>
+<a href="mailto:info@juntonova.com" aria-label="Email"><i class="fa-solid fa-envelope"></i></a>
+<a href="https://x.com/JuntoNov" target="_blank" rel="noopener" aria-label="X"><i class="fa-brands fa-x-twitter"></i></a>
 <a href="https://juntonova.substack.com" target="_blank" rel="noopener" aria-label="Substack"><i class="fa-solid fa-bookmark"></i></a>
 <a href="ventures.html">Ventures</a>
 <a href="involved.html">Get Involved</a>
 <a href="privacy.html">Privacy</a>
 <span>© 2026</span>
 </div></div></footer>
-<script>
-function toggleMenu(){const m=document.getElementById('mobile-menu');const open=m.classList.toggle('open');document.getElementById('menu-icon').classList.toggle('hidden',open);document.getElementById('close-icon').classList.toggle('hidden',!open)}
-function closeMenu(){document.getElementById('mobile-menu').classList.remove('open');document.getElementById('menu-icon').classList.remove('hidden');document.getElementById('close-icon').classList.add('hidden')}
-document.addEventListener('click',function(event){const menu=document.getElementById('mobile-menu');const button=document.getElementById('menu-toggle');if(!menu||!menu.classList.contains('open'))return;if(menu.contains(event.target)||button.contains(event.target))return;closeMenu()})
-</script>
 </body>
 </html>

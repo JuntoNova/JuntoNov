@@ -2,10 +2,17 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+<style>.jn-skip{position:absolute;left:-9999px;top:0;z-index:1000;background:#1A1A1A;color:#fff;padding:.75rem 1rem;border-radius:.5rem;font:500 .875rem/1 Inter,system-ui,sans-serif;text-decoration:none}
+.jn-skip:focus{left:.75rem;top:.75rem;outline:2px solid #C45C26;outline-offset:2px}</style>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>:focus-visible{outline:2px solid #1A1A1A;outline-offset:2px}
+html input::placeholder,html textarea::placeholder{color:#64748B;opacity:1}</style>
     <title>Member · Junto Nova</title>
-    <link rel="icon" type="image/png" sizes="32x32" href="https://juntonova.com/favicon-32.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="https://juntonova.com/favicon-180.png">
+    <link rel="icon" href="/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <meta name="theme-color" content="#1A1A1A">
     <meta name="description" content="Prototype: what membership and incoming payments could look like.">
         <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -74,8 +81,25 @@
         }
         tr:last-child td { border-bottom: none; }
     </style>
+<meta name="robots" content="noindex">
+<link rel="canonical" href="https://juntonova.com/sandbox">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Junto Nova">
+<meta property="og:title" content="Member · Junto Nova">
+<meta property="og:description" content="Prototype: what membership and incoming payments could look like.">
+<meta property="og:url" content="https://juntonova.com/sandbox">
+<meta property="og:image" content="https://juntonova.com/og-default.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Junto Nova. A stake in the dream.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Member · Junto Nova">
+<meta name="twitter:description" content="Prototype: what membership and incoming payments could look like.">
+<meta name="twitter:image" content="https://juntonova.com/og-default.png">
+<link rel="stylesheet" href="/jn-polish.css">
 </head>
 <body>
+<a class="jn-skip" href="#main">Skip to main content</a>
 
     <header class="border-b" style="border-color: var(--border); background: #fff;">
         <div class="max-w-5xl mx-auto px-6 py-5 flex items-center justify-between">
@@ -90,7 +114,7 @@
         </div>
     </header>
 
-    <main class="max-w-5xl mx-auto px-6 py-10 md:py-14">
+    <main id="main" class="max-w-5xl mx-auto px-6 py-10 md:py-14">
 
         <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-8">
             <div>
@@ -99,8 +123,8 @@
                 <p style="color: var(--muted);">Active since March 2026 · Housing slice · Dallas</p>
             </div>
             <div class="flex gap-3">
-                <button type="button" class="px-4 py-2.5 rounded-xl text-sm font-medium btn-outline" onclick="alert('Prototype only — payout method would open here.')">Payout method</button>
-                <button type="button" class="px-4 py-2.5 rounded-xl text-sm font-medium btn-primary" onclick="alert('Prototype only — next distribution is already scheduled.')">Request payout</button>
+                <button type="button" class="px-4 py-2.5 rounded-xl text-sm font-medium btn-outline" onclick="alert('Prototype only. Payout method would open here.')">Payout method</button>
+                <button type="button" class="px-4 py-2.5 rounded-xl text-sm font-medium btn-primary" onclick="alert('Prototype only. Next distribution is already scheduled.')">Request payout</button>
             </div>
         </div>
 
@@ -202,7 +226,7 @@
             </div>
         </div>
 
-        <p class="text-xs" style="color: var(--muted);">Sandbox prototype. Names, amounts, and the housing pool are illustrative — nothing here moves money.</p>
+        <p class="text-xs" style="color: var(--muted);">Sandbox prototype. Names, amounts, and the housing pool are illustrative. Nothing here moves money.</p>
 
     </main>
 
@@ -211,8 +235,8 @@
 <div style="max-width:64rem;margin:0 auto;padding:2rem 1.5rem;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:1rem;font-size:.875rem;color:#64748B">
 <div><div class="display" style="font-size:1.125rem;color:#1A1A1A">JUNTO NOVA</div><div style="font-size:.75rem;margin-top:.25rem">Junto Nova LLC · Dallas, TX</div></div>
 <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:1.25rem">
-<a href="mailto:andrew@juntonova.com" aria-label="Email"><i class="fa-solid fa-envelope"></i></a>
-<a href="https://x.com/jandrewclark" target="_blank" rel="noopener" aria-label="X"><i class="fa-brands fa-x-twitter"></i></a>
+<a href="mailto:info@juntonova.com" aria-label="Email"><i class="fa-solid fa-envelope"></i></a>
+<a href="https://x.com/JuntoNov" target="_blank" rel="noopener" aria-label="X"><i class="fa-brands fa-x-twitter"></i></a>
 <a href="https://juntonova.substack.com" target="_blank" rel="noopener" aria-label="Substack"><i class="fa-solid fa-bookmark"></i></a>
 <a href="ventures.html">Ventures</a>
 <a href="involved.html">Get Involved</a>

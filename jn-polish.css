@@ -1,0 +1,114 @@
+/* jn-polish.css  (PR-A, with header section used by PR-B)
+   Link as the LAST element in <head>:  <link rel="stylesheet" href="/jn-polish.css">
+   Tailwind CDN appends its <style> at runtime AFTER this link, so every rule that
+   must beat a Tailwind utility uses element+class (0,1,1) specificity, never order.
+   Service pages (capital, diagnose, govern, organization, strategy) are NOT covered:
+   their rules live in jn-service-pages.css (after Monday). */
+
+:root{--ember-ink:#A8481A;--paper:#F0E6D3;--oxidized:#2A3A4A;--muted:#64748B;--border:#E2E8F0;--light:#F8FAFC;--measure:50ch}
+
+/* 2. Ember on white is 4.28:1. Small ember text uses ember-ink (5.82:1 on white). Ember stays for dots, rules, marks, large display. */
+body .text-xs[style*="--ember"],body .text-sm[style*="--ember"],body p.text-xs[style*="--ember"]{color:var(--ember-ink)!important}
+body .faq-q:hover{color:var(--ember-ink)}
+body .faq-item.open .faq-icon{color:var(--ember-ink);border-color:var(--ember-ink)}
+
+/* 3. Type floor: nothing under 12px, table heads and labels 13px */
+body .text-\[10px\],body .text-\[11px\],body .pill{font-size:12px}
+body th{font-size:13px}
+[style*="font-size:10px"],[style*="font-size:11px"],[style*="font-size: 10px"],[style*="font-size: 11px"]{font-size:12px!important}
+
+/* 4. h1: only the mobile size comes down (text-4xl 36px -> 30px under 480px). From 480px up every h1 keeps the size it has on main. */
+@media (max-width:479px){body h1.display.text-4xl{font-size:1.875rem;line-height:1.12}}
+
+/* 5. Tap targets (>=44px tall). Visual change kept to padding / hit box only. */
+#menu-toggle{min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center}
+footer a{display:inline-flex;align-items:center;justify-content:center;min-height:44px;margin-top:-11px;margin-bottom:-11px}
+footer a[aria-label],footer a:has(> i){min-width:44px;margin-left:-.5rem;margin-right:-.5rem}
+header a.text-sm{display:inline-flex;align-items:center;min-height:44px}
+body .nav-btn,body #lenses > button,body #detail > a,body main button.rounded-xl,body main article a{min-height:44px}
+body #detail > a.inline-flex,body main article a{align-items:center}
+input:not([type=checkbox]):not([type=radio]):not([type=hidden]),select{min-height:44px}
+body input:not([type=checkbox]):not([type=radio]):not([type=hidden]),body select,body textarea{padding:.5rem 1rem}
+label:has(> input[type=checkbox]),label:has(> input[type=radio]){min-height:44px;align-items:center}
+
+/* 5b. Grid items may shrink: stops wide tables/charts from pushing the page past the viewport (sandbox: 71px overflow at 390 today) */
+main .grid > *{min-width:0}
+
+/* 6. Reading measure: about 68 characters per line (50ch measures ~63-71 characters depending on font size) */
+main p:not([class*="text-center"]),main .clean-list span,main .clean-list li,#detail li,#detail p{max-width:var(--measure)}
+
+/* 7. Shared header (PR-B). Self-contained: also works on pages without Tailwind. */
+header.jn-header{position:relative;display:block;max-width:none;margin:0;padding:0;background:#fff;border-bottom:1px solid var(--border);z-index:40}
+header.jn-header *,header.jn-header *::before,header.jn-header *::after{box-sizing:border-box}
+.jn-header__in{max-width:64rem;margin:0 auto;padding:1.25rem 1.5rem;display:flex;align-items:center;justify-content:space-between;gap:1rem}
+.jn-brand{display:flex;align-items:center;gap:.75rem;color:#1A1A1A;text-decoration:none;flex:none}
+.jn-brand img{display:block;width:40px;height:auto}
+.jn-brand span{font-family:'Playfair Display',Georgia,serif;font-weight:700;font-size:1.5rem;line-height:2rem;letter-spacing:-.025em}
+.jn-nav{display:none}
+.jn-menu-btn{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;margin:0 -10px 0 0;padding:0;border:0;border-radius:.5rem;background:none;color:var(--muted);cursor:pointer}
+.jn-menu-btn svg{width:24px;height:24px;display:block}
+.jn-menu-btn .jn-x{display:none}
+.jn-menu-btn[aria-expanded="true"] .jn-x{display:block}
+.jn-menu-btn[aria-expanded="true"] .jn-bars{display:none}
+.jn-menu{position:absolute;right:1.5rem;top:100%;margin-top:.5rem;width:18rem;max-width:calc(100vw - 3rem);padding:.5rem;background:#fff;border:1px solid var(--border);border-radius:.75rem;box-shadow:0 10px 15px -3px rgba(0,0,0,.1),0 4px 6px -4px rgba(0,0,0,.1);z-index:50}
+.jn-menu[hidden]{display:none}
+.jn-menu:not([hidden]){display:flex;flex-direction:column;gap:2px}
+.jn-menu a{display:flex;align-items:center;min-height:48px;padding:0 .5rem;border-radius:.5rem;color:#1A1A1A;text-decoration:none;font-size:1rem;line-height:1.5}
+.jn-menu a:hover{background:var(--light)}
+.jn-menu a[aria-current]{text-decoration:underline;text-decoration-color:#C45C26;text-decoration-thickness:2px;text-underline-offset:6px}
+/* Header stays the compact sandwich at every width: wordmark plus the three-line button. Links live in the menu, not in an always-visible bar. */
+
+/* 7b. Focus ring on dark surfaces. PR #13 draws a #1A1A1A ring, which is not visible on a dark background. Inside dark containers the ring is warm paper #F0E6D3.
+   Dark containers today: .debt-card (index), the three dark ventures cards (inline background #141110 / #0E1A24 / #090A0C), the charcoal footer (section 10). For a new dark block add class="jn-dark". */
+.jn-dark :focus-visible,.debt-card :focus-visible,[style*="background:#141110"] :focus-visible,[style*="background:#0E1A24"] :focus-visible,[style*="background:#090A0C"] :focus-visible,body > footer :focus-visible{outline:2px solid var(--paper);outline-offset:2px}
+
+/* 8. Motion: only when the visitor has not asked for less */
+@media (prefers-reduced-motion:no-preference){
+  .jn-menu a,.jn-menu-btn{transition:color .15s ease,background-color .15s ease}
+}
+
+/* 9. Home bands: Cost Drivers and Your Share panels sit on warm paper, full-bleed.
+   The panels are max-w-5xl, so the paper is extended sideways with a clipped box-shadow (no markup or layout change).
+   Variables are re-pointed inside the band so existing inline var(--muted)/var(--surface) follow without !important:
+   muted text directly on paper becomes charcoal at 85% (7+:1 on paper; #64748B would be 3.8:1), cards stay white, and cards keep the original muted grey. */
+#content-costs,#content-share{background-color:var(--paper);box-shadow:0 0 0 100vmax var(--paper);clip-path:inset(0 -100vmax);--muted:rgba(26,26,26,.85);--surface:#fff}
+#content-costs .rounded-2xl,#content-share .rounded-2xl{--muted:#64748B}
+#content-costs .btn-outline,#content-share .btn-outline{background-color:#fff}
+#content-costs .btn-outline:hover,#content-share .btn-outline:hover{background-color:var(--light)}
+
+/* 10. Footer: charcoal with warm paper text. !important is only used where an inline style on the page has to be overridden
+   (footer border-top, outer div colour, wordmark colour). The wordmark is text (there is no image mark in the footer), rendered white. */
+body > footer{background-color:#1A1A1A;color:var(--paper);border-top:0!important}
+body > footer > div{color:var(--paper)!important}
+body > footer .display{color:#fff!important}
+body > footer .display + div{color:rgba(240,230,211,.8)!important}
+body > footer a,body > footer a:visited{color:inherit}
+body > footer a:hover{text-decoration:underline;text-underline-offset:3px}
+
+/* 11. Issues page repairs.
+   (a) PR #17's global input padding (section 5) outranked .issue-search, so the magnifier overlapped the placeholder. Restore the 2.5rem icon gutters.
+   (b) Phones hide the quadrant descriptions, so show the four quadrant names (name line only) in the plot corners. At 640px and up nothing changes. */
+body input#q.issue-search{padding-left:2.5rem;padding-right:2.5rem}
+@media (max-width:639px){
+  #matrix .issue-quad{display:block}
+  #matrix .issue-quad > div:last-child{display:none}
+  #matrix .issue-quad > div:first-child{font-size:10px;line-height:1.2}
+}
+
+/* 12. Home tab pills stay on one line at phone width.
+   About Us / Cost Drivers / Your Share sit in a flex-wrap row (px-5, gap-3, 14px).
+   With Inter, the widest set (Cost Drivers semibold) is 369px, so the row wraps below a 420px viewport: two rows at 414px, one row at 420px. From 420px up the original padding is unchanged.
+   360px to 419px keeps 14px type, with 10px inline padding and an 8px gap. The 360px row is 312px; the buttons need 301px.
+   Under 360px, 13px type, 8px inline padding, and a 4px gap fit the 320px row (272px wide; the buttons need about 266px). Min height stays 44px, so the hit target does not shrink vertically.
+   Under 320px the same labels do not fit at 13px, so the row scrolls sideways instead of wrapping. */
+@media (max-width:419px){
+  body .jn-tabs{flex-wrap:nowrap;gap:8px}
+  body .jn-tabs>.nav-btn{padding-left:10px;padding-right:10px;white-space:nowrap}
+}
+@media (max-width:359px){
+  body .jn-tabs{gap:4px}
+  body .jn-tabs>.nav-btn{padding-left:8px;padding-right:8px;font-size:13px}
+}
+@media (max-width:319px){
+  body .jn-tabs{overflow-x:auto;margin:-4px;padding:4px}
+}
