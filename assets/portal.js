@@ -18,7 +18,10 @@ var addLens = "practical";
 var clientSaved = "";
 var issueOpen = false;
 var ideaLens = "";
-try { token = sessionStorage.getItem("jn_google") || ""; } catch (e) {}
+var msEnabled = false;
+/* Sign-in is a server session cookie on portal-api (HttpOnly). The page never holds a token:
+   `token` is only "session" when signed in, "" when not. Old Google tokens are cleared. */
+try { sessionStorage.removeItem("jn_google"); } catch (e) {}
 
 function esc(s) {
   return String(s || "").replace(/[&<>"']/g, function (c) {
@@ -29,23 +32,28 @@ function esc(s) {
     return "&" + "#39;";
   });
 }
-function logout() {
+function signedOut() {
   token = "";
   room = null;
   reading = null;
-  try { sessionStorage.removeItem("jn_google"); } catch (e) {}
   try { if (window.google && window.google.accounts && window.google.accounts.id) window.google.accounts.id.disableAutoSelect(); } catch (e) {}
   render();
+}
+function logout() {
+  fetch(API + "/auth/logout", { method: "POST", credentials: "include", headers: { "Content-Type": "application/json" }, body: "{}" }).catch(function () {});
+  error = "";
+  signedOut();
 }
 async function api(body) {
   if (previewKind()) return previewMutate(body);
   var res = await fetch(API + "/api/portal", {
     method: "POST",
-    headers: { "Content-Type": "application/json", Authorization: "Bearer " + token },
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
   });
   var data = await res.json().catch(function () { return { error: "The portal can't be reached." }; });
-  if (res.status === 401) { logout(); throw new Error("Sign in again."); }
+  if (res.status === 401) { signedOut(); throw new Error(""); }
   return data;
 }
 async function refresh() {
@@ -54,11 +62,39 @@ async function refresh() {
   room = data;
   error = data.error || "";
 }
-function onGoogle(response) {
-  token = response.credential;
-  try { sessionStorage.setItem("jn_google", token); } catch (e) {}
+var NOT_LISTED = "This account isn't on the list.";
+var SIGNIN_FAILED = "Sign-in didn't work. Try again.";
+async function onGoogle(response) {
   error = "";
-  refresh().then(render).catch(function (e) { error = e.message; render(); });
+  try {
+    var res = await fetch(API + "/auth/google", {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ credential: response.credential }),
+    });
+    if (res.status === 403) { error = NOT_LISTED; render(); return; }
+    if (!res.ok) { error = SIGNIN_FAILED; render(); return; }
+    token = "session";
+    await refresh();
+  } catch (e) {
+    if (!error) error = SIGNIN_FAILED;
+  }
+  render();
+}
+/* Microsoft sign-in returns here with #signin=<outcome>. Read it once, then clear it. */
+function readSigninOutcome() {
+  var m = /^#signin=([a-z_]+)$/.exec(location.hash || "");
+  if (!m) return;
+  try { history.replaceState(null, "", location.pathname + location.search); } catch (e) {}
+  if (m[1] === "not_listed") error = NOT_LISTED;
+  else if (m[1] !== "ok" && m[1] !== "cancelled") error = SIGNIN_FAILED;
+}
+function loadProviders() {
+  return fetch(API + "/auth/providers", { credentials: "omit" })
+    .then(function (r) { return r.ok ? r.json() : {}; })
+    .then(function (p) { msEnabled = Boolean(p && p.microsoft); })
+    .catch(function () { msEnabled = false; });
 }
 function initGoogle() {
   var host = document.getElementById("google-btn");
@@ -432,7 +468,8 @@ function disclosureBlock() {
 function safeB64(s) { return String(s || "").replace(/[^A-Za-z0-9+\/=]/g, ""); }
 function page() {
   if (!token) {
-    return '<main class="wrap"><div class="login-shell"><div class="login-card card"><div class="kicker">Client portal</div><h1 class="display t-lg">Sign in</h1><p class="muted">Use the Google account you were given.</p>' + (error ? '<div class="err" role="alert">' + esc(error) + "</div>" : "") + '<div id="google-btn"></div><button type="button" class="btn google" id="google-fallback" data-act="google">Sign in with Google</button></div></div></main>';
+    var ms = msEnabled ? '<a class="btn signin ms" href="' + API + '/auth/microsoft/start"><svg class="ms-logo" viewBox="0 0 21 21" aria-hidden="true"><path fill="#f25022" d="M0 0h10v10H0z"/><path fill="#7fba00" d="M11 0h10v10H11z"/><path fill="#00a4ef" d="M0 11h10v10H0z"/><path fill="#ffb900" d="M11 11h10v10H11z"/></svg><span>Sign in with Microsoft</span></a>' : "";
+    return '<main class="wrap"><div class="login-shell"><div class="login-card card signin-card"><div class="kicker">Client portal</div><h1 class="display t-lg">Sign in</h1>' + (error ? '<div class="err" role="alert">' + esc(error) + "</div>" : "") + '<div class="signin-stack"><div id="google-btn"></div><button type="button" class="btn signin google" id="google-fallback" data-act="google">Sign in with Google</button>' + ms + '</div></div></div></main>';
   }
   if (!room) {
     return '<main class="wrap"><div class="login-card card"><h1 class="display t-lg">This account isn\'t on the list</h1><p class="muted">' + esc(error || "Ask Junto Nova to add this Google account.") + '</p><button type="button" class="btn ghost" data-act="logout">Sign out</button></div></main>';
@@ -1074,8 +1111,25 @@ function boot() {
     render();
     return;
   }
-  if (!token) { render(); return; }
-  refresh().then(render).catch(function () { error = "The portal can't be reached. Try again."; token = ""; render(); });
+  readSigninOutcome();
+  var signedInCheck = fetch(API + "/api/portal", {
+    method: "POST",
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ action: "load" }),
+  }).then(function (res) {
+    if (res.status === 401) return null;
+    return res.json().then(function (data) {
+      if (!res.ok) throw new Error(data && data.error);
+      return data;
+    });
+  });
+  Promise.all([signedInCheck, loadProviders()])
+    .then(function (out) {
+      if (out[0]) { token = "session"; room = out[0]; }
+      render();
+    })
+    .catch(function () { error = "The portal can't be reached. Try again."; token = ""; render(); });
 }
 boot();
 
