@@ -117,9 +117,11 @@ function nav() {
 function paintMenu() {
   var slot = document.getElementById("portal-menu");
   if (!slot) return;
-  if (!token || !room) { slot.innerHTML = ""; slot.hidden = true; return; }
+  var signedIn = Boolean(token && room);
+  document.querySelectorAll('#mobile-menu a.login, #mobile-menu a[href="project.html"]').forEach(function (a) { a.hidden = signedIn; });
+  if (!signedIn) { slot.innerHTML = ""; slot.hidden = true; return; }
   slot.hidden = false;
-  slot.innerHTML = '<nav class="portal-nav" aria-label="Portal sections">' + nav() + '</nav><div class="menu-who"><b>' + esc(room.person.name) + '</b><button type="button" data-act="logout">Sign out</button></div>';
+  slot.innerHTML = '<nav class="portal-nav" aria-label="Portal sections">' + nav() + '</nav><div class="menu-who">' + esc(room.person.name) + '</div><button type="button" class="menu-row" data-act="logout">Sign out</button>';
 }
 function setView(id) { if (sections().indexOf(id) < 0) id = "ideas"; view = id; reading = null; menu(false); render(); }
 function ideaTotal() {
@@ -163,7 +165,7 @@ function issueDrawer() {
 }
 function lensChips() {
   var lenses = [["", "All"], ["practical", "Practical"], ["structural", "Structural"], ["cultural", "Cultural"]];
-  return '<div class="chips" role="group" aria-label="Lens">' + lenses.map(function (pair) {
+  return '<div class="chips lens-row" role="group" aria-label="Lens">' + lenses.map(function (pair) {
     var on = ideaLens === pair[0];
     return '<button type="button" data-act="lens" data-lens="' + esc(pair[0]) + '" class="' + (on ? "active" : "") + '"' + (on ? ' aria-current="true"' : "") + ">" + pair[1] + "</button>";
   }).join("") + "</div>";
@@ -343,7 +345,7 @@ function submitIdeaForm(issue) {
 }
 function ideasPage() {
   var list = room.issues || [];
-  var main = '<div class="kicker">Ideas</div><h1 class="display">Ideas</h1>' + issueDrawer() + lensChips();
+  var main = '<h1 class="display">Ideas</h1>' + issueDrawer() + lensChips();
   if (!list.length) return main + '<p class="muted">Nothing here yet.</p>' + (room.staff ? '<form class="form" data-form="issue"><label>Issue<input id="n-issue" required></label><button class="btn" type="submit">Add issue</button></form>' : "");
   var issue = currentIssue();
   var visible = (issue.items || []).filter(function (item) { return !ideaLens || (item.lens || "") === ideaLens; });
