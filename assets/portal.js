@@ -21,7 +21,12 @@ var ideaLens = "";
 var msEnabled = false;
 /* Sign-in is a server session cookie on portal-api (HttpOnly). The page never holds a token:
    `token` is only "session" when signed in, "" when not. Old Google tokens are cleared. */
-try { sessionStorage.removeItem("jn_google"); } catch (e) {}
+try {
+  if (sessionStorage.getItem("jn_google")) {
+    sessionStorage.removeItem("jn_google");
+    error = "Sign-in has changed. Please sign in once more.";
+  }
+} catch (e) {}
 
 function esc(s) {
   return String(s || "").replace(/[&<>"']/g, function (c) {
@@ -39,8 +44,13 @@ function signedOut() {
   try { if (window.google && window.google.accounts && window.google.accounts.id) window.google.accounts.id.disableAutoSelect(); } catch (e) {}
   render();
 }
-function logout() {
-  fetch(API + "/auth/logout", { method: "POST", credentials: "include", headers: { "Content-Type": "application/json" }, body: "{}" }).catch(function () {});
+async function logout() {
+  var ok = false;
+  try {
+    var res = await fetch(API + "/auth/logout", { method: "POST", credentials: "include", headers: { "Content-Type": "application/json" }, body: "{}" });
+    ok = res.ok;
+  } catch (e) {}
+  if (!ok) { error = "Sign out didn't finish. Try again."; render(); return; }
   error = "";
   signedOut();
 }
