@@ -1,15 +1,23 @@
 /* Client portal. No inline script or inline handlers: the page's Content-Security-Policy allows
-   only this file and the Google sign-in script. Server data is escaped with esc() before it
-   reaches innerHTML, and actions are wired by data-act attributes and one delegated listener. */
+   only scripts from this origin and the Google sign-in script. Server data is escaped with esc()
+   before it reaches innerHTML, and actions are wired by data-act attributes and one delegated listener. */
 (function () {
 "use strict";
 var GOOGLE_CLIENT_ID = "696574706151-9qjv11se3a3us5k86o2fodtktb4m5r2d.apps.googleusercontent.com";
 var API = "https://portal-api.juntonova.com";
 var token = "";
 var room = null;
-var view = "home";
+var view = "ideas";
 var error = "";
 var reading = null;
+var ideaIssue = "";
+var openItem = "";
+var editingItem = "";
+var addingItem = false;
+var addLens = "practical";
+var clientSaved = "";
+var issueOpen = false;
+var ideaLens = "";
 try { token = sessionStorage.getItem("jn_google") || ""; } catch (e) {}
 
 function esc(s) {
@@ -30,6 +38,7 @@ function logout() {
   render();
 }
 async function api(body) {
+  if (previewKind()) return previewMutate(body);
   var res = await fetch(API + "/api/portal", {
     method: "POST",
     headers: { "Content-Type": "application/json", Authorization: "Bearer " + token },
@@ -94,19 +103,271 @@ function layer(person) {
   return person.billing && person.role !== "jn" && person.role !== "admin" ? base + " · Billing" : base;
 }
 function isAdmin() { return Boolean(room && room.person && room.person.role === "admin"); }
+function sections() {
+  var ids = ["ideas", "home", "proposals", "research", "billing"];
+  if (room && room.staff) ids.push("admin");
+  return ids;
+}
+function sectionLabel(id) { return id === "home" ? "Workspace" : id[0].toUpperCase() + id.slice(1); }
 function nav() {
-  return ["home", "proposals", "research", "billing", "admin"].map(function (id) {
-    var label = id[0].toUpperCase() + id.slice(1);
-    return '<button type="button" data-act="view" data-view="' + id + '" class="' + (view === id ? "active" : "") + '"' + (view === id ? ' aria-current="page"' : "") + ">" + label + "</button>";
+  return sections().map(function (id) {
+    return '<button type="button" data-act="view" data-view="' + id + '" class="' + (view === id ? "active" : "") + '"' + (view === id ? ' aria-current="page"' : "") + ">" + sectionLabel(id) + "</button>";
   }).join("");
 }
-function setView(id) { view = id; reading = null; render(); }
+function paintMenu() {
+  var slot = document.getElementById("portal-menu");
+  if (!slot) return;
+  var signedIn = Boolean(token && room);
+  document.querySelectorAll('#mobile-menu a.login, #mobile-menu a[href="project.html"]').forEach(function (a) { a.hidden = signedIn; });
+  if (!signedIn) { slot.innerHTML = ""; slot.hidden = true; return; }
+  slot.hidden = false;
+  slot.innerHTML = '<nav class="portal-nav" aria-label="Portal sections">' + nav() + '</nav><div class="menu-who">' + esc(room.person.name) + '</div><button type="button" class="menu-row" data-act="logout">Sign out</button>';
+}
+function setView(id) { if (sections().indexOf(id) < 0) id = "ideas"; view = id; reading = null; menu(false); render(); }
+function ideaTotal() {
+  var n = 0;
+  (room.issues || []).forEach(function (issue) { n += (issue.items || []).length; });
+  return n;
+}
+function lensLabel(id) {
+  return { practical: "Practical", structural: "Structural", cultural: "Cultural" }[id] || "No lens";
+}
+function badge(value) {
+  var labels = { idea: "Idea", poll: "Poll", opposition: "Opposition", vetted: "Vetted", untested: "Untested" };
+  var cls = "pill";
+  if (value === "opposition") cls += " oppose";
+  else if (value === "untested" || value === "poll") cls += " open";
+  else if (value === "vetted") cls += " paid";
+  return '<span class="' + cls + '">' + esc(labels[value] || value) + "</span>";
+}
+function selectOptions(values, current, labels) {
+  return values.map(function (value) {
+    return '<option value="' + esc(value) + '"' + (value === current ? " selected" : "") + ">" + esc(labels[value] || value) + "</option>";
+  }).join("");
+}
+function currentIssue() {
+  var list = room.issues || [];
+  if (!list.length) return null;
+  for (var i = 0; i < list.length; i++) if (list[i].id === ideaIssue) return list[i];
+  ideaIssue = list[0].id;
+  return list[0];
+}
+function issueDrawer() {
+  var current = currentIssue();
+  var name = current ? current.name : "Issue";
+  var button = '<button type="button" class="drawer-btn" data-act="issue-drawer" aria-expanded="' + (issueOpen ? "true" : "false") + '">' + esc(name) + "</button>";
+  if (!issueOpen) return '<div class="drawer">' + button + "</div>";
+  var list = (room.issues || []).map(function (issue) {
+    var on = current && issue.id === current.id;
+    return '<button type="button" data-act="idea" data-id="' + esc(issue.id) + '" class="' + (on ? "active" : "") + '"' + (on ? ' aria-current="true"' : "") + ">" + esc(issue.name) + "</button>";
+  }).join("");
+  return '<div class="drawer">' + button + '<div class="drawer-list">' + list + "</div></div>";
+}
+function lensChips() {
+  var lenses = [["", "All"], ["practical", "Practical"], ["structural", "Structural"], ["cultural", "Cultural"]];
+  return '<div class="chips lens-row" role="group" aria-label="Lens">' + lenses.map(function (pair) {
+    var on = ideaLens === pair[0];
+    return '<button type="button" data-act="lens" data-lens="' + esc(pair[0]) + '" class="' + (on ? "active" : "") + '"' + (on ? ' aria-current="true"' : "") + ">" + pair[1] + "</button>";
+  }).join("") + "</div>";
+}
+function itemGroups(items) {
+  var order = ["practical", "structural", "cultural", ""];
+  var map = {};
+  items.forEach(function (item) {
+    var key = item.lens || "";
+    if (!map[key]) map[key] = [];
+    map[key].push(item);
+  });
+  return order.filter(function (key) { return map[key] && map[key].length; }).map(function (key) {
+    return { lens: key, items: map[key] };
+  });
+}
+function itemForm(item) {
+  var row = item || {};
+  var urls = (row.sourceUrls || []).map(function (source) { return source.url; }).join("\n");
+  return '<form class="form" data-form="item" data-id="' + esc(row.id || "") + '" data-issue="' + esc(ideaIssue) + '"><label>Title<input id="i-title" required value="' + esc(row.title || "") + '"></label><div class="row2"><label>Type<select id="i-type">' + selectOptions(["idea", "poll", "opposition"], row.type || "idea", { idea: "Idea", poll: "Poll", opposition: "Opposition" }) + '</select></label><label>Status<select id="i-status">' + selectOptions(["untested", "vetted"], row.status || "untested", { untested: "Untested", vetted: "Vetted" }) + '</select></label></div><div class="row2"><label>Lens<select id="i-lens"><option value="">No lens</option>' + selectOptions(["practical", "structural", "cultural"], row.lens || "", { practical: "Practical", structural: "Structural", cultural: "Cultural" }) + '</select></label><label>Empiricism<select id="i-emp"><option value=""> </option>' + selectOptions(["cited", "indirect", "none"], row.empiricism || "", { cited: "Cited", indirect: "Indirect", none: "Not confirmed" }) + '</select></label></div><div class="row2"><label>' + (row.scoreAxis === "how widely held" ? "How widely held" : "Ease") + '<input id="' + (row.scoreAxis === "how widely held" ? "i-held" : "i-ease") + '" inputmode="numeric" value="' + ((row.scoreAxis === "how widely held" ? row.held : row.ease) == null ? "" : esc(String(row.scoreAxis === "how widely held" ? row.held : row.ease))) + '"></label><label>Impact<input id="i-impact" inputmode="numeric" value="' + (row.impact == null ? "" : esc(String(row.impact))) + '"></label></div><label>Text<textarea id="i-text" rows="3">' + esc(row.body || "") + '</textarea></label><label>Evidence<textarea id="i-evidence" rows="3">' + esc(row.evidence || "") + '</textarea></label><label>Source links<textarea id="i-sources" rows="2" placeholder="https://">' + esc(urls) + '</textarea></label><div class="row-actions"><button class="btn" type="submit">' + (row.id ? "Save" : "Add item") + "</button>" + (row.id ? '<button class="btn ghost" type="button" data-act="remove-item" data-id="' + esc(row.id) + '">Remove</button>' : "") + "</div></form>";
+}
+function publicControls(item) {
+  if (!room.staff) return "";
+  var state = item.publicState || "private";
+  var on = state === "queued" || state === "published";
+  var word = state === "queued" ? "Queued" : state === "published" ? "Published" : "";
+  var pill = word ? '<span class="pill">' + word + "</span>" : "";
+  var toggle = '<label class="switch"><input type="checkbox" data-public="' + esc(item.id) + '"' + (on ? " checked" : "") + "><span>Public</span></label>";
+  var extra = "";
+  var eligible = item.status === "vetted" && item.type !== "opposition" && item.source !== "client";
+  if (state === "queued" && eligible) {
+    extra = '<form class="form" data-form="clear-gate" data-id="' + esc(item.id) + '"><label>Note<input required maxlength="500"></label><button class="btn" type="submit">Mark gate cleared</button></form>';
+  } else if (state === "published" && item.publicClearedBy && item.publicClearedBy.name) {
+    var when = item.publicClearedAt ? " · " + esc(item.publicClearedAt) : "";
+    var note = item.publicClearNote ? " · " + esc(item.publicClearNote) : "";
+    extra = '<p class="muted">' + esc(item.publicClearedBy.name) + when + note + "</p>";
+  }
+  return '<div class="public-row">' + toggle + pill + "</div>" + extra;
+}
+function clientNames(item) {
+  if (!room.staff) return [];
+  var names = [];
+  (room.assignments || []).forEach(function (row) {
+    if ((row.itemIds || []).indexOf(item.id) === -1) return;
+    var name = (room.orgs || {})[row.orgId];
+    if (name && names.indexOf(name) === -1) names.push(name);
+  });
+  return names;
+}
+function clientChips(item) {
+  var names = clientNames(item);
+  if (!names.length) return "";
+  return '<div class="client-chips">' + names.map(function (name) {
+    return '<span class="pill">' + esc(name) + "</span>";
+  }).join("") + "</div>";
+}
+function clientAssign(item) {
+  if (!room.staff) return "";
+  var orgs = room.orgs || {};
+  var ids = Object.keys(orgs);
+  if (!ids.length) return "";
+  var saved = clientSaved === item.id ? '<span class="saved">Saved</span>' : "";
+  var boxes = ids.map(function (orgId) {
+    var on = false;
+    (room.assignments || []).forEach(function (row) {
+      if (row.orgId === orgId && (row.itemIds || []).indexOf(item.id) !== -1) on = true;
+    });
+    return '<label class="check tap"><input type="checkbox" data-client="' + esc(item.id) + '" data-org="' + esc(orgId) + '"' + (on ? " checked" : "") + "><span>" + esc(orgs[orgId]) + "</span></label>";
+  }).join("");
+  return '<div class="clients"><div class="clients-head"><div class="kicker">Clients</div>' + saved + '</div><div class="checks">' + boxes + "</div></div>";
+}
+function scoreFields(item) {
+  if (!room.staff) return "";
+  var axisHeld = item.scoreAxis === "how widely held";
+  var xLabel = axisHeld ? "How widely held" : "Ease";
+  var xVal = axisHeld ? item.held : item.ease;
+  return '<form class="form scores" data-form="scores" data-id="' + esc(item.id) + '"><div class="row2"><label>' + xLabel + '<input id="score-x" inputmode="numeric" value="' + (xVal == null ? "" : esc(String(xVal))) + '"></label><label>Impact<input id="score-y" inputmode="numeric" value="' + (item.impact == null ? "" : esc(String(item.impact))) + '"></label></div></form>';
+}
+function staffAddForm() {
+  var options = (room.issues || []).map(function (issue) {
+    return '<option value="' + esc(issue.id) + '"' + (issue.id === ideaIssue ? " selected" : "") + ">" + esc(issue.name) + "</option>";
+  }).join("");
+  var lenses = [["practical", "Practical"], ["structural", "Structural"], ["cultural", "Cultural"]];
+  var chips = '<div class="chips" role="group" aria-label="Lens">' + lenses.map(function (pair) {
+    var on = addLens === pair[0];
+    return '<button type="button" data-act="add-lens" data-lens="' + pair[0] + '" class="' + (on ? "active" : "") + '" aria-pressed="' + (on ? "true" : "false") + '">' + pair[1] + "</button>";
+  }).join("") + "</div>";
+  var orgs = room.orgs || {};
+  var clients = Object.keys(orgs).map(function (id) {
+    return '<label class="check tap"><input type="checkbox" data-add-client value="' + esc(id) + '"><span>' + esc(orgs[id]) + "</span></label>";
+  }).join("");
+  return '<form class="form card" data-form="add-idea"><div class="kicker">Add idea</div><label>Title<input id="s-title" required></label><label>Text<textarea id="s-text" rows="3"></textarea></label><label>Source<input id="s-source" type="url" placeholder="https://"></label><label>Issue<select id="s-issue">' + options + '</select></label><div class="field"><span class="kicker">Lens</span>' + chips + '</div><div class="clients"><div class="kicker">Clients</div><div class="checks">' + clients + '</div></div><label class="switch"><input id="s-public" type="checkbox"><span>Public</span></label><button class="btn" type="submit">Add idea</button></form>';
+}
+function researchHtml(text) {
+  var parts = String(text).split(/(https:\/\/\S+)/i);
+  return parts.map(function (part) {
+    if (/^https:\/\/\S+$/i.test(part)) {
+      return '<a href="' + esc(part) + '" target="_blank" rel="noopener noreferrer">' + esc(part) + "</a>";
+    }
+    return esc(part);
+  }).join("");
+}
+function researchList(item) {
+  var rows = [];
+  String(item.evidence || "").split("\n").forEach(function (line) {
+    var text = line.trim();
+    if (text) rows.push(researchHtml(text));
+  });
+  (item.sourceUrls || []).forEach(function (source) {
+    var url = source && source.url ? source.url : "";
+    if (!/^https:\/\/\S+$/i.test(url)) return;
+    var label = source.label || url;
+    rows.push('<a href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">' + esc(label) + "</a>");
+  });
+  if (!rows.length) return "";
+  return '<div class="research"><div class="kicker">Research</div><ul>' + rows.map(function (row) {
+    return "<li>" + row + "</li>";
+  }).join("") + "</ul></div>";
+}
+function chartItems(items, lens) {
+  var rows = [];
+  (items || []).forEach(function (item) {
+    if ((item.lens || "") !== lens) return;
+    var axisHeld = item.scoreAxis === "how widely held";
+    var x = axisHeld ? item.held : item.ease;
+    var y = item.impact;
+    if (x == null || y == null) return;
+    x = Number(x);
+    y = Number(y);
+    if (!Number.isFinite(x) || !Number.isFinite(y)) return;
+    rows.push({ id: item.id, name: item.title, x: x, y: y });
+  });
+  return rows;
+}
+function paintIssueGrid() {
+  var root = document.getElementById("issue-grid");
+  if (!root || !window.JNIssueGrid) return;
+  var issue = currentIssue();
+  if (!issue) { root.innerHTML = ""; return; }
+  JNIssueGrid.paint(root, {
+    items: chartItems(issue.items, ideaLens || "practical"),
+    lens: ideaLens || "practical",
+    selectedId: openItem || null,
+    matchIds: null,
+  });
+}
+function itemCard(item) {
+  var open = openItem === item.id;
+  var head = '<button type="button" class="item-open" data-act="toggle-item" data-id="' + esc(item.id) + '"><b>' + esc(item.title) + '</b><span class="badges">' + badge(item.type) + badge(item.status) + "</span></button>";
+  var cls = "item" + (item.type === "opposition" ? " opposition" : "");
+  var gate = publicControls(item);
+  var clients = clientAssign(item);
+  if (!open) return '<article class="' + cls + '">' + head + clientChips(item) + gate + "</article>";
+  if (room.staff && editingItem === item.id) return '<article class="' + cls + '">' + head + itemForm(item) + gate + clients + "</article>";
+  var bits = "";
+  var axisHeld = item.scoreAxis === "how widely held";
+  if (!room.staff && (item.ease != null || item.impact != null || (axisHeld && item.held != null))) {
+    var scores = [];
+    if (axisHeld && item.held != null) scores.push("How widely held " + item.held);
+    else if (item.ease != null) scores.push("Ease " + item.ease);
+    if (item.impact != null) scores.push("Impact " + item.impact);
+    bits += "<p><b>" + esc(scores.join(" · ")) + "</b></p>";
+  }
+  if (item.stance) bits += '<p class="badges"><span class="pill">' + esc(item.stance) + "</span></p>";
+  if (item.empiricism) {
+    var empiricism = { cited: "Cited", indirect: "Indirect", none: "Not confirmed" }[item.empiricism] || item.empiricism;
+    bits += '<p class="badges"><span class="pill">' + esc(empiricism) + "</span></p>";
+  }
+  if (item.body) bits += '<p class="muted pre">' + esc(item.body) + "</p>";
+  bits += researchList(item);
+  if (room.staff) bits += '<p class="mt-s"><button type="button" class="btn ghost" data-act="edit-item" data-id="' + esc(item.id) + '">Edit</button></p>';
+  return '<article class="' + cls + '">' + head + bits + gate + (room.staff ? scoreFields(item) : "") + clients + "</article>";
+}
+function submitIdeaForm(issue) {
+  if (room.staff) return "";
+  return '<form class="form short card" data-form="submit-idea" data-issue="' + esc(issue.id) + '"><div class="kicker">Add idea</div><label>Title<input id="s-title" required></label><label>Text<textarea id="s-text" rows="3"></textarea></label><label>Source<input id="s-source" type="url" placeholder="https://"></label><button class="btn" type="submit">Add idea</button></form>';
+}
+function ideasPage() {
+  var list = room.issues || [];
+  var main = '<h1 class="display">Ideas</h1>' + issueDrawer() + lensChips();
+  if (!list.length) return main + '<p class="muted">Nothing here yet.</p>' + (room.staff ? '<form class="form" data-form="issue"><label>Issue<input id="n-issue" required></label><button class="btn" type="submit">Add issue</button></form>' : "");
+  var issue = currentIssue();
+  var visible = (issue.items || []).filter(function (item) { return !ideaLens || (item.lens || "") === ideaLens; });
+  var body = itemGroups(visible).map(function (group) {
+    var add = "";
+    if (room.staff && group.lens && !addingItem) add = '<p class="mt-s"><button type="button" class="btn ghost" data-act="add-item" data-lens="' + esc(group.lens) + '">Add idea</button></p>';
+    return '<section class="lens-block"><h2 class="kicker">' + esc(lensLabel(group.lens)) + "</h2>" + group.items.map(itemCard).join("") + add + "</section>";
+  }).join("");
+  if (!visible.length) body = '<p class="muted">Nothing here yet.</p>' + (room.staff && !addingItem ? '<p class="mt-s"><button type="button" class="btn ghost" data-act="add-item" data-lens="' + esc(ideaLens || "practical") + '">Add idea</button></p>' : "");
+  var composer = room.staff && addingItem ? staffAddForm() : "";
+  var remove = room.staff ? '<p class="mt-s"><button type="button" class="btn ghost" data-act="remove-issue" data-id="' + esc(issue.id) + '">Remove issue</button></p>' : "";
+  var create = room.staff ? '<form class="form" data-form="issue"><label>Issue<input id="n-issue" required></label><button class="btn" type="submit">Add issue</button></form>' : "";
+  return main + '<div id="issue-grid" class="jn-grid"></div>' + composer + body + (room.staff ? "" : submitIdeaForm(issue)) + remove + create;
+}
 function table(headers, rows) {
-  var head = headers.map(function (h) { return "<th>" + h + "</th>"; }).join("");
-  var body = rows.length ? rows.map(function (row) {
-    return "<tr>" + row.map(function (cell) { return "<td>" + cell + "</td>"; }).join("") + "</tr>";
-  }).join("") : '<tr><td colspan="' + headers.length + '">Nothing here yet.</td></tr>';
-  return '<div class="tbl-wrap"><table><thead><tr>' + head + "</tr></thead><tbody>" + body + "</tbody></table></div>";
+  if (!rows.length) return '<p class="muted">Nothing here yet.</p>';
+  return '<div class="stack">' + rows.map(function (row) {
+    return '<article class="card list-card">' + row.map(function (cell, i) {
+      var label = headers[i] ? '<div class="kicker">' + headers[i] + "</div>" : "";
+      return "<div>" + label + cell + "</div>";
+    }).join("") + "</article>";
+  }).join("") + "</div>";
 }
 function docTable(section) {
   return table(["Item", "Who can see it"], docs(section).map(function (doc) {
@@ -177,14 +438,20 @@ function page() {
   var main = "";
   if (view === "home") {
     main = '<div class="kicker">Workspace</div><h1 class="display">' + esc(org) + '</h1><div class="grid">' +
+      card("Ideas", ideaTotal(), "ideas") +
       card("Proposals", docs("proposals").length, "proposals") +
       card("Research", docs("research").length, "research") +
       card("Billing", room.person.billing || room.staff ? docs("billing").length : "None", "billing") +
-      card("Admin", room.directory ? room.directory.length : 1, "admin") + "</div>";
+      (room.staff ? card("Admin", room.directory ? room.directory.length : 0, "admin") : "") + "</div>";
+  } else if (view === "ideas") {
+    main = ideasPage();
   } else if (view === "billing" && !(room.person.billing || room.staff)) {
     main = '<div class="kicker">' + esc(org) + '</div><h1 class="display">Billing</h1><p class="muted">This login can\'t see billing.</p>';
-  } else if (view === "admin") {
+  } else if (view === "admin" && room.staff) {
     main = admin();
+  } else if (view === "admin") {
+    view = "ideas";
+    main = ideasPage();
   } else {
     var titles = { proposals: "Proposals", research: "Research", billing: "Billing" };
     var list = view === "proposals" || view === "research" ? (docs(view).map(offerCard).join("") || '<p class="muted">Nothing posted yet.</p>') : docTable(view);
@@ -197,7 +464,7 @@ function page() {
     }
     main += '<article class="card mt-l"><h2 class="display t-md">' + esc(reading.title) + '</h2><p class="muted pre">' + esc(reading.body) + "</p>" + download + "</article>";
   }
-  return '<div class="portal-tools"><div class="wrap row"><nav class="tabs" aria-label="Portal sections">' + nav() + '</nav><div class="who"><b>' + esc(room.person.name) + '</b><br>' + esc(room.person.email) + ' · <button type="button" data-act="logout">Sign out</button></div></div></div><main class="wrap">' + (error ? '<div class="err" role="alert">' + esc(error) + "</div>" : "") + main + "</main>";
+  return '<main class="wrap">' + (error ? '<div class="err" role="alert">' + esc(error) + "</div>" : "") + main + "</main>";
 }
 function card(label, n, id) {
   return '<div class="card"><div class="muted">' + label + '</div><div class="stat">' + n + '</div><button type="button" class="btn ghost" data-act="view" data-view="' + id + '">Open</button></div>';
@@ -217,6 +484,8 @@ function admin() {
 }
 function render() {
   document.getElementById("app").innerHTML = page();
+  paintMenu();
+  paintIssueGrid();
   if (!token) initGoogle();
   else syncOrgWrap();
 }
@@ -291,6 +560,209 @@ async function saveDoc(section) {
     render();
   }
 }
+function numOrNull(id) {
+  var raw = field(id).trim();
+  if (!raw) return null;
+  var n = Number(raw);
+  return Number.isInteger(n) ? n : raw;
+}
+function takeRoom(data) {
+  if (!data || data.error) { error = (data && data.error) || "Something went wrong. Try again."; render(); return false; }
+  room = data;
+  error = "";
+  return true;
+}
+async function saveIssueName() {
+  var data = await api({ action: "saveIssue", name: field("n-issue") });
+  if (!takeRoom(data)) return;
+  var match = (room.issues || []).filter(function (issue) { return issue.name === field("n-issue"); })[0];
+  if (match) ideaIssue = match.id;
+  render();
+}
+async function saveItemForm(form) {
+  var lines = field("i-sources").split(/\n/).map(function (line) { return line.trim(); }).filter(Boolean);
+  var body = {
+    action: "saveItem",
+    issueId: form.getAttribute("data-issue"),
+    type: field("i-type"),
+    status: field("i-status"),
+    lens: field("i-lens"),
+    title: field("i-title"),
+    text: field("i-text"),
+    evidence: field("i-evidence"),
+    empiricism: field("i-emp"),
+    ease: document.getElementById("i-held") ? null : numOrNull("i-ease"),
+    held: document.getElementById("i-held") ? numOrNull("i-held") : undefined,
+    impact: numOrNull("i-impact"),
+    sourceUrls: lines,
+  };
+  var id = form.getAttribute("data-id");
+  if (id) body.id = id;
+  var data = await api(body);
+  if (!takeRoom(data)) return;
+  editingItem = "";
+  addingItem = false;
+  openItem = id || "";
+  render();
+}
+function wholeScore(id) {
+  var raw = field(id).trim();
+  if (!raw) return null;
+  var n = Number(raw);
+  if (!Number.isInteger(n) || n < 0 || n > 100) return undefined;
+  return n;
+}
+async function saveScores(itemId) {
+  var item = null;
+  var issueId = "";
+  (room.issues || []).forEach(function (issue) {
+    (issue.items || []).forEach(function (row) {
+      if (row.id === itemId) { item = row; issueId = issue.id; }
+    });
+  });
+  if (!item) return;
+  var x = wholeScore("score-x");
+  var y = wholeScore("score-y");
+  if (x === undefined || y === undefined) return;
+  var axisHeld = item.scoreAxis === "how widely held";
+  var data = await api({
+    action: "saveItem",
+    id: item.id,
+    issueId: issueId,
+    type: item.type,
+    status: item.status,
+    lens: item.lens || "",
+    title: item.title,
+    text: item.body || "",
+    evidence: item.evidence || "",
+    empiricism: item.empiricism || "",
+    ease: axisHeld ? null : x,
+    held: axisHeld ? x : undefined,
+    impact: y,
+  });
+  if (!takeRoom(data)) return;
+  openItem = itemId;
+  render();
+}
+function grantIds(orgId, issueId) {
+  var ids = [];
+  (room.assignments || []).forEach(function (row) {
+    if (row.orgId === orgId && row.issueId === issueId) ids = (row.itemIds || []).slice();
+  });
+  return ids;
+}
+async function addStaffIdea(form) {
+  var issueId = field("s-issue");
+  var lens = addLens || "practical";
+  var source = field("s-source").trim();
+  var before = {};
+  (room.issues || []).forEach(function (issue) {
+    (issue.items || []).forEach(function (item) { before[item.id] = true; });
+  });
+  var data = await api({
+    action: "saveItem",
+    issueId: issueId,
+    type: "idea",
+    status: "untested",
+    lens: lens,
+    title: field("s-title"),
+    text: field("s-text"),
+    evidence: "",
+    empiricism: "",
+    ease: null,
+    impact: null,
+    sourceUrls: source ? [source] : [],
+  });
+  if (!takeRoom(data)) return;
+  var created = "";
+  (room.issues || []).forEach(function (issue) {
+    (issue.items || []).forEach(function (item) {
+      if (!before[item.id]) created = item.id;
+    });
+  });
+  var boxes = form.querySelectorAll("[data-add-client]");
+  var any = false;
+  for (var i = 0; i < boxes.length; i++) {
+    if (!boxes[i].checked || !created) continue;
+    any = true;
+    var orgId = boxes[i].value;
+    var ids = grantIds(orgId, issueId);
+    if (ids.indexOf(created) === -1) ids.push(created);
+    var assigned = await api({ action: "setAssignment", orgId: orgId, issueId: issueId, assigned: true, itemIds: ids });
+    if (!takeRoom(assigned)) return;
+  }
+  var pub = document.getElementById("s-public");
+  if (pub && pub.checked && created) {
+    var queued = await api({ action: "setItemPublic", id: created, on: true });
+    if (!takeRoom(queued)) return;
+  }
+  addingItem = false;
+  ideaIssue = issueId;
+  ideaLens = lens;
+  openItem = created;
+  editingItem = "";
+  clientSaved = any ? created : "";
+  render();
+}
+async function toggleClient(itemId, orgId, checked) {
+  var issueId = "";
+  (room.issues || []).forEach(function (issue) {
+    (issue.items || []).forEach(function (item) {
+      if (item.id === itemId) issueId = issue.id;
+    });
+  });
+  if (!issueId) return;
+  var ids = grantIds(orgId, issueId).filter(function (id) { return id !== itemId; });
+  if (checked) ids.push(itemId);
+  var data = await api({
+    action: "setAssignment",
+    orgId: orgId,
+    issueId: issueId,
+    assigned: ids.length > 0,
+    itemIds: ids,
+  });
+  if (!takeRoom(data)) return;
+  clientSaved = itemId;
+  openItem = itemId;
+  render();
+}
+async function setItemPublic(id, on) {
+  var data = await api({ action: "setItemPublic", id: id, on: on });
+  if (!takeRoom(data)) return;
+  render();
+}
+async function clearPublicGate(form) {
+  var note = form.querySelector("input");
+  var data = await api({ action: "clearPublicGate", id: form.getAttribute("data-id"), note: note ? note.value : "" });
+  if (!takeRoom(data)) return;
+  render();
+}
+async function submitIdea(form) {
+  var data = await api({
+    action: "submitIdea",
+    issueId: form.getAttribute("data-issue"),
+    title: field("s-title"),
+    text: field("s-text"),
+    source: field("s-source"),
+  });
+  if (!takeRoom(data)) return;
+  render();
+}
+async function removeIdeaItem(id) {
+  var data = await api({ action: "removeItem", id: id });
+  if (!takeRoom(data)) return;
+  if (openItem === id) openItem = "";
+  editingItem = "";
+  render();
+}
+async function removeIdeaIssue(id) {
+  var data = await api({ action: "removeIssue", id: id });
+  if (!takeRoom(data)) return;
+  if (ideaIssue === id) ideaIssue = "";
+  openItem = "";
+  editingItem = "";
+  render();
+}
 async function openDoc(id) {
   var data = await api({ action: "open", id: id });
   if (data.error) { error = "That document isn't available."; render(); return; }
@@ -317,6 +789,16 @@ document.addEventListener("click", function (event) {
     var inside = panel.contains(event.target) || document.getElementById("menu-toggle").contains(event.target);
     if (!inside) menu(false);
   }
+  var dot = event.target.closest ? event.target.closest("#issue-grid button[data-id]") : null;
+  if (dot) {
+    var dotId = dot.getAttribute("data-id") || "";
+    openItem = dotId;
+    editingItem = "";
+    render();
+    var opened = document.querySelector("#app .item-open[data-id='" + (window.CSS && CSS.escape ? CSS.escape(dotId) : dotId) + "']");
+    if (opened && opened.scrollIntoView) opened.scrollIntoView({ block: "nearest" });
+    return;
+  }
   if (!target) return;
   var act = target.getAttribute("data-act");
   if (act === "menu") menu();
@@ -326,6 +808,40 @@ document.addEventListener("click", function (event) {
   else if (act === "google") signInGoogle();
   else if (act === "open") openDoc(target.getAttribute("data-id")).catch(fail);
   else if (act === "remove-person") removePerson(target.getAttribute("data-id")).catch(fail);
+  else if (act === "idea") { ideaIssue = target.getAttribute("data-id") || ""; issueOpen = false; openItem = ""; editingItem = ""; addingItem = false; view = "ideas"; render(); }
+  else if (act === "issue-drawer") { issueOpen = !issueOpen; render(); }
+  else if (act === "lens") { ideaLens = target.getAttribute("data-lens") || ""; openItem = ""; editingItem = ""; render(); }
+  else if (act === "add-lens") {
+    addLens = target.getAttribute("data-lens") || "practical";
+    var group = target.parentElement;
+    if (!group) return;
+    var chips = group.querySelectorAll("[data-act='add-lens']");
+    for (var i = 0; i < chips.length; i++) {
+      var on = chips[i] === target;
+      chips[i].classList.toggle("active", on);
+      chips[i].setAttribute("aria-pressed", on ? "true" : "false");
+    }
+  }
+  else if (act === "toggle-item") {
+    var itemId = target.getAttribute("data-id");
+    openItem = openItem === itemId ? "" : itemId;
+    if (openItem !== itemId) editingItem = "";
+    render();
+  }
+  else if (act === "edit-item") { editingItem = target.getAttribute("data-id"); openItem = editingItem; render(); }
+  else if (act === "add-item") {
+    var from = target.getAttribute("data-lens") || ideaLens || "practical";
+    if (from !== "practical" && from !== "structural" && from !== "cultural") from = "practical";
+    addLens = from;
+    ideaLens = from;
+    addingItem = true;
+    editingItem = "";
+    openItem = "";
+    clientSaved = "";
+    render();
+  }
+  else if (act === "remove-item") removeIdeaItem(target.getAttribute("data-id")).catch(fail);
+  else if (act === "remove-issue") removeIdeaIssue(target.getAttribute("data-id")).catch(fail);
 });
 document.addEventListener("submit", function (event) {
   var form = event.target;
@@ -334,15 +850,225 @@ document.addEventListener("submit", function (event) {
   event.preventDefault();
   if (kind === "person") savePerson().catch(fail);
   else if (kind === "doc") saveDoc(form.getAttribute("data-section")).catch(fail);
+  else if (kind === "issue") saveIssueName().catch(fail);
+  else if (kind === "item") saveItemForm(form).catch(fail);
+  else if (kind === "add-idea") addStaffIdea(form).catch(fail);
+  else if (kind === "submit-idea") submitIdea(form).catch(fail);
+  else if (kind === "clear-gate") clearPublicGate(form).catch(fail);
 });
 document.addEventListener("change", function (event) {
   if (event.target && event.target.id === "d-vis") syncOrgWrap();
+  if (event.target && event.target.hasAttribute && event.target.hasAttribute("data-public")) {
+    setItemPublic(event.target.getAttribute("data-public"), event.target.checked).catch(fail);
+  }
+  if (event.target && event.target.hasAttribute && event.target.hasAttribute("data-client")) {
+    toggleClient(event.target.getAttribute("data-client"), event.target.getAttribute("data-org"), event.target.checked).catch(fail);
+  }
+  if (event.target && (event.target.id === "score-x" || event.target.id === "score-y")) {
+    var scoreForm = event.target.closest ? event.target.closest("form") : null;
+    var scoreId = scoreForm && scoreForm.getAttribute("data-id");
+    if (scoreId) saveScores(scoreId).catch(fail);
+  }
 });
 document.addEventListener("keydown", function (event) {
   if (event.key === "Escape") menu(false);
 });
+var gridTimer = 0;
+window.addEventListener("resize", function () {
+  clearTimeout(gridTimer);
+  gridTimer = setTimeout(paintIssueGrid, 150);
+});
 
+function previewKind() {
+  try {
+    var host = location.hostname;
+    if (host !== "localhost" && host !== "127.0.0.1") return "";
+    return new URLSearchParams(location.search).get("preview") || "";
+  } catch (e) { return ""; }
+}
+function previewItem(id, title, type, status, lens, ease, impact) {
+  return { id: id, issueId: "issue-energy", type: type, status: status, lens: lens, title: title, body: "", ease: ease, impact: impact, evidence: "", empiricism: "", source: "staff", sourceUrls: [], own: false, publicState: "private" };
+}
+function previewRoom(kind) {
+  var energy = [
+    Object.assign(previewItem("E1", "Time-of-use rates", "idea", "vetted", "practical", 74, 80), { publicState: "published", body: "Charge more when the grid is busy, and less when it is not.", evidence: "Several utilities already bill this way.", empiricism: "cited", stance: "Back", sourceUrls: [{ url: "https://example.test/time-of-use", label: "Utility tariff study" }], publicClearedBy: { id: "staff", name: "Staff One", email: "staff@example.test" }, publicClearedAt: "2026-03-02", publicClearNote: "Cleared for the public list." }),
+    previewItem("E2", "Block a new fuel tax", "opposition", "untested", "practical", 40, 70),
+    previewItem("E3", "Who writes the grid rules", "idea", "untested", "structural", null, null),
+    Object.assign(previewItem("E4", "How widely the cost is felt", "idea", "vetted", "cultural", null, 60), { publicState: "queued", held: 55, scoreAxis: "how widely held", stance: "Watch" }),
+    Object.assign(previewItem("E5", "A second structural change", "idea", "untested", "structural", 20, 30), { publicState: "queued" }),
+  ];
+  var housing = [
+    { id: "staff-starter-commission", issueId: "issue-housing", type: "idea", status: "untested", lens: "practical", title: "Real estate commission rates", body: "", ease: null, impact: null, evidence: "", empiricism: "", source: "staff", sourceUrls: [] },
+    { id: "staff-starter-agents", issueId: "issue-housing", type: "idea", status: "untested", lens: "practical", title: "Number of real estate agents per transaction or market", body: "", ease: null, impact: null, evidence: "", empiricism: "", source: "staff", sourceUrls: [] },
+    { id: "staff-starter-title-fees", issueId: "issue-housing", type: "idea", status: "untested", lens: "practical", title: "Title company cut and fees", body: "", ease: null, impact: null, evidence: "", empiricism: "", source: "staff", sourceUrls: [] },
+    { id: "staff-starter-forced-agent", issueId: "issue-housing", type: "idea", status: "untested", lens: "structural", title: "Laws and rules that effectively force buyers and sellers to use a real estate agent and title company", body: "", ease: null, impact: null, evidence: "", empiricism: "", source: "staff", sourceUrls: [] },
+  ];
+  var staff = kind === "staff";
+  var issues = staff
+    ? [{ id: "issue-energy", slug: "energy", name: "Energy", notes: "", drive: "", items: energy }, { id: "issue-housing", slug: "housing", name: "Housing", notes: "", drive: "", items: housing }]
+    : [{ id: "issue-energy", slug: "energy", name: "Energy", items: energy.slice(0, 2).map(function (item) { return Object.assign({}, item, { own: false }); }) }];
+  return {
+    access: "ok",
+    email: staff ? "staff@example.test" : "ada@example.test",
+    staff: staff,
+    person: { id: staff ? "staff" : "ada", name: staff ? "Staff One" : "Ada Client", email: staff ? "staff@example.test" : "ada@example.test", role: staff ? "admin" : "director", billing: false, orgId: staff ? null : "orgA", orgName: staff ? "" : "Example Org A" },
+    orgs: staff ? { orgA: "Example Org A", orgB: "Contoso" } : { orgA: "Example Org A" },
+    disclosures: {},
+    documents: [],
+    issues: issues,
+    assignments: staff ? [{ orgId: "orgA", issueId: "issue-energy", itemIds: ["E1", "E2"] }] : undefined,
+    directory: staff ? [{ id: "ada", name: "Ada Client", email: "ada@example.test", role: "director", billing: false, orgId: "orgA" }] : undefined,
+  };
+}
+function previewExtra() {
+  try {
+    var raw = sessionStorage.getItem("jn_preview_extra");
+    if (!raw) return null;
+    var data = JSON.parse(raw);
+    return data && typeof data === "object" ? data : null;
+  } catch (e) { return null; }
+}
+function previewStore() {
+  var items = [];
+  (room.issues || []).forEach(function (issue) {
+    (issue.items || []).forEach(function (item) {
+      if (String(item.id).indexOf("preview-") === 0) items.push(item);
+    });
+  });
+  try {
+    sessionStorage.setItem("jn_preview_extra", JSON.stringify({ items: items, assignments: room.assignments || [] }));
+  } catch (e) {}
+}
+function previewApply(kind) {
+  var extra = previewExtra();
+  if (!extra) return;
+  if (kind === "staff") {
+    (extra.items || []).forEach(function (item) {
+      (room.issues || []).forEach(function (issue) {
+        if (issue.id !== item.issueId) return;
+        var exists = (issue.items || []).some(function (row) { return row.id === item.id; });
+        if (!exists) issue.items.push(item);
+      });
+    });
+    if (extra.assignments) room.assignments = extra.assignments;
+    return;
+  }
+  var allowed = {};
+  (extra.assignments || []).forEach(function (row) {
+    if (row.orgId !== "orgA") return;
+    (row.itemIds || []).forEach(function (id) { allowed[id] = row.issueId; });
+  });
+  (extra.items || []).forEach(function (item) {
+    if (allowed[item.id] !== item.issueId) return;
+    (room.issues || []).forEach(function (issue) {
+      if (issue.id !== item.issueId) return;
+      var copy = {
+        id: item.id, issueId: item.issueId, type: item.type, status: item.status, lens: item.lens,
+        title: item.title, body: item.body, ease: item.ease == null ? null : item.ease,
+        impact: item.impact == null ? null : item.impact, held: item.held == null ? null : item.held,
+        scoreAxis: item.scoreAxis || "ease", stance: item.stance || null, evidence: item.evidence || "",
+        empiricism: item.empiricism || "", source: item.source || "staff", sourceUrls: item.sourceUrls || [], own: false,
+      };
+      var exists = (issue.items || []).some(function (row) { return row.id === item.id; });
+      if (!exists) issue.items.push(copy);
+    });
+  });
+}
+function previewMutate(body) {
+  var action = body && body.action;
+  if (!action || action === "load") return room;
+  if (action === "saveItem") {
+    if (body.id) {
+      (room.issues || []).forEach(function (issue) {
+        (issue.items || []).forEach(function (item) {
+          if (item.id !== body.id) return;
+          item.type = body.type || item.type;
+          item.status = body.status || item.status;
+          item.lens = body.lens || "";
+          item.title = body.title || item.title;
+          item.body = body.text || "";
+          item.evidence = body.evidence || "";
+          item.empiricism = body.empiricism || "";
+          item.ease = body.ease == null ? null : body.ease;
+          item.impact = body.impact == null ? null : body.impact;
+          if (Object.prototype.hasOwnProperty.call(body, "held")) item.held = body.held;
+          if (Array.isArray(body.sourceUrls)) {
+            item.sourceUrls = body.sourceUrls.map(function (entry) {
+              var url = typeof entry === "string" ? entry : (entry && entry.url) || "";
+              var label = typeof entry === "string" || !entry ? "" : entry.label || "";
+              return { url: url, label: label };
+            });
+          }
+        });
+      });
+    } else {
+      var created = {
+        id: "preview-" + Date.now().toString(36),
+        issueId: body.issueId,
+        type: body.type || "idea",
+        status: body.status || "untested",
+        lens: body.lens || "",
+        title: body.title || "",
+        body: body.text || "",
+        ease: body.ease == null ? null : body.ease,
+        impact: body.impact == null ? null : body.impact,
+        held: null,
+        scoreAxis: "ease",
+        stance: null,
+        evidence: body.evidence || "",
+        empiricism: body.empiricism || "",
+        source: "staff",
+        sourceUrls: [],
+        publicState: "private",
+      };
+      if (Array.isArray(body.sourceUrls)) {
+        created.sourceUrls = body.sourceUrls.map(function (entry) {
+          var url = typeof entry === "string" ? entry : (entry && entry.url) || "";
+          return { url: url, label: "" };
+        });
+      }
+      (room.issues || []).forEach(function (issue) {
+        if (issue.id === body.issueId) issue.items.push(created);
+      });
+    }
+    previewStore();
+    return room;
+  }
+  if (action === "setAssignment") {
+    var orgId = body.orgId;
+    var issueId = body.issueId;
+    var ids = Array.isArray(body.itemIds) ? body.itemIds.slice() : [];
+    room.assignments = (room.assignments || []).filter(function (row) {
+      return !(row.orgId === orgId && row.issueId === issueId);
+    });
+    if (body.assigned && ids.length) room.assignments.push({ orgId: orgId, issueId: issueId, itemIds: ids });
+    previewStore();
+    return room;
+  }
+  if (action === "setItemPublic") {
+    (room.issues || []).forEach(function (issue) {
+      (issue.items || []).forEach(function (item) {
+        if (item.id !== body.id) return;
+        item.publicState = body.on ? "queued" : "private";
+        if (!body.on) { item.publicClearedBy = null; item.publicClearedAt = ""; item.publicClearNote = ""; }
+      });
+    });
+    previewStore();
+    return room;
+  }
+  return room;
+}
 function boot() {
+  var preview = previewKind();
+  if (preview === "staff" || preview === "client") {
+    token = "preview";
+    room = previewRoom(preview);
+    previewApply(preview);
+    view = "ideas";
+    ideaIssue = "issue-energy";
+    render();
+    return;
+  }
   if (!token) { render(); return; }
   refresh().then(render).catch(function () { error = "The portal can't be reached. Try again."; token = ""; render(); });
 }
