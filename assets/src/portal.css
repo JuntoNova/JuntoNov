@@ -121,8 +121,8 @@ h1{font-size:1.7rem;margin:0 0 .5rem;overflow-wrap:anywhere}
 .drawer{margin:0 0 .75rem}
 .drawer-btn,.drawer-list button,.chips button{min-height:44px;border:1px solid var(--border);background:#fff;color:var(--charcoal);font:inherit;font-size:1rem;font-weight:600;cursor:pointer}
 .drawer-btn{display:flex;align-items:center;justify-content:space-between;gap:.75rem;width:100%;text-align:left;border-radius:.7rem;padding:0 1rem}
-.drawer-btn::after{content:"▾";color:var(--muted);font-weight:400}
-.drawer-btn[aria-expanded="true"]::after{content:"▴"}
+.drawer-btn::after{content:"\u25be";color:var(--muted);font-weight:400}
+.drawer-btn[aria-expanded="true"]::after{content:"\u25b4"}
 .drawer-list{display:grid;gap:.5rem;margin-top:.5rem}
 .drawer-list button{width:100%;text-align:left;border-radius:.7rem;padding:0 1rem}
 .drawer-list button.active,.chips button.active,.drawer-btn:hover,.chips button:hover{background:var(--surface)}
@@ -152,6 +152,90 @@ h1{font-size:1.7rem;margin:0 0 .5rem;overflow-wrap:anywhere}
 .form .chips{margin:0}
 .form label.switch{display:flex;align-items:center;font-size:1rem;font-weight:600;color:var(--charcoal)}
 .form label.switch input{width:44px;height:44px;min-width:44px;min-height:44px;padding:0;border:0;background:transparent}
+
+/* Same chart as the public issues page. Utilities stay under .jn-grid so they do not restyle the portal. */
+.jn-grid{margin:0 0 1.25rem;min-width:0;max-width:100%}
+.jn-grid .flex{display:flex}
+.jn-grid .inline-flex{display:inline-flex}
+.jn-grid .flex-col{flex-direction:column}
+.jn-grid .flex-1{flex:1 1 0%;min-width:0}
+.jn-grid .items-stretch{align-items:stretch}
+.jn-grid .items-center{align-items:center}
+.jn-grid .justify-end{justify-content:flex-end}
+.jn-grid .justify-center{justify-content:center}
+.jn-grid .justify-between{justify-content:space-between}
+.jn-grid .shrink-0{flex-shrink:0}
+.jn-grid .gap-2{gap:.5rem}
+.jn-grid .relative{position:relative}
+.jn-grid .absolute{position:absolute}
+.jn-grid .overflow-hidden{overflow:hidden}
+.jn-grid .pointer-events-none{pointer-events:none}
+.jn-grid .block{display:block}
+.jn-grid .w-full{width:100%}
+.jn-grid .w-12{width:3rem}
+.jn-grid .w-px{width:1px}
+.jn-grid .h-px{height:1px}
+.jn-grid .h-7{height:1.75rem}
+.jn-grid .w-7{width:1.75rem}
+.jn-grid .h-3\.5{height:.875rem}
+.jn-grid .w-3\.5{width:.875rem}
+.jn-grid .min-h-96{min-height:24rem}
+.jn-grid .min-w-0{min-width:0}
+.jn-grid .w-max{width:max-content}
+.jn-grid .max-w-36{max-width:9rem}
+.jn-grid .max-w-52{max-width:13rem}
+.jn-grid .max-w-\[46\%\]{max-width:46%}
+.jn-grid .z-0{z-index:0}
+.jn-grid .text-left{text-align:left}
+.jn-grid .text-right{text-align:right}
+.jn-grid .text-\[10px\]{font-size:10px}
+.jn-grid .text-\[11px\]{font-size:11px}
+.jn-grid .text-xs{font-size:.75rem;line-height:1rem}
+.jn-grid .font-medium{font-weight:500}
+.jn-grid .font-semibold{font-weight:600}
+.jn-grid .leading-tight{line-height:1.25}
+.jn-grid .leading-snug{line-height:1.375}
+.jn-grid .rounded-2xl{border-radius:1rem}
+.jn-grid .rounded-full{border-radius:9999px}
+.jn-grid .rounded-md{border-radius:.375rem}
+.jn-grid .border{border-width:1px}
+.jn-grid .border-2{border-width:2px}
+.jn-grid .bg-white\/95{background:rgba(255,255,255,.95)}
+.jn-grid .px-1\.5{padding-left:.375rem;padding-right:.375rem}
+.jn-grid .py-0\.5{padding-top:.125rem;padding-bottom:.125rem}
+.jn-grid .mt-2{margin-top:.5rem}
+.jn-grid .top-3{top:.75rem}
+.jn-grid .right-3{right:.75rem}
+.jn-grid .bottom-3{bottom:.75rem}
+.jn-grid .left-3{left:.75rem}
+.jn-grid .top-1\/2{top:50%}
+.jn-grid .left-1\/2{left:50%}
+.jn-grid .inset-10{top:2.5rem;right:2.5rem;bottom:2.5rem;left:2.5rem}
+.jn-grid .inset-y-10{top:2.5rem;bottom:2.5rem}
+.jn-grid .inset-x-10{left:2.5rem;right:2.5rem}
+.jn-grid .-translate-x-1\/2{--jn-tx:-50%}
+.jn-grid .translate-y-1\/2{--jn-ty:50%}
+.jn-grid .-translate-y-1\/2{--jn-ty:-50%}
+.jn-grid .-translate-x-1\/2,
+.jn-grid .translate-y-1\/2,
+.jn-grid .-translate-y-1\/2{transform:translate(var(--jn-tx,0),var(--jn-ty,0))}
+.jn-grid button[data-id]{width:44px;height:44px;min-width:44px;min-height:44px;padding:0;border:0;background:transparent}
+.jn-grid button[data-id]:focus-visible{outline:2px solid var(--charcoal);outline-offset:2px;border-radius:999px}
+@media(min-width:640px){
+  .jn-grid .sm\:gap-3{gap:.75rem}
+  .jn-grid .sm\:w-28{width:7rem}
+  .jn-grid .sm\:text-xs{font-size:.75rem;line-height:1rem}
+  .jn-grid .sm\:min-h-\[28rem\]{min-height:28rem}
+  .jn-grid .sm\:block{display:block}
+}
+@media(max-width:639px){
+  .jn-grid .issue-quad,.jn-grid .issue-chip{display:none}
+}
+.research{margin-top:.85rem}
+.research .kicker{margin-bottom:.35rem}
+.research ul{list-style:disc;margin:0;padding-left:1.15rem}
+.research li{margin:.1rem 0;color:var(--muted);font-size:.95rem;line-height:1.45;overflow-wrap:anywhere}
+.research a{display:inline-block;min-height:44px;padding:.55rem 0;line-height:1.3;color:var(--ember);text-decoration:underline;text-underline-offset:2px;overflow-wrap:anywhere}
 
 /* Footer */
 .jn-foot{border-top:1px solid #e2e8f0;color:var(--muted);font-size:.85rem}
