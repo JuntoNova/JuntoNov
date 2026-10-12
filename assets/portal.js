@@ -1,1 +1,1 @@
-FROM_DISK
+LOAD_FROM_/home/ubuntu/JuntoNov/assets/portal.js
