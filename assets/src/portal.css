@@ -150,6 +150,7 @@ h1{font-size:1.7rem;margin:0 0 .5rem;overflow-wrap:anywhere}
 .saved{font-size:.75rem;font-weight:600;color:var(--ok)}
 .field{display:grid;gap:.35rem}
 .form .chips{margin:0}
+.form.scores{margin:.75rem 0 0}
 .form label.switch{display:flex;align-items:center;font-size:1rem;font-weight:600;color:var(--charcoal)}
 .form label.switch input{width:44px;height:44px;min-width:44px;min-height:44px;padding:0;border:0;background:transparent}
 
