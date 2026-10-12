@@ -104,11 +104,11 @@ function layer(person) {
 }
 function isAdmin() { return Boolean(room && room.person && room.person.role === "admin"); }
 function sections() {
-  var ids = ["ideas", "home", "proposals", "research", "billing"];
+  var ids = ["home", "ideas", "proposals", "research", "billing"];
   if (room && room.staff) ids.push("admin");
   return ids;
 }
-function sectionLabel(id) { return id === "home" ? "Workspace" : id[0].toUpperCase() + id.slice(1); }
+function sectionLabel(id) { return id[0].toUpperCase() + id.slice(1); }
 function nav() {
   return sections().map(function (id) {
     return '<button type="button" data-act="view" data-view="' + id + '" class="' + (view === id ? "active" : "") + '"' + (view === id ? ' aria-current="page"' : "") + ">" + sectionLabel(id) + "</button>";
@@ -464,7 +464,7 @@ function page() {
     }
     main += '<article class="card mt-l"><h2 class="display t-md">' + esc(reading.title) + '</h2><p class="muted pre">' + esc(reading.body) + "</p>" + download + "</article>";
   }
-  return '<main class="wrap">' + (error ? '<div class="err" role="alert">' + esc(error) + "</div>" : "") + main + "</main>";
+  return '<div class="portal-tabs"><nav class="wrap" aria-label="Portal sections">' + nav() + '</nav></div><main class="wrap">' + (error ? '<div class="err" role="alert">' + esc(error) + "</div>" : "") + main + "</main>";
 }
 function card(label, n, id) {
   return '<div class="card"><div class="muted">' + label + '</div><div class="stat">' + n + '</div><button type="button" class="btn ghost" data-act="view" data-view="' + id + '">Open</button></div>';
