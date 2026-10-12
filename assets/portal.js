@@ -185,8 +185,8 @@ function publicControls(item) {
   if (state === "queued" && eligible) {
     extra = '<form class="form" data-form="clear-gate" data-id="' + esc(item.id) + '"><label>Note<input required maxlength="500"></label><button class="btn" type="submit">Mark gate cleared</button></form>';
   } else if (state === "published" && item.publicClearedBy && item.publicClearedBy.name) {
-    var when = item.publicClearedAt ? " · " + esc(item.publicClearedAt) : "";
-    var note = item.publicClearNote ? " · " + esc(item.publicClearNote) : "";
+    var when = item.publicClearedAt ? " \u00b7 " + esc(item.publicClearedAt) : "";
+    var note = item.publicClearNote ? " \u00b7 " + esc(item.publicClearNote) : "";
     extra = '<p class="muted">' + esc(item.publicClearedBy.name) + when + note + "</p>";
   }
   return '<div class="public-row">' + toggle + pill + "</div>" + extra;
@@ -313,7 +313,7 @@ function itemCard(item) {
     if (axisHeld && item.held != null) scores.push("How widely held " + item.held);
     else if (item.ease != null) scores.push("Ease " + item.ease);
     if (item.impact != null) scores.push("Impact " + item.impact);
-    bits += "<p><b>" + esc(scores.join(" · ")) + "</b></p>";
+    bits += "<p><b>" + esc(scores.join(" \u00b7 ")) + "</b></p>";
   }
   if (item.stance) bits += '<p class="badges"><span class="pill">' + esc(item.stance) + "</span></p>";
   if (item.empiricism) {
@@ -368,7 +368,7 @@ function offerCard(doc) {
   if (doc.cost) bits.push(esc(doc.cost));
   var link = /^https:\/\/\S+$/i.test(doc.link || "") ? esc(doc.link) : "";
   return '<article class="card mb-m"><h2 class="display t-card">' + esc(doc.title) + "</h2>" +
-    (bits.length ? "<p><b>" + bits.join(" · ") + "</b></p>" : "") +
+    (bits.length ? "<p><b>" + bits.join(" \u00b7 ") + "</b></p>" : "") +
     (doc.body ? '<p class="muted pre">' + esc(doc.body) + "</p>" : "") +
     (link ? '<p class="mt-m"><a class="btn" href="' + link + '" target="_blank" rel="noopener noreferrer">Fund this</a></p>' : "") +
     (doc.hasFile ? '<p class="mt-s"><button class="btn ghost" type="button" data-act="open" data-id="' + esc(doc.id) + '">Open file</button></p>' : "") +
@@ -421,7 +421,7 @@ function page() {
     return '<main class="wrap"><div class="login-card card"><h1 class="display t-lg">This account isn\'t on the list</h1><p class="muted">' + esc(error || "Ask Junto Nova to add this Google account.") + '</p><button type="button" class="btn ghost" data-act="logout">Sign out</button></div></main>';
   }
   var org = room.staff ? "All clients" : (room.person.orgName || "Your organization");
-  var whoLine = (!room.staff && room.person.orgName ? esc(room.person.orgName) + " · " : "") + esc(room.person.email);
+  var whoLine = (!room.staff && room.person.orgName ? esc(room.person.orgName) + " \u00b7 " : "") + esc(room.person.email);
   var main = "";
   if (view === "home") {
     main = '<div class="kicker">Workspace</div><h1 class="display">' + esc(org) + '</h1><div class="grid">' +
@@ -448,7 +448,7 @@ function page() {
     }
     main += '<article class="card mt-l"><h2 class="display t-md">' + esc(reading.title) + '</h2><p class="muted pre">' + esc(reading.body) + "</p>" + download + "</article>";
   }
-  return '<div class="portal-tools"><div class="wrap row"><nav class="tabs" aria-label="Portal sections">' + nav() + '</nav><div class="who"><b>' + esc(room.person.name) + '</b><br>' + whoLine + ' · <button type="button" data-act="logout">Sign out</button></div></div></div><main class="wrap">' + (error ? '<div class="err" role="alert">' + esc(error) + "</div>" : "") + main + "</main>";
+  return '<div class="portal-tools"><div class="wrap row"><nav class="tabs" aria-label="Portal sections">' + nav() + '</nav><div class="who"><b>' + esc(room.person.name) + '</b><br>' + whoLine + ' \u00b7 <button type="button" data-act="logout">Sign out</button></div></div></div><main class="wrap">' + (error ? '<div class="err" role="alert">' + esc(error) + "</div>" : "") + main + "</main>";
 }
 function card(label, n, id) {
   return '<div class="card"><div class="muted">' + label + '</div><div class="stat">' + n + '</div><button type="button" class="btn ghost" data-act="view" data-view="' + id + '">Open</button></div>';
