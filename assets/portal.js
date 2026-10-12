@@ -10,6 +10,13 @@ var room = null;
 var view = "home";
 var error = "";
 var reading = null;
+var ideaIssue = "";
+var openItem = "";
+var editingItem = "";
+var addingItem = false;
+var assignOrg = "";
+var issueOpen = false;
+var ideaLens = "";
 try { token = sessionStorage.getItem("jn_google") || ""; } catch (e) {}
 
 function esc(s) {
@@ -30,6 +37,7 @@ function logout() {
   render();
 }
 async function api(body) {
+  if (previewKind()) return room;
   var res = await fetch(API + "/api/portal", {
     method: "POST",
     headers: { "Content-Type": "application/json", Authorization: "Bearer " + token },
@@ -95,18 +103,168 @@ function layer(person) {
 }
 function isAdmin() { return Boolean(room && room.person && room.person.role === "admin"); }
 function nav() {
-  return ["home", "proposals", "research", "billing", "admin"].map(function (id) {
+  return ["home", "ideas", "proposals", "research", "billing", "admin"].map(function (id) {
     var label = id[0].toUpperCase() + id.slice(1);
     return '<button type="button" data-act="view" data-view="' + id + '" class="' + (view === id ? "active" : "") + '"' + (view === id ? ' aria-current="page"' : "") + ">" + label + "</button>";
   }).join("");
 }
 function setView(id) { view = id; reading = null; render(); }
+function ideaTotal() {
+  var n = 0;
+  (room.issues || []).forEach(function (issue) { n += (issue.items || []).length; });
+  return n;
+}
+function lensLabel(id) {
+  return { practical: "Practical", structural: "Structural", cultural: "Cultural" }[id] || "No lens";
+}
+function badge(value) {
+  var labels = { idea: "Idea", poll: "Poll", opposition: "Opposition", vetted: "Vetted", untested: "Untested" };
+  var cls = "pill";
+  if (value === "opposition") cls += " oppose";
+  else if (value === "untested" || value === "poll") cls += " open";
+  else if (value === "vetted") cls += " paid";
+  return '<span class="' + cls + '">' + esc(labels[value] || value) + "</span>";
+}
+function selectOptions(values, current, labels) {
+  return values.map(function (value) {
+    return '<option value="' + esc(value) + '"' + (value === current ? " selected" : "") + ">" + esc(labels[value] || value) + "</option>";
+  }).join("");
+}
+function currentIssue() {
+  var list = room.issues || [];
+  if (!list.length) return null;
+  for (var i = 0; i < list.length; i++) if (list[i].id === ideaIssue) return list[i];
+  ideaIssue = list[0].id;
+  return list[0];
+}
+function issueDrawer() {
+  var current = currentIssue();
+  var name = current ? current.name : "Issue";
+  var button = '<button type="button" class="drawer-btn" data-act="issue-drawer" aria-expanded="' + (issueOpen ? "true" : "false") + '">' + esc(name) + "</button>";
+  if (!issueOpen) return '<div class="drawer">' + button + "</div>";
+  var list = (room.issues || []).map(function (issue) {
+    var on = current && issue.id === current.id;
+    return '<button type="button" data-act="idea" data-id="' + esc(issue.id) + '" class="' + (on ? "active" : "") + '"' + (on ? ' aria-current="true"' : "") + ">" + esc(issue.name) + "</button>";
+  }).join("");
+  return '<div class="drawer">' + button + '<div class="drawer-list">' + list + "</div></div>";
+}
+function lensChips() {
+  var lenses = [["", "All"], ["practical", "Practical"], ["structural", "Structural"], ["cultural", "Cultural"]];
+  return '<div class="chips" role="group" aria-label="Lens">' + lenses.map(function (pair) {
+    var on = ideaLens === pair[0];
+    return '<button type="button" data-act="lens" data-lens="' + esc(pair[0]) + '" class="' + (on ? "active" : "") + '"' + (on ? ' aria-current="true"' : "") + ">" + pair[1] + "</button>";
+  }).join("") + "</div>";
+}
+function itemGroups(items) {
+  var order = ["practical", "structural", "cultural", ""];
+  var map = {};
+  items.forEach(function (item) {
+    var key = item.lens || "";
+    if (!map[key]) map[key] = [];
+    map[key].push(item);
+  });
+  return order.filter(function (key) { return map[key] && map[key].length; }).map(function (key) {
+    return { lens: key, items: map[key] };
+  });
+}
+function itemForm(item) {
+  var row = item || {};
+  var urls = (row.sourceUrls || []).map(function (source) { return source.url; }).join("\n");
+  return '<form class="form" data-form="item" data-id="' + esc(row.id || "") + '" data-issue="' + esc(ideaIssue) + '"><label>Title<input id="i-title" required value="' + esc(row.title || "") + '"></label><div class="row2"><label>Type<select id="i-type">' + selectOptions(["idea", "poll", "opposition"], row.type || "idea", { idea: "Idea", poll: "Poll", opposition: "Opposition" }) + '</select></label><label>Status<select id="i-status">' + selectOptions(["untested", "vetted"], row.status || "untested", { untested: "Untested", vetted: "Vetted" }) + '</select></label></div><div class="row2"><label>Lens<select id="i-lens"><option value="">No lens</option>' + selectOptions(["practical", "structural", "cultural"], row.lens || "", { practical: "Practical", structural: "Structural", cultural: "Cultural" }) + '</select></label><label>Empiricism<select id="i-emp"><option value=""> </option>' + selectOptions(["cited", "indirect", "none"], row.empiricism || "", { cited: "Cited", indirect: "Indirect", none: "Not confirmed" }) + '</select></label></div><div class="row2"><label>' + (row.scoreAxis === "how widely held" ? "How widely held" : "Ease") + '<input id="' + (row.scoreAxis === "how widely held" ? "i-held" : "i-ease") + '" inputmode="numeric" value="' + ((row.scoreAxis === "how widely held" ? row.held : row.ease) == null ? "" : esc(String(row.scoreAxis === "how widely held" ? row.held : row.ease))) + '"></label><label>Impact<input id="i-impact" inputmode="numeric" value="' + (row.impact == null ? "" : esc(String(row.impact))) + '"></label></div><label>Text<textarea id="i-text" rows="3">' + esc(row.body || "") + '</textarea></label><label>Evidence<textarea id="i-evidence" rows="3">' + esc(row.evidence || "") + '</textarea></label><label>Source links<textarea id="i-sources" rows="2" placeholder="https://">' + esc(urls) + '</textarea></label><div class="row-actions"><button class="btn" type="submit">' + (row.id ? "Save" : "Add item") + "</button>" + (row.id ? '<button class="btn ghost" type="button" data-act="remove-item" data-id="' + esc(row.id) + '">Remove</button>' : "") + "</div></form>";
+}
+function publicControls(item) {
+  if (!room.staff) return "";
+  var state = item.publicState || "private";
+  var on = state === "queued" || state === "published";
+  var word = state === "queued" ? "Queued" : state === "published" ? "Published" : "";
+  var pill = word ? '<span class="pill">' + word + "</span>" : "";
+  var toggle = '<label class="switch"><input type="checkbox" data-public="' + esc(item.id) + '"' + (on ? " checked" : "") + "><span>Public</span></label>";
+  var extra = "";
+  var eligible = item.status === "vetted" && item.type !== "opposition" && item.source !== "client";
+  if (state === "queued" && eligible) {
+    extra = '<form class="form" data-form="clear-gate" data-id="' + esc(item.id) + '"><label>Note<input required maxlength="500"></label><button class="btn" type="submit">Mark gate cleared</button></form>';
+  } else if (state === "published" && item.publicClearedBy && item.publicClearedBy.name) {
+    var when = item.publicClearedAt ? " · " + esc(item.publicClearedAt) : "";
+    var note = item.publicClearNote ? " · " + esc(item.publicClearNote) : "";
+    extra = '<p class="muted">' + esc(item.publicClearedBy.name) + when + note + "</p>";
+  }
+  return '<div class="public-row">' + toggle + pill + "</div>" + extra;
+}
+function itemCard(item) {
+  var open = openItem === item.id;
+  var head = '<button type="button" class="item-open" data-act="toggle-item" data-id="' + esc(item.id) + '"><b>' + esc(item.title) + '</b><span class="badges">' + badge(item.type) + badge(item.status) + "</span></button>";
+  var cls = "item" + (item.type === "opposition" ? " opposition" : "");
+  var gate = publicControls(item);
+  if (!open) return '<article class="' + cls + '">' + head + gate + "</article>";
+  if (room.staff && editingItem === item.id) return '<article class="' + cls + '">' + head + itemForm(item) + gate + "</article>";
+  var bits = "";
+  var axisHeld = item.scoreAxis === "how widely held";
+  if (item.ease != null || item.impact != null || (axisHeld && item.held != null)) {
+    var scores = [];
+    if (axisHeld && item.held != null) scores.push("How widely held " + item.held);
+    else if (item.ease != null) scores.push("Ease " + item.ease);
+    if (item.impact != null) scores.push("Impact " + item.impact);
+    bits += "<p><b>" + esc(scores.join(" · ")) + "</b></p>";
+  }
+  if (item.stance) bits += '<p class="badges"><span class="pill">' + esc(item.stance) + "</span></p>";
+  if (item.empiricism) {
+    var empiricism = { cited: "Cited", indirect: "Indirect", none: "Not confirmed" }[item.empiricism] || item.empiricism;
+    bits += '<p class="badges"><span class="pill">' + esc(empiricism) + "</span></p>";
+  }
+  if (item.body) bits += '<p class="muted pre">' + esc(item.body) + "</p>";
+  if (item.evidence) bits += '<p class="muted pre">' + esc(item.evidence) + "</p>";
+  (item.sourceUrls || []).forEach(function (source) {
+    if (!/^https:\/\/\S+$/i.test(source.url || "")) return;
+    bits += '<p class="mt-s"><a href="' + esc(source.url) + '" target="_blank" rel="noopener noreferrer">' + esc(source.label || source.url) + "</a></p>";
+  });
+  if (room.staff) bits += '<p class="mt-s"><button type="button" class="btn ghost" data-act="edit-item" data-id="' + esc(item.id) + '">Edit</button></p>';
+  return '<article class="' + cls + '">' + head + bits + gate + "</article>";
+}
+function assignForm(issue) {
+  if (!room.staff) return "";
+  var orgIds = Object.keys(room.orgs || {});
+  if (!assignOrg || !room.orgs[assignOrg]) assignOrg = orgIds[0] || "";
+  var grant = null;
+  (room.assignments || []).forEach(function (row) {
+    if (row.orgId === assignOrg && row.issueId === issue.id) grant = row;
+  });
+  var chosen = {};
+  if (grant) (grant.itemIds || []).forEach(function (id) { chosen[id] = true; });
+  var boxes = (issue.items || []).map(function (item) {
+    return '<label class="check tap"><input type="checkbox" data-assign-item value="' + esc(item.id) + '"' + (chosen[item.id] ? " checked" : "") + "><span>" + esc(item.title) + "</span></label>";
+  }).join("");
+  var options = orgIds.map(function (id) {
+    return '<option value="' + esc(id) + '"' + (id === assignOrg ? " selected" : "") + ">" + esc(room.orgs[id]) + "</option>";
+  }).join("");
+  return '<form class="form" data-form="assign" data-issue="' + esc(issue.id) + '"><div class="kicker">Access</div><label>Client<select id="a-org">' + options + '</select></label><label class="check tap"><input id="a-on" type="checkbox"' + (grant ? " checked" : "") + "><span>Assigned</span></label><div class=\"checks\">" + boxes + '</div><button class="btn" type="submit">Save access</button></form>';
+}
+function submitIdeaForm(issue) {
+  if (room.staff) return "";
+  return '<form class="form short card" data-form="submit-idea" data-issue="' + esc(issue.id) + '"><div class="kicker">Add idea</div><label>Title<input id="s-title" required></label><label>Text<textarea id="s-text" rows="3"></textarea></label><label>Source<input id="s-source" type="url" placeholder="https://"></label><button class="btn" type="submit">Add idea</button></form>';
+}
+function ideasPage() {
+  var list = room.issues || [];
+  var main = '<div class="kicker">Ideas</div><h1 class="display">Ideas</h1>' + issueDrawer() + lensChips();
+  if (!list.length) return main + '<p class="muted">Nothing here yet.</p>' + (room.staff ? '<form class="form" data-form="issue"><label>Issue<input id="n-issue" required></label><button class="btn" type="submit">Add issue</button></form>' : "");
+  var issue = currentIssue();
+  var visible = (issue.items || []).filter(function (item) { return !ideaLens || (item.lens || "") === ideaLens; });
+  var body = itemGroups(visible).map(function (group) {
+    return '<section class="lens-block"><h2 class="kicker">' + esc(lensLabel(group.lens)) + "</h2>" + group.items.map(itemCard).join("") + "</section>";
+  }).join("");
+  if (!visible.length) body = '<p class="muted">Nothing here yet.</p>';
+  var add = room.staff ? (addingItem ? itemForm(null) : '<p class="mt-m"><button type="button" class="btn ghost" data-act="add-item">Add item</button></p>') : submitIdeaForm(issue);
+  var remove = room.staff ? '<p class="mt-s"><button type="button" class="btn ghost" data-act="remove-issue" data-id="' + esc(issue.id) + '">Remove issue</button></p>' : "";
+  var create = room.staff ? '<form class="form" data-form="issue"><label>Issue<input id="n-issue" required></label><button class="btn" type="submit">Add issue</button></form>' : "";
+  return main + body + add + assignForm(issue) + remove + create;
+}
 function table(headers, rows) {
-  var head = headers.map(function (h) { return "<th>" + h + "</th>"; }).join("");
-  var body = rows.length ? rows.map(function (row) {
-    return "<tr>" + row.map(function (cell) { return "<td>" + cell + "</td>"; }).join("") + "</tr>";
-  }).join("") : '<tr><td colspan="' + headers.length + '">Nothing here yet.</td></tr>';
-  return '<div class="tbl-wrap"><table><thead><tr>' + head + "</tr></thead><tbody>" + body + "</tbody></table></div>";
+  if (!rows.length) return '<p class="muted">Nothing here yet.</p>';
+  return '<div class="stack">' + rows.map(function (row) {
+    return '<article class="card list-card">' + row.map(function (cell, i) {
+      var label = headers[i] ? '<div class="kicker">' + headers[i] + "</div>" : "";
+      return "<div>" + label + cell + "</div>";
+    }).join("") + "</article>";
+  }).join("") + "</div>";
 }
 function docTable(section) {
   return table(["Item", "Who can see it"], docs(section).map(function (doc) {
@@ -138,7 +296,7 @@ function addForm(section) {
   if (!room.staff) return "";
   var offer = section === "proposals" || section === "research";
   var extra = offer
-    ? '<label>City<input id="d-city" placeholder="Phoenix"></label><label>Dates<input id="d-when" placeholder="March 12–14"></label><label>Cost<input id="d-cost" placeholder="$18,500" required></label><label>Link to fund it<input id="d-link" type="url" placeholder="https://"></label>'
+    ? '<label>City<input id="d-city" placeholder="Phoenix"></label><label>Dates<input id="d-when" placeholder="March 12\u201314"></label><label>Cost<input id="d-cost" placeholder="$18,500" required></label><label>Link to fund it<input id="d-link" type="url" placeholder="https://"></label>'
     : "";
   return '<form class="form" data-form="doc" data-section="' + esc(section) + '"><div class="kicker">' + (offer ? "Add something they can fund" : "Add a document") + '</div><label>' + (offer ? "What" : "Title") + '<input id="d-title" required placeholder="' + (offer ? "Focus group" : "") + '"></label>' + extra +
     '<label>Who can see it<select id="d-vis"><option value="clients">All clients</option><option value="org" selected>This organization</option><option value="director">Director</option><option value="board">Board</option><option value="billing">Billing</option></select></label>' +
@@ -177,10 +335,13 @@ function page() {
   var main = "";
   if (view === "home") {
     main = '<div class="kicker">Workspace</div><h1 class="display">' + esc(org) + '</h1><div class="grid">' +
+      card("Ideas", ideaTotal(), "ideas") +
       card("Proposals", docs("proposals").length, "proposals") +
       card("Research", docs("research").length, "research") +
       card("Billing", room.person.billing || room.staff ? docs("billing").length : "None", "billing") +
       card("Admin", room.directory ? room.directory.length : 1, "admin") + "</div>";
+  } else if (view === "ideas") {
+    main = ideasPage();
   } else if (view === "billing" && !(room.person.billing || room.staff)) {
     main = '<div class="kicker">' + esc(org) + '</div><h1 class="display">Billing</h1><p class="muted">This login can\'t see billing.</p>';
   } else if (view === "admin") {
@@ -291,6 +452,102 @@ async function saveDoc(section) {
     render();
   }
 }
+function numOrNull(id) {
+  var raw = field(id).trim();
+  if (!raw) return null;
+  var n = Number(raw);
+  return Number.isInteger(n) ? n : raw;
+}
+function takeRoom(data) {
+  if (!data || data.error) { error = (data && data.error) || "Something went wrong. Try again."; render(); return false; }
+  room = data;
+  error = "";
+  return true;
+}
+async function saveIssueName() {
+  var data = await api({ action: "saveIssue", name: field("n-issue") });
+  if (!takeRoom(data)) return;
+  var match = (room.issues || []).filter(function (issue) { return issue.name === field("n-issue"); })[0];
+  if (match) ideaIssue = match.id;
+  render();
+}
+async function saveItemForm(form) {
+  var lines = field("i-sources").split(/\n/).map(function (line) { return line.trim(); }).filter(Boolean);
+  var body = {
+    action: "saveItem",
+    issueId: form.getAttribute("data-issue"),
+    type: field("i-type"),
+    status: field("i-status"),
+    lens: field("i-lens"),
+    title: field("i-title"),
+    text: field("i-text"),
+    evidence: field("i-evidence"),
+    empiricism: field("i-emp"),
+    ease: document.getElementById("i-held") ? null : numOrNull("i-ease"),
+    held: document.getElementById("i-held") ? numOrNull("i-held") : undefined,
+    impact: numOrNull("i-impact"),
+    sourceUrls: lines,
+  };
+  var id = form.getAttribute("data-id");
+  if (id) body.id = id;
+  var data = await api(body);
+  if (!takeRoom(data)) return;
+  editingItem = "";
+  addingItem = false;
+  openItem = id || "";
+  render();
+}
+async function saveAssignment(form) {
+  var ids = [];
+  form.querySelectorAll("[data-assign-item]").forEach(function (box) { if (box.checked) ids.push(box.value); });
+  var on = document.getElementById("a-on");
+  var data = await api({
+    action: "setAssignment",
+    orgId: field("a-org"),
+    issueId: form.getAttribute("data-issue"),
+    assigned: Boolean(on && on.checked),
+    itemIds: ids,
+  });
+  if (!takeRoom(data)) return;
+  render();
+}
+async function setItemPublic(id, on) {
+  var data = await api({ action: "setItemPublic", id: id, on: on });
+  if (!takeRoom(data)) return;
+  render();
+}
+async function clearPublicGate(form) {
+  var note = form.querySelector("input");
+  var data = await api({ action: "clearPublicGate", id: form.getAttribute("data-id"), note: note ? note.value : "" });
+  if (!takeRoom(data)) return;
+  render();
+}
+async function submitIdea(form) {
+  var data = await api({
+    action: "submitIdea",
+    issueId: form.getAttribute("data-issue"),
+    title: field("s-title"),
+    text: field("s-text"),
+    source: field("s-source"),
+  });
+  if (!takeRoom(data)) return;
+  render();
+}
+async function removeIdeaItem(id) {
+  var data = await api({ action: "removeItem", id: id });
+  if (!takeRoom(data)) return;
+  if (openItem === id) openItem = "";
+  editingItem = "";
+  render();
+}
+async function removeIdeaIssue(id) {
+  var data = await api({ action: "removeIssue", id: id });
+  if (!takeRoom(data)) return;
+  if (ideaIssue === id) ideaIssue = "";
+  openItem = "";
+  editingItem = "";
+  render();
+}
 async function openDoc(id) {
   var data = await api({ action: "open", id: id });
   if (data.error) { error = "That document isn't available."; render(); return; }
@@ -326,6 +583,19 @@ document.addEventListener("click", function (event) {
   else if (act === "google") signInGoogle();
   else if (act === "open") openDoc(target.getAttribute("data-id")).catch(fail);
   else if (act === "remove-person") removePerson(target.getAttribute("data-id")).catch(fail);
+  else if (act === "idea") { ideaIssue = target.getAttribute("data-id") || ""; issueOpen = false; openItem = ""; editingItem = ""; addingItem = false; view = "ideas"; render(); }
+  else if (act === "issue-drawer") { issueOpen = !issueOpen; render(); }
+  else if (act === "lens") { ideaLens = target.getAttribute("data-lens") || ""; openItem = ""; editingItem = ""; render(); }
+  else if (act === "toggle-item") {
+    var itemId = target.getAttribute("data-id");
+    openItem = openItem === itemId ? "" : itemId;
+    if (openItem !== itemId) editingItem = "";
+    render();
+  }
+  else if (act === "edit-item") { editingItem = target.getAttribute("data-id"); openItem = editingItem; render(); }
+  else if (act === "add-item") { addingItem = true; editingItem = ""; render(); }
+  else if (act === "remove-item") removeIdeaItem(target.getAttribute("data-id")).catch(fail);
+  else if (act === "remove-issue") removeIdeaIssue(target.getAttribute("data-id")).catch(fail);
 });
 document.addEventListener("submit", function (event) {
   var form = event.target;
@@ -334,15 +604,74 @@ document.addEventListener("submit", function (event) {
   event.preventDefault();
   if (kind === "person") savePerson().catch(fail);
   else if (kind === "doc") saveDoc(form.getAttribute("data-section")).catch(fail);
+  else if (kind === "issue") saveIssueName().catch(fail);
+  else if (kind === "item") saveItemForm(form).catch(fail);
+  else if (kind === "assign") saveAssignment(form).catch(fail);
+  else if (kind === "submit-idea") submitIdea(form).catch(fail);
+  else if (kind === "clear-gate") clearPublicGate(form).catch(fail);
 });
 document.addEventListener("change", function (event) {
   if (event.target && event.target.id === "d-vis") syncOrgWrap();
+  if (event.target && event.target.id === "a-org") { assignOrg = event.target.value; render(); }
+  if (event.target && event.target.hasAttribute && event.target.hasAttribute("data-public")) {
+    setItemPublic(event.target.getAttribute("data-public"), event.target.checked).catch(fail);
+  }
 });
 document.addEventListener("keydown", function (event) {
   if (event.key === "Escape") menu(false);
 });
 
+function previewKind() {
+  try {
+    var host = location.hostname;
+    if (host !== "localhost" && host !== "127.0.0.1") return "";
+    return new URLSearchParams(location.search).get("preview") || "";
+  } catch (e) { return ""; }
+}
+function previewItem(id, title, type, status, lens, ease, impact) {
+  return { id: id, issueId: "issue-energy", type: type, status: status, lens: lens, title: title, body: "", ease: ease, impact: impact, evidence: "", empiricism: "", source: "staff", sourceUrls: [], own: false, publicState: "private" };
+}
+function previewRoom(kind) {
+  var energy = [
+    Object.assign(previewItem("E1", "Time-of-use rates", "idea", "vetted", "practical", 74, 80), { publicState: "published", body: "Charge more when the grid is busy, and less when it is not.", evidence: "Several utilities already bill this way.", stance: "Back", publicClearedBy: { id: "staff", name: "Staff One", email: "staff@example.test" }, publicClearedAt: "2026-03-02", publicClearNote: "Cleared for the public list." }),
+    previewItem("E2", "Block a new fuel tax", "opposition", "untested", "practical", 40, 70),
+    previewItem("E3", "Who writes the grid rules", "idea", "untested", "structural", null, null),
+    Object.assign(previewItem("E4", "How widely the cost is felt", "idea", "vetted", "cultural", null, 60), { publicState: "queued", held: 55, scoreAxis: "how widely held", stance: "Watch" }),
+    Object.assign(previewItem("E5", "A second structural change", "idea", "untested", "structural", 20, 30), { publicState: "queued" }),
+  ];
+  var housing = [
+    { id: "staff-starter-commission", issueId: "issue-housing", type: "idea", status: "untested", lens: "practical", title: "Real estate commission rates", body: "", ease: null, impact: null, evidence: "", empiricism: "", source: "staff", sourceUrls: [] },
+    { id: "staff-starter-agents", issueId: "issue-housing", type: "idea", status: "untested", lens: "practical", title: "Number of real estate agents per transaction or market", body: "", ease: null, impact: null, evidence: "", empiricism: "", source: "staff", sourceUrls: [] },
+    { id: "staff-starter-title-fees", issueId: "issue-housing", type: "idea", status: "untested", lens: "practical", title: "Title company cut and fees", body: "", ease: null, impact: null, evidence: "", empiricism: "", source: "staff", sourceUrls: [] },
+    { id: "staff-starter-forced-agent", issueId: "issue-housing", type: "idea", status: "untested", lens: "structural", title: "Laws and rules that effectively force buyers and sellers to use a real estate agent and title company", body: "", ease: null, impact: null, evidence: "", empiricism: "", source: "staff", sourceUrls: [] },
+  ];
+  var staff = kind === "staff";
+  var issues = staff
+    ? [{ id: "issue-energy", slug: "energy", name: "Energy", notes: "", drive: "", items: energy }, { id: "issue-housing", slug: "housing", name: "Housing", notes: "", drive: "", items: housing }]
+    : [{ id: "issue-energy", slug: "energy", name: "Energy", items: energy.slice(0, 2).map(function (item) { return Object.assign({}, item, { own: false }); }) }];
+  return {
+    access: "ok",
+    email: staff ? "staff@example.test" : "ada@example.test",
+    staff: staff,
+    person: { id: staff ? "staff" : "ada", name: staff ? "Staff One" : "Ada Client", email: staff ? "staff@example.test" : "ada@example.test", role: staff ? "admin" : "director", billing: false, orgId: staff ? null : "orgA", orgName: staff ? "" : "Northwind" },
+    orgs: staff ? { orgA: "Northwind", orgB: "Contoso" } : { orgA: "Northwind" },
+    disclosures: {},
+    documents: [],
+    issues: issues,
+    assignments: staff ? [{ orgId: "orgA", issueId: "issue-energy", itemIds: ["E1", "E2"] }] : undefined,
+    directory: staff ? [{ id: "ada", name: "Ada Client", email: "ada@example.test", role: "director", billing: false, orgId: "orgA" }] : undefined,
+  };
+}
 function boot() {
+  var preview = previewKind();
+  if (preview === "staff" || preview === "client") {
+    token = "preview";
+    room = previewRoom(preview);
+    view = "ideas";
+    ideaIssue = "issue-energy";
+    render();
+    return;
+  }
   if (!token) { render(); return; }
   refresh().then(render).catch(function () { error = "The portal can't be reached. Try again."; token = ""; render(); });
 }
