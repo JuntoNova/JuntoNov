@@ -74,7 +74,7 @@
       '<div class="relative min-h-96 w-full flex-1 overflow-hidden rounded-2xl border sm:min-h-[28rem]" style="border-color:var(--border);background:var(--surface)">' + quads +
       '<div class="pointer-events-none absolute inset-y-10 left-1/2 w-px" style="background:var(--border)"></div><div class="pointer-events-none absolute inset-x-10 top-1/2 h-px" style="background:var(--border)"></div>' +
       '<div class="absolute inset-10">' + dots + "</div></div></div>" +
-      '<div class="mt-2 flex gap-2 sm:gap-3"><div class="w-12 shrink-0 sm:w-28"></div><div class="flex min-w-0 flex-1 justify-between gap-2 text-[10px] font-medium leading-tight sm:gap-3 sm:text-xs" style="color:var(--muted)"><span class="max-w-[46%]">' + esc(cfg.xl) + '</span><span class="max-w-[46%] text-right">' + esc(cfg.xh) + "</span></div></div>";
+      '<div class="mt-2 flex gap-2 sm:gap-3"><div class="w-12 shrink-0 sm:w-28"></div><div class="flex min-w-0 flex-1 justify-between gap-2 text-[10px] font-medium leading-tight sm:gap-3 sm:text-xs" style="color:var(--muted)"><span class="max-w-[46%]">' + esc(cfg.xl) + '</span><span class="max-w-[46%] text-right">' + esc(cfg.xh) + '</span></div></div>';
     place(root);
   }
   function place(root) {
