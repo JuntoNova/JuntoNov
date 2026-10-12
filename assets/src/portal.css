@@ -121,8 +121,8 @@ h1{font-size:1.7rem;margin:0 0 .5rem;overflow-wrap:anywhere}
 .drawer{margin:0 0 .75rem}
 .drawer-btn,.drawer-list button,.chips button{min-height:44px;border:1px solid var(--border);background:#fff;color:var(--charcoal);font:inherit;font-size:1rem;font-weight:600;cursor:pointer}
 .drawer-btn{display:flex;align-items:center;justify-content:space-between;gap:.75rem;width:100%;text-align:left;border-radius:.7rem;padding:0 1rem}
-.drawer-btn::after{content:"\u25be";color:var(--muted);font-weight:400}
-.drawer-btn[aria-expanded="true"]::after{content:"\u25b4"}
+.drawer-btn::after{content:"▾";color:var(--muted);font-weight:400}
+.drawer-btn[aria-expanded="true"]::after{content:"▴"}
 .drawer-list{display:grid;gap:.5rem;margin-top:.5rem}
 .drawer-list button{width:100%;text-align:left;border-radius:.7rem;padding:0 1rem}
 .drawer-list button.active,.chips button.active,.drawer-btn:hover,.chips button:hover{background:var(--surface)}
