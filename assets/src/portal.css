@@ -250,3 +250,14 @@ h1{font-size:1.7rem;margin:0 0 .5rem;overflow-wrap:anywhere}
 .foot-links a{display:inline-flex;align-items:center;justify-content:center;min-width:44px;min-height:44px}
 .ico{width:1rem;height:1rem;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .ico.solid{fill:currentColor;stroke:none}
+
+/* Portal sections live in the header menu. */
+#portal-menu{display:flex;flex-direction:column;gap:.125rem;padding-bottom:.375rem;margin-bottom:.375rem;border-bottom:1px solid var(--border)}
+#portal-menu[hidden]{display:none}
+.portal-nav{display:flex;flex-direction:column;gap:.125rem}
+.portal-nav button{display:flex;align-items:center;min-height:44px;padding:.75rem .5rem;border-radius:.5rem;background:none;border:0;font:inherit;font-weight:500;color:var(--charcoal);text-align:left;cursor:pointer}
+.portal-nav button.active,.portal-nav button:hover{background:var(--surface)}
+.menu-who{display:flex;align-items:center;justify-content:space-between;gap:.5rem;padding:0 .5rem;font-size:.875rem;color:var(--muted)}
+.menu-who b{color:var(--charcoal);overflow-wrap:anywhere}
+.menu-who button{min-height:44px;background:none;border:0;padding:0;font:inherit;text-decoration:underline;text-underline-offset:2px;cursor:pointer;color:inherit}
+.portal-nav button:focus-visible,.menu-who button:focus-visible{outline:2px solid var(--ember);outline-offset:2px}

@@ -7,7 +7,7 @@ var GOOGLE_CLIENT_ID = "696574706151-9qjv11se3a3us5k86o2fodtktb4m5r2d.apps.googl
 var API = "https://portal-api.juntonova.com";
 var token = "";
 var room = null;
-var view = "home";
+var view = "ideas";
 var error = "";
 var reading = null;
 var ideaIssue = "";
@@ -103,13 +103,25 @@ function layer(person) {
   return person.billing && person.role !== "jn" && person.role !== "admin" ? base + " · Billing" : base;
 }
 function isAdmin() { return Boolean(room && room.person && room.person.role === "admin"); }
+function sections() {
+  var ids = ["ideas", "home", "proposals", "research", "billing"];
+  if (room && room.staff) ids.push("admin");
+  return ids;
+}
+function sectionLabel(id) { return id === "home" ? "Workspace" : id[0].toUpperCase() + id.slice(1); }
 function nav() {
-  return ["home", "ideas", "proposals", "research", "billing", "admin"].map(function (id) {
-    var label = id[0].toUpperCase() + id.slice(1);
-    return '<button type="button" data-act="view" data-view="' + id + '" class="' + (view === id ? "active" : "") + '"' + (view === id ? ' aria-current="page"' : "") + ">" + label + "</button>";
+  return sections().map(function (id) {
+    return '<button type="button" data-act="view" data-view="' + id + '" class="' + (view === id ? "active" : "") + '"' + (view === id ? ' aria-current="page"' : "") + ">" + sectionLabel(id) + "</button>";
   }).join("");
 }
-function setView(id) { view = id; reading = null; render(); }
+function paintMenu() {
+  var slot = document.getElementById("portal-menu");
+  if (!slot) return;
+  if (!token || !room) { slot.innerHTML = ""; slot.hidden = true; return; }
+  slot.hidden = false;
+  slot.innerHTML = '<nav class="portal-nav" aria-label="Portal sections">' + nav() + '</nav><div class="menu-who"><b>' + esc(room.person.name) + '</b><button type="button" data-act="logout">Sign out</button></div>';
+}
+function setView(id) { if (sections().indexOf(id) < 0) id = "ideas"; view = id; reading = null; menu(false); render(); }
 function ideaTotal() {
   var n = 0;
   (room.issues || []).forEach(function (issue) { n += (issue.items || []).length; });
@@ -421,7 +433,6 @@ function page() {
     return '<main class="wrap"><div class="login-card card"><h1 class="display t-lg">This account isn\'t on the list</h1><p class="muted">' + esc(error || "Ask Junto Nova to add this Google account.") + '</p><button type="button" class="btn ghost" data-act="logout">Sign out</button></div></main>';
   }
   var org = room.staff ? "All clients" : (room.person.orgName || "Your organization");
-  var whoLine = (!room.staff && room.person.orgName ? esc(room.person.orgName) + " · " : "") + esc(room.person.email);
   var main = "";
   if (view === "home") {
     main = '<div class="kicker">Workspace</div><h1 class="display">' + esc(org) + '</h1><div class="grid">' +
@@ -429,13 +440,16 @@ function page() {
       card("Proposals", docs("proposals").length, "proposals") +
       card("Research", docs("research").length, "research") +
       card("Billing", room.person.billing || room.staff ? docs("billing").length : "None", "billing") +
-      card("Admin", room.directory ? room.directory.length : 1, "admin") + "</div>";
+      (room.staff ? card("Admin", room.directory ? room.directory.length : 0, "admin") : "") + "</div>";
   } else if (view === "ideas") {
     main = ideasPage();
   } else if (view === "billing" && !(room.person.billing || room.staff)) {
     main = '<div class="kicker">' + esc(org) + '</div><h1 class="display">Billing</h1><p class="muted">This login can\'t see billing.</p>';
-  } else if (view === "admin") {
+  } else if (view === "admin" && room.staff) {
     main = admin();
+  } else if (view === "admin") {
+    view = "ideas";
+    main = ideasPage();
   } else {
     var titles = { proposals: "Proposals", research: "Research", billing: "Billing" };
     var list = view === "proposals" || view === "research" ? (docs(view).map(offerCard).join("") || '<p class="muted">Nothing posted yet.</p>') : docTable(view);
@@ -448,7 +462,7 @@ function page() {
     }
     main += '<article class="card mt-l"><h2 class="display t-md">' + esc(reading.title) + '</h2><p class="muted pre">' + esc(reading.body) + "</p>" + download + "</article>";
   }
-  return '<div class="portal-tools"><div class="wrap row"><nav class="tabs" aria-label="Portal sections">' + nav() + '</nav><div class="who"><b>' + esc(room.person.name) + '</b><br>' + whoLine + ' · <button type="button" data-act="logout">Sign out</button></div></div></div><main class="wrap">' + (error ? '<div class="err" role="alert">' + esc(error) + "</div>" : "") + main + "</main>";
+  return '<main class="wrap">' + (error ? '<div class="err" role="alert">' + esc(error) + "</div>" : "") + main + "</main>";
 }
 function card(label, n, id) {
   return '<div class="card"><div class="muted">' + label + '</div><div class="stat">' + n + '</div><button type="button" class="btn ghost" data-act="view" data-view="' + id + '">Open</button></div>';
@@ -468,6 +482,7 @@ function admin() {
 }
 function render() {
   document.getElementById("app").innerHTML = page();
+  paintMenu();
   paintIssueGrid();
   if (!token) initGoogle();
   else syncOrgWrap();
