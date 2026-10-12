@@ -270,6 +270,28 @@ h1{font-size:1.7rem;margin:0 0 .5rem;overflow-wrap:anywhere}
 .issue-ylab{white-space:nowrap}
 @media (max-width:639px){.issue-ylab{width:3.6rem}}
 
-/* Desktop keeps the section row in view; phones use the header menu. */
-.portal-tabs{display:none}
-@media(min-width:720px){.portal-tabs{display:block;border-bottom:1px solid var(--border)}.portal-tabs nav{display:flex;flex-wrap:wrap;gap:.35rem;padding-top:.5rem;padding-bottom:.5rem}.portal-tabs button{min-height:44px;padding:.45rem .8rem;border-radius:.7rem;font:inherit;font-size:.875rem;font-weight:500;color:var(--muted);background:none;border:0;cursor:pointer}.portal-tabs button.active,.portal-tabs button:hover{background:var(--surface);color:var(--charcoal)}.portal-tabs button:focus-visible{outline:2px solid var(--ember);outline-offset:2px}}
+/* Section row under the header at every width; it scrolls sideways on phones. */
+.portal-tabs{border-bottom:1px solid var(--border);background:#fff}
+.portal-tabs nav{display:flex;flex-wrap:nowrap;gap:.25rem;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain}
+.portal-tabs nav::-webkit-scrollbar{display:none}
+.portal-tabs button{flex:0 0 auto;white-space:nowrap;min-height:44px;padding:0 .8rem;border-radius:0;border:0;border-bottom:2px solid transparent;background:none;font:inherit;font-size:.875rem;font-weight:500;color:var(--muted);cursor:pointer}
+.portal-tabs button:hover{color:var(--charcoal)}
+.portal-tabs button.active{color:var(--charcoal);font-weight:600;border-bottom-color:var(--ember)}
+.portal-tabs button:focus-visible{outline:2px solid var(--ember);outline-offset:-2px}
+.portal-tabs+main{padding-top:1.5rem}
+/* Name and Sign out sit small at the right of the header. */
+.head-end{display:flex;align-items:center;gap:.5rem;min-width:0}
+.head-who{display:flex;align-items:center;gap:.6rem;min-width:0;font-size:.8rem;color:var(--muted)}
+.head-who[hidden]{display:none}
+.head-who .who-name{display:none;max-width:12rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.head-who button{min-height:44px;padding:0 .25rem;background:none;border:0;font:inherit;color:inherit;text-decoration:underline;text-underline-offset:2px;cursor:pointer;white-space:nowrap}
+.head-who button:hover{color:var(--charcoal)}
+.head-who button:focus-visible{outline:2px solid var(--ember);outline-offset:2px;border-radius:.25rem}
+@media(min-width:720px){.head-who .who-name{display:inline}.signed-in .menu{display:none}}
+/* Public: a small neutral switch, not a bright checkbox. */
+.switch,.form label.switch{display:inline-flex;width:auto;min-height:44px;padding:0;gap:.5rem;border:0;background:none;font-size:.875rem;font-weight:500;color:var(--muted);cursor:pointer}
+.switch input,.form label.switch input{-webkit-appearance:none;appearance:none;position:relative;width:2rem;height:1.125rem;min-width:2rem;min-height:1.125rem;margin:0;padding:0;border:0;border-radius:999px;background:#cbd5e1;cursor:pointer;transition:background .15s}
+.switch input::before{content:"";position:absolute;top:2px;left:2px;width:calc(1.125rem - 4px);height:calc(1.125rem - 4px);border-radius:50%;background:#fff;transition:transform .15s}
+.switch input:checked{background:#2A3A4A}
+.switch input:checked::before{transform:translateX(.875rem)}
+.switch:has(input:checked){color:var(--charcoal)}

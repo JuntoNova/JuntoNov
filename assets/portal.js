@@ -119,9 +119,12 @@ function paintMenu() {
   if (!slot) return;
   var signedIn = Boolean(token && room);
   document.querySelectorAll('#mobile-menu a.login, #mobile-menu a[href="project.html"]').forEach(function (a) { a.hidden = signedIn; });
-  if (!signedIn) { slot.innerHTML = ""; slot.hidden = true; return; }
-  slot.hidden = false;
-  slot.innerHTML = '<nav class="portal-nav" aria-label="Portal sections">' + nav() + '</nav><div class="menu-who">' + esc(room.person.name) + '</div><button type="button" class="menu-row" data-act="logout">Sign out</button>';
+  document.body.classList.toggle("signed-in", signedIn);
+  slot.innerHTML = ""; slot.hidden = true;
+  var who = document.getElementById("portal-who");
+  if (!who) return;
+  who.hidden = !signedIn;
+  who.innerHTML = signedIn ? '<span class="who-name" title="' + esc(room.person.name) + '">' + esc(room.person.name) + '</span><button type="button" data-act="logout">Sign out</button>' : "";
 }
 function setView(id) { if (sections().indexOf(id) < 0) id = "ideas"; view = id; reading = null; menu(false); render(); }
 function ideaTotal() {
@@ -485,6 +488,8 @@ function admin() {
 function render() {
   document.getElementById("app").innerHTML = page();
   paintMenu();
+  var activeTab = document.querySelector('.portal-tabs button[aria-current="page"]');
+  if (activeTab && activeTab.scrollIntoView) activeTab.scrollIntoView({ block: "nearest", inline: "nearest" });
   paintIssueGrid();
   if (!token) initGoogle();
   else syncOrgWrap();
