@@ -269,3 +269,7 @@ h1{font-size:1.7rem;margin:0 0 .5rem;overflow-wrap:anywhere}
 .chips.lens-row button{white-space:nowrap;padding:0 .7rem;flex:0 0 auto}
 .issue-ylab{white-space:nowrap}
 @media (max-width:639px){.issue-ylab{width:3.6rem}}
+
+/* Desktop keeps the section row in view; phones use the header menu. */
+.portal-tabs{display:none}
+@media(min-width:720px){.portal-tabs{display:block;border-bottom:1px solid var(--border)}.portal-tabs nav{display:flex;flex-wrap:wrap;gap:.35rem;padding-top:.5rem;padding-bottom:.5rem}.portal-tabs button{min-height:44px;padding:.45rem .8rem;border-radius:.7rem;font:inherit;font-size:.875rem;font-weight:500;color:var(--muted);background:none;border:0;cursor:pointer}.portal-tabs button.active,.portal-tabs button:hover{background:var(--surface);color:var(--charcoal)}.portal-tabs button:focus-visible{outline:2px solid var(--ember);outline-offset:2px}}
