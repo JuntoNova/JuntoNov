@@ -89,4 +89,12 @@ test("the issues page reads the live feed and does not embed a snapshot", () => 
   assert.equal(portal.includes('id="score-x"'), false);
   assert.equal(portal.includes('id="i-ease"'), false);
   assert.equal(portal.includes('id="i-impact"'), false);
+  assert.match(portal, /class="danger-zone"/);
+  assert.match(portal, />Danger zone</);
+  assert.match(portal, /data-form="remove-issue"/);
+  assert.match(portal, /Type the issue name to confirm/);
+  assert.match(portal, />Delete this issue</);
+  assert.match(portal, /room\.person\.role !== "admin"/);
+  assert.equal(portal.includes('data-act="remove-issue"'), false);
+  assert.equal(portal.includes(">Remove issue<"), false);
 });

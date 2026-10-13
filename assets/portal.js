@@ -540,6 +540,37 @@ function newIssueForm() {
   if (!room.staff) return "";
   return '<details class="new-issue"><summary>New issue</summary><form class="form" data-form="issue"><label>Issue name<input id="n-issue" required maxlength="80"></label><button class="btn" type="submit">Add issue</button></form></details>';
 }
+function countPhrase(n, one, many) {
+  return n + " " + (n === 1 ? one : many);
+}
+function issueImpact(issue) {
+  var ideas = 0;
+  var polls = 0;
+  var opposition = 0;
+  (issue.items || []).forEach(function (item) {
+    if (item.type === "idea") ideas += 1;
+    else if (item.type === "poll") polls += 1;
+    else if (item.type === "opposition") opposition += 1;
+  });
+  var grants = 0;
+  (room.assignments || []).forEach(function (row) {
+    if (row.issueId !== issue.id) return;
+    grants += 1 + (row.itemIds || []).length;
+  });
+  return { ideas: ideas, polls: polls, opposition: opposition, grants: grants };
+}
+function attachedSentence(n) {
+  return "This issue still has " + countPhrase(n.ideas, "idea", "ideas") + ", " + countPhrase(n.polls, "poll", "polls") + ", " + countPhrase(n.opposition, "opposition item", "opposition items") + ", and " + countPhrase(n.grants, "grant", "grants") + ". Remove the ideas, polls, and opposition first.";
+}
+function dangerZone(issue) {
+  if (!room.person || room.person.role !== "admin") return "";
+  var n = issueImpact(issue);
+  var head = '<details class="danger-zone"><summary>Danger zone</summary>';
+  if (n.ideas || n.polls || n.opposition) {
+    return head + '<p class="muted">' + esc(attachedSentence(n)) + "</p></details>";
+  }
+  return head + '<form class="form" data-form="remove-issue" data-id="' + esc(issue.id) + '" data-name="' + esc(issue.name) + '"><p class="muted">' + esc(countPhrase(n.grants, "grant", "grants") + " would be removed with this issue.") + '</p><label>Type the issue name to confirm<input data-confirm-name autocomplete="off" autocapitalize="off" spellcheck="false" maxlength="80"></label><button class="link-btn" type="submit" disabled>Delete this issue</button></form></details>';
+}
 function ideasPage() {
   var list = room.issues || [];
   var main = '<h1 class="display">Ideas</h1>' + issueDrawer();
@@ -558,9 +589,8 @@ function ideasPage() {
   var body = '<section class="lens-block">' + lensSelect() + visible.map(itemCard).join("") + add + "</section>";
   if (!visible.length) body = '<section class="lens-block">' + lensSelect() + '<p class="muted">Nothing here yet.</p>' + add + "</section>";
   var composer = room.staff && addingItem ? staffAddForm() : "";
-  var remove = room.staff ? '<p class="mt-s"><button type="button" class="btn ghost" data-act="remove-issue" data-id="' + esc(issue.id) + '">Remove issue</button></p>' : "";
   var create = newIssueForm();
-  return main + '<div id="issue-grid" class="jn-grid"></div>' + composer + body + (room.staff ? "" : submitIdeaForm(issue)) + remove + create;
+  return main + '<div id="issue-grid" class="jn-grid"></div>' + composer + body + (room.staff ? "" : submitIdeaForm(issue)) + create + dangerZone(issue);
 }
 function table(headers, rows) {
   if (!rows.length) return '<p class="muted">Nothing here yet.</p>';
@@ -1060,8 +1090,8 @@ async function removeIdeaItem(id) {
   editingItem = "";
   render();
 }
-async function removeIdeaIssue(id) {
-  var data = await api({ action: "removeIssue", id: id });
+async function removeIdeaIssue(id, confirmName) {
+  var data = await api({ action: "removeIssue", id: id, confirmName: confirmName });
   if (!takeRoom(data)) return;
   if (ideaIssue === id) ideaIssue = "";
   openItem = "";
@@ -1172,7 +1202,6 @@ document.addEventListener("click", function (event) {
     if (scoreForm && scoreForm.getAttribute("data-form") === "scores") saveScores(scoreForm.getAttribute("data-id")).catch(fail);
   }
   else if (act === "remove-item") removeIdeaItem(target.getAttribute("data-id")).catch(fail);
-  else if (act === "remove-issue") removeIdeaIssue(target.getAttribute("data-id")).catch(fail);
 });
 document.addEventListener("submit", function (event) {
   var form = event.target;
@@ -1187,6 +1216,18 @@ document.addEventListener("submit", function (event) {
   else if (kind === "add-idea") addStaffIdea(form).catch(fail);
   else if (kind === "submit-idea") submitIdea(form).catch(fail);
   else if (kind === "clear-gate") clearPublicGate(form).catch(fail);
+  else if (kind === "remove-issue") {
+    var typed = form.querySelector("[data-confirm-name]");
+    var expected = form.getAttribute("data-name") || "";
+    if (!typed || typed.value !== expected) return;
+    removeIdeaIssue(form.getAttribute("data-id"), typed.value).catch(fail);
+  }
+});
+document.addEventListener("input", function (event) {
+  var form = event.target && event.target.closest ? event.target.closest("[data-form='remove-issue']") : null;
+  if (!form || !event.target.hasAttribute || !event.target.hasAttribute("data-confirm-name")) return;
+  var button = form.querySelector("button");
+  if (button) button.disabled = event.target.value !== (form.getAttribute("data-name") || "");
 });
 document.addEventListener("change", function (event) {
   if (event.target && event.target.hasAttribute && event.target.hasAttribute("data-lens-select")) {
@@ -1379,6 +1420,34 @@ function previewMutate(body) {
       });
     }
     previewStore();
+    return room;
+  }
+  if (action === "saveIssue") {
+    var issueName = typeof body.name === "string" ? body.name.trim() : "";
+    if (!issueName) return { error: "Name is required." };
+    var taken = (room.issues || []).some(function (issue) { return String(issue.name).toLowerCase() === issueName.toLowerCase(); });
+    if (taken) return { error: "An issue with that name already exists." };
+    room.issues = room.issues || [];
+    room.issues.push({
+      id: "preview-issue-" + Date.now().toString(36),
+      slug: issueName.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
+      name: issueName,
+      notes: "",
+      drive: "",
+      items: [],
+    });
+    return room;
+  }
+  if (action === "removeIssue") {
+    if (!room.person || room.person.role !== "admin") return { error: "Only an admin can delete an issue." };
+    var targetIssue = null;
+    (room.issues || []).forEach(function (issue) { if (issue.id === body.id) targetIssue = issue; });
+    if (!targetIssue) return { error: "That isn't available." };
+    var impact = issueImpact(targetIssue);
+    if (impact.ideas || impact.polls || impact.opposition) return { error: attachedSentence(impact) };
+    if (body.confirmName !== targetIssue.name) return { error: "Type the issue name exactly." };
+    room.issues = room.issues.filter(function (issue) { return issue.id !== targetIssue.id; });
+    room.assignments = (room.assignments || []).filter(function (row) { return row.issueId !== targetIssue.id; });
     return room;
   }
   if (action === "setAssignment") {

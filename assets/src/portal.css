@@ -351,4 +351,7 @@ h1{font-size:1.7rem;margin:0 0 .5rem;overflow-wrap:anywhere}
 .scale-note{margin:.35rem 0 0}
 .new-issue{margin:1rem 0 1.5rem}
 .new-issue summary{display:flex;align-items:center;min-height:44px;cursor:pointer;font-weight:600}
+.danger-zone{margin:1.5rem 0;color:var(--muted)}
+.danger-zone summary{display:flex;align-items:center;min-height:44px;cursor:pointer;font-weight:600;color:var(--muted)}
+.danger-zone .link-btn:disabled{opacity:.4;cursor:default}
 .form .field .kicker{margin-bottom:0}
