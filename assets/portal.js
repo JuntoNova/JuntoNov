@@ -348,7 +348,7 @@ function itemGroups(items) {
 function itemForm(item) {
   var row = item || {};
   var urls = (row.sourceUrls || []).map(function (source) { return source.url; }).join("\n");
-  return '<form class="form" data-form="item" data-id="' + esc(row.id || "") + '" data-issue="' + esc(ideaIssue) + '"><label>Title<input id="i-title" required value="' + esc(row.title || "") + '"></label><div class="row2"><label>Type<select id="i-type">' + selectOptions(["idea", "poll", "opposition"], row.type || "idea", { idea: "Idea", poll: "Poll", opposition: "Opposition" }) + '</select></label><label>Status<select id="i-status">' + selectOptions(["untested", "vetted"], row.status || "untested", { untested: "Untested", vetted: "Vetted" }) + '</select></label></div><div class="row2"><label>Lens<select id="i-lens"><option value="">No lens</option>' + selectOptions(["practical", "structural", "cultural"], row.lens || "", { practical: "Practical", structural: "Structural", cultural: "Cultural" }) + '</select></label><label>Empiricism<select id="i-emp"><option value=""> </option>' + selectOptions(["cited", "indirect", "none"], row.empiricism || "", { cited: "Cited", indirect: "Indirect", none: "Not confirmed" }) + '</select></label></div><div class="row2"><label>' + (row.scoreAxis === "how widely held" ? "How widely held" : "Ease") + '<input id="' + (row.scoreAxis === "how widely held" ? "i-held" : "i-ease") + '" inputmode="numeric" value="' + ((row.scoreAxis === "how widely held" ? row.held : row.ease) == null ? "" : esc(String(row.scoreAxis === "how widely held" ? row.held : row.ease))) + '"></label><label>Impact<input id="i-impact" inputmode="numeric" value="' + (row.impact == null ? "" : esc(String(row.impact))) + '"></label></div><label>Text<textarea id="i-text" rows="3">' + esc(row.body || "") + '</textarea></label><label>Evidence<textarea id="i-evidence" rows="3">' + esc(row.evidence || "") + '</textarea></label><label>Source links<textarea id="i-sources" rows="2" placeholder="https://">' + esc(urls) + '</textarea></label><div class="row-actions"><button class="btn" type="submit">' + (row.id ? "Save" : "Add item") + "</button>" + (row.id ? '<button class="btn ghost" type="button" data-act="remove-item" data-id="' + esc(row.id) + '">Remove</button>' : "") + "</div></form>";
+  return '<form class="form" data-form="item" data-id="' + esc(row.id || "") + '" data-issue="' + esc(ideaIssue) + '"><label>Title<input id="i-title" required value="' + esc(row.title || "") + '"></label><div class="row2"><label>Type<select id="i-type">' + selectOptions(["idea", "poll", "opposition"], row.type || "idea", { idea: "Idea", poll: "Poll", opposition: "Opposition" }) + '</select></label><label>Status<select id="i-status">' + selectOptions(["untested", "vetted"], row.status || "untested", { untested: "Untested", vetted: "Vetted" }) + '</select></label></div><div class="row2"><label>Lens<select id="i-lens"><option value="">No lens</option>' + selectOptions(["practical", "structural", "cultural"], row.lens || "", { practical: "Practical", structural: "Structural", cultural: "Cultural" }) + '</select></label><label>Empiricism<select id="i-emp"><option value=""> </option>' + selectOptions(["cited", "indirect", "none"], row.empiricism || "", { cited: "Cited", indirect: "Indirect", none: "Not confirmed" }) + '</select></label></div><div class="row2"><label>' + (row.scoreAxis === "how widely held" ? "How widely held" : "Ease") + '<input id="' + (row.scoreAxis === "how widely held" ? "i-held" : "i-ease") + '" inputmode="numeric" value="' + ((row.scoreAxis === "how widely held" ? row.held : row.ease) == null ? "" : esc(String(row.scoreAxis === "how widely held" ? row.held : row.ease))) + '"></label><label>Impact<input id="i-impact" inputmode="numeric" value="' + (row.impact == null ? "" : esc(String(row.impact))) + '"></label></div><label>Text<textarea id="i-text" rows="3">' + esc(row.body || "") + '</textarea></label><label>Evidence<textarea id="i-evidence" rows="3">' + esc(row.evidence || "") + '</textarea></label><label>Source links<textarea id="i-sources" rows="2" placeholder="https://">' + esc(urls) + '</textarea></label><div class="row-actions"><button class="btn" type="submit">' + (row.id ? "Save" : "Add item") + "</button>" + (row.id ? '<button class="btn ghost" type="button" data-act="cancel-item">Cancel</button>' : "") + (row.id ? '<button class="btn ghost" type="button" data-act="remove-item" data-id="' + esc(row.id) + '">Remove</button>' : "") + "</div></form>";
 }
 function publicControls(item) {
   if (!room.staff) return "";
@@ -668,8 +668,49 @@ function admin() {
   });
   return '<div class="kicker">Junto Nova</div><h1 class="display">Admin</h1><p class="muted">Add a client\'s email and what they can see.</p><form class="form" data-form="person"><div class="row2"><label>Name<input id="c-name" required></label><label>Email<input id="c-email" type="email" required></label></div><label>Access<select id="c-role"><option value="director">Director</option><option value="board">Board</option><option value="member">Member</option>' + (admin ? '<option value="jn">Junto Nova staff</option>' : "") + '</select></label><label>Organization<select id="c-org">' + orgOptions(false) + '</select></label><label>New organization name<input id="c-org-name" placeholder="Only if you chose New organization"></label><label class="check"><input id="c-bill" type="checkbox"> Billing</label><button class="btn" type="submit">Give access</button></form>' + table(["Client", "Organization", "Access", ""], rows) + addForm("admin");
 }
+/* Editors (inline rename and the full edit form) keep what was typed. Any re-render while one is
+   open carries the typed values over, and nothing else closes an editor that has unsaved text.
+   Only Save sends it; only Cancel or Escape throws it away. */
+var EDITOR_SELECTOR = "[data-name-input], form[data-form='item'] input, form[data-form='item'] textarea, form[data-form='item'] select";
+function editorSnapshot() {
+  var out = [];
+  var els = document.querySelectorAll("#app " + EDITOR_SELECTOR.split(", ").join(", #app "));
+  for (var i = 0; i < els.length; i++) {
+    var el = els[i];
+    var key = el.getAttribute("data-name-input") ? "name:" + el.getAttribute("data-name-input") : el.id ? "form:" + el.id : "";
+    if (!key) continue;
+    out.push({ key: key, value: el.type === "checkbox" ? el.checked : el.value, dirty: fieldDirty(el), focused: document.activeElement === el, start: el.selectionStart, end: el.selectionEnd });
+  }
+  return out;
+}
+function fieldDirty(el) {
+  if (el.type === "checkbox") return el.checked !== el.defaultChecked;
+  if (el.tagName === "SELECT") {
+    for (var i = 0; i < el.options.length; i++) if (el.options[i].selected !== el.options[i].defaultSelected) return true;
+    return false;
+  }
+  return el.value !== el.defaultValue;
+}
+function editorDirty() {
+  return editorSnapshot().some(function (f) { return f.dirty; });
+}
+function editorRestore(snap) {
+  snap.forEach(function (f) {
+    var el = f.key.indexOf("name:") === 0
+      ? document.querySelector("#app [data-name-input='" + (window.CSS && CSS.escape ? CSS.escape(f.key.slice(5)) : f.key.slice(5)) + "']")
+      : document.getElementById(f.key.slice(5));
+    if (!el || !el.closest("#app")) return;
+    if (!f.dirty) { /* untouched: take the fresh value */ } else if (el.type === "checkbox") el.checked = f.value; else el.value = f.value;
+    if (f.focused) {
+      el.focus();
+      try { if (f.start != null) el.setSelectionRange(f.start, f.end); } catch (e) {}
+    }
+  });
+}
 function render() {
+  var snap = editorSnapshot();
   document.getElementById("app").innerHTML = page();
+  editorRestore(snap);
   paintMenu();
   var activeTab = document.querySelector('.portal-tabs button[aria-current="page"]');
   if (activeTab && activeTab.scrollIntoView) activeTab.scrollIntoView({ block: "nearest", inline: "nearest" });
@@ -1000,6 +1041,7 @@ document.addEventListener("click", function (event) {
     if (!inside) menu(false);
   }
   var dot = event.target.closest ? event.target.closest("#issue-grid button[data-id]") : null;
+  if (dot && editorDirty()) return;
   if (dot) {
     var dotId = dot.getAttribute("data-id") || "";
     openItem = dotId;
@@ -1039,12 +1081,15 @@ document.addEventListener("click", function (event) {
     }
   }
   else if (act === "toggle-item") {
+    if (editorDirty()) return;
     var itemId = target.getAttribute("data-id");
     openItem = openItem === itemId ? "" : itemId;
     if (openItem !== itemId) editingItem = "";
     editingName = "";
     render();
   }
+  else if ((act === "edit-item" || act === "edit-name") && editorDirty()) return;
+  else if (act === "cancel-item") { editingItem = ""; render(); }
   else if (act === "edit-item") { editingItem = target.getAttribute("data-id"); openItem = editingItem; editingName = ""; render(); }
   else if (act === "edit-name") { editingName = target.getAttribute("data-id"); openItem = ""; editingItem = ""; render(); setTimeout(function () { var inp = document.querySelector("[data-name-input]"); if (inp) { inp.focus(); inp.select(); } }, 0); }
   else if (act === "cancel-name") { editingName = ""; render(); }
@@ -1080,6 +1125,7 @@ document.addEventListener("submit", function (event) {
 document.addEventListener("change", function (event) {
   if (event.target && event.target.hasAttribute && event.target.hasAttribute("data-lens-select")) {
     ideaLens = event.target.value || "practical";
+    if (editorDirty()) { render(); return; }
     openItem = "";
     editingItem = "";
     editingName = "";
@@ -1100,11 +1146,9 @@ document.addEventListener("change", function (event) {
   }
 });
 document.addEventListener("keydown", function (event) {
-  if (event.key === "Escape") { menu(false); if (editingName) { editingName = ""; render(); } }
-  if (event.key === "Enter" && event.target && event.target.hasAttribute && event.target.hasAttribute("data-name-input")) {
-    event.preventDefault();
-    saveName(event.target.getAttribute("data-name-input")).catch(fail);
-  }
+  if (event.key === "Escape") { menu(false); if (editingName) { editingName = ""; render(); } else if (editingItem) { editingItem = ""; render(); } }
+  /* Enter in the name field does nothing: only the Save button saves. */
+  if (event.key === "Enter" && event.target && event.target.hasAttribute && event.target.hasAttribute("data-name-input")) event.preventDefault();
 });
 var gridTimer = 0;
 window.addEventListener("resize", function () {
