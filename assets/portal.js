@@ -197,7 +197,7 @@ function emailCard() {
     return head("Set up your authenticator app") +
       '<ol class="steps"><li>Open an authenticator app on your phone, such as Google Authenticator or Microsoft Authenticator.</li><li>Scan this code.</li></ol>' +
       (qr ? '<img class="qr" src="' + qr + '" width="208" height="208" alt="QR code for your authenticator app">' : "") +
-      '<details class="key"><summary>Can\'t scan it? Type this key instead</summary><code class="secret">' + esc(setup.secret) + '</code><div class="muted small">Account: ' + esc(setup.account) + "</div></details>" +
+      '<details class="key"><summary>Can\'t scan the code? Type this key instead</summary><code class="secret">' + esc(setup.secret) + '</code><div class="muted small">Account: ' + esc(setup.account) + "</div></details>" +
       '<form class="form signin-form" data-form="totp-enroll">' + codeInput("t-code", "Code from the app") + '<button class="btn wide" type="submit">Continue</button></form>' + back + foot;
   }
   if (emailStep === "codes" && recoveryCodes) {
