@@ -326,7 +326,7 @@ function issueDrawer() {
   return '<div class="drawer">' + button + '<div class="drawer-list">' + list + "</div></div>";
 }
 function lensSelect() {
-  var lenses = [["practical", "Practical"], ["structural", "Structural"], ["cultural", "Cultural"]];
+  var lenses = [["practical", "Practical"], ["structural", "Structural"], ["cultural", "Cultural"], ["none", "No lens"]];
   if (!ideaLens || lenses.every(function (p) { return p[0] !== ideaLens; })) ideaLens = "practical";
   return '<select class="lens-select" data-lens-select aria-label="Lens">' + lenses.map(function (pair) {
     return '<option value="' + esc(pair[0]) + '"' + (ideaLens === pair[0] ? " selected" : "") + ">" + pair[1] + "</option>";
@@ -519,9 +519,16 @@ function ideasPage() {
   var main = '<h1 class="display">Ideas</h1>' + issueDrawer();
   if (!list.length) return main + '<p class="muted">Nothing here yet.</p>' + (room.staff ? '<form class="form" data-form="issue"><label>Issue<input id="n-issue" required></label><button class="btn" type="submit">Add issue</button></form>' : "");
   var issue = currentIssue();
-  var visible = (issue.items || []).filter(function (item) { return (item.lens || "") === ideaLens; });
+  /* Ideas with no lens never vanish: "No lens" lists them, and the default view also shows them
+     to staff and to the person who submitted them. */
+  var visible = (issue.items || []).filter(function (item) {
+    var lens = item.lens || "";
+    if (ideaLens === "none") return !lens;
+    if (lens === ideaLens) return true;
+    return !lens && ideaLens === "practical" && (room.staff || item.own);
+  });
   var add = "";
-  if (room.staff && !addingItem) add = '<p class="mt-s"><button type="button" class="btn ghost" data-act="add-item" data-lens="' + esc(ideaLens) + '">Add idea</button></p>';
+  if (room.staff && !addingItem) add = '<p class="mt-s"><button type="button" class="btn ghost" data-act="add-item" data-lens="' + esc(ideaLens === "none" ? "practical" : ideaLens) + '">Add idea</button></p>';
   var body = '<section class="lens-block">' + lensSelect() + visible.map(itemCard).join("") + add + "</section>";
   if (!visible.length) body = '<section class="lens-block">' + lensSelect() + '<p class="muted">Nothing here yet.</p>' + add + "</section>";
   var composer = room.staff && addingItem ? staffAddForm() : "";
@@ -1101,6 +1108,7 @@ function previewRoom(kind) {
     previewItem("E3", "Who writes the grid rules", "idea", "untested", "structural", null, null),
     Object.assign(previewItem("E4", "How widely the cost is felt", "idea", "vetted", "cultural", null, 60), { publicState: "queued", held: 55, scoreAxis: "how widely held", stance: "Watch" }),
     Object.assign(previewItem("E5", "A second structural change", "idea", "untested", "structural", 20, 30), { publicState: "queued" }),
+    previewItem("E6", "Ask the co-op first", "idea", "untested", "", 40, 50),
   ];
   var housing = [
     { id: "staff-starter-commission", issueId: "issue-housing", type: "idea", status: "untested", lens: "practical", title: "Real estate commission rates", body: "", ease: null, impact: null, evidence: "", empiricism: "", source: "staff", sourceUrls: [] },
@@ -1293,6 +1301,13 @@ async function saveName(itemId) {
     sourceUrls: (item.sourceUrls || []).map(function (s) { return s.url || s; }),
   };
   if (item.scoreAxis === "how widely held") body.held = item.held;
+  /* A published idea with a new name goes back to the publishing queue first, so the new name is
+     never public until the gate is cleared again. setItemPublic on: true moves published to queued
+     and clears the gate. */
+  if (item.publicState === "published" && title !== item.title) {
+    var queued = await api({ action: "setItemPublic", id: itemId, on: true });
+    if (!takeRoom(queued)) return;
+  }
   var data = await api(body);
   if (!takeRoom(data)) return;
   editingName = "";
