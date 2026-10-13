@@ -223,7 +223,8 @@ function initGoogle() {
   var host = document.getElementById("google-btn");
   if (!host || host.dataset.ready === "1") return;
   if (!window.google || !window.google.accounts || !window.google.accounts.id) return;
-  var width = Math.max(200, Math.min(320, (host.parentElement ? host.parentElement.clientWidth : 320) - 8));
+  /* Full width of the card, up to Google's 400px maximum, so it lines up with the email button. */
+  var width = Math.max(200, Math.min(400, Math.floor((host.parentElement ? host.parentElement.clientWidth : 320))));
   window.google.accounts.id.initialize({
     client_id: GOOGLE_CLIENT_ID,
     callback: onGoogle,
@@ -328,9 +329,9 @@ function issueDrawer() {
 function lensSelect() {
   var lenses = [["practical", "Practical"], ["structural", "Structural"], ["cultural", "Cultural"], ["none", "No lens"]];
   if (!ideaLens || lenses.every(function (p) { return p[0] !== ideaLens; })) ideaLens = "practical";
-  return '<select class="lens-select" data-lens-select aria-label="Lens">' + lenses.map(function (pair) {
+  return '<label class="lens-field"><span class="kicker">Lens</span><span class="lens-wrap"><select class="lens-select" data-lens-select>' + lenses.map(function (pair) {
     return '<option value="' + esc(pair[0]) + '"' + (ideaLens === pair[0] ? " selected" : "") + ">" + pair[1] + "</option>";
-  }).join("") + "</select>";
+  }).join("") + "</select></span></label>";
 }
 function itemGroups(items) {
   var order = ["practical", "structural", "cultural", ""];
@@ -479,13 +480,16 @@ function itemCard(item) {
   var titleHtml;
   var nameActions = "";
   if (room.staff && editingName === item.id) {
-    titleHtml = '<input class="title-edit" value="' + esc(item.title) + '" data-name-input="' + esc(item.id) + '" maxlength="200">';
-    nameActions = '<button type="button" class="btn ghost tiny" data-act="save-name" data-id="' + esc(item.id) + '">Save</button><button type="button" class="btn ghost tiny" data-act="cancel-name">Cancel</button>';
+    var editor = '<div class="name-edit"><input class="title-edit" value="' + esc(item.title) + '" data-name-input="' + esc(item.id) + '" maxlength="200" aria-label="Name"><div class="name-actions"><button type="button" class="link-btn plain" data-act="cancel-name">Cancel</button><button type="button" class="btn tiny" data-act="save-name" data-id="' + esc(item.id) + '">Save</button></div></div>';
+    titleHtml = "";
+    nameActions = editor;
   } else {
     titleHtml = '<b>' + esc(item.title) + '</b>';
-    if (room.staff) nameActions = '<button type="button" class="btn ghost tiny" data-act="edit-name" data-id="' + esc(item.id) + '">Edit</button>';
+    if (room.staff) nameActions = '<button type="button" class="icon-btn" data-act="edit-name" data-id="' + esc(item.id) + '" aria-label="Edit name"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button>';
   }
-  var head = '<div class="item-head"><button type="button" class="item-open" data-act="toggle-item" data-id="' + esc(item.id) + '">' + titleHtml + '<span class="badges">' + badge(item.type) + badge(item.status) + "</span></button>" + nameActions + "</div>";
+  var head = titleHtml
+    ? '<div class="item-head"><button type="button" class="item-open" data-act="toggle-item" data-id="' + esc(item.id) + '">' + titleHtml + '<span class="badges">' + badge(item.type) + badge(item.status) + "</span></button>" + nameActions + "</div>"
+    : nameActions;
   var cls = "item" + (item.type === "opposition" ? " opposition" : "");
   var gate = publicControls(item);
   var clients = clientAssign(item);
@@ -787,6 +791,14 @@ async function saveItemForm(form) {
   };
   var id = form.getAttribute("data-id");
   if (id) body.id = id;
+  /* A published idea whose title, text or evidence changes goes back to the publishing queue
+     first, so the change is never public before the gate is cleared again. */
+  var prev = null;
+  if (id) (room.issues || []).forEach(function (issue) { (issue.items || []).forEach(function (row) { if (row.id === id) prev = row; }); });
+  if (prev && prev.publicState === "published" && (body.title !== (prev.title || "") || body.text !== (prev.body || "") || body.evidence !== (prev.evidence || ""))) {
+    var queued = await api({ action: "setItemPublic", id: id, on: true });
+    if (!takeRoom(queued)) return;
+  }
   var data = await api(body);
   if (!takeRoom(data)) return;
   editingItem = "";
