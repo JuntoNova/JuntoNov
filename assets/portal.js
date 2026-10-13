@@ -223,7 +223,8 @@ function initGoogle() {
   var host = document.getElementById("google-btn");
   if (!host || host.dataset.ready === "1") return;
   if (!window.google || !window.google.accounts || !window.google.accounts.id) return;
-  var width = Math.max(200, Math.min(320, (host.parentElement ? host.parentElement.clientWidth : 320) - 8));
+  /* Full width of the card, up to Google's 400px maximum, so it lines up with the email button. */
+  var width = Math.max(200, Math.min(400, Math.floor((host.parentElement ? host.parentElement.clientWidth : 320))));
   window.google.accounts.id.initialize({
     client_id: GOOGLE_CLIENT_ID,
     callback: onGoogle,
@@ -326,11 +327,11 @@ function issueDrawer() {
   return '<div class="drawer">' + button + '<div class="drawer-list">' + list + "</div></div>";
 }
 function lensSelect() {
-  var lenses = [["practical", "Practical"], ["structural", "Structural"], ["cultural", "Cultural"]];
+  var lenses = [["practical", "Practical"], ["structural", "Structural"], ["cultural", "Cultural"], ["none", "No lens"]];
   if (!ideaLens || lenses.every(function (p) { return p[0] !== ideaLens; })) ideaLens = "practical";
-  return '<select class="lens-select" data-lens-select aria-label="Lens">' + lenses.map(function (pair) {
+  return '<label class="lens-field"><span class="kicker">Lens</span><span class="lens-wrap"><select class="lens-select" data-lens-select>' + lenses.map(function (pair) {
     return '<option value="' + esc(pair[0]) + '"' + (ideaLens === pair[0] ? " selected" : "") + ">" + pair[1] + "</option>";
-  }).join("") + "</select>";
+  }).join("") + "</select></span></label>";
 }
 function itemGroups(items) {
   var order = ["practical", "structural", "cultural", ""];
@@ -347,7 +348,7 @@ function itemGroups(items) {
 function itemForm(item) {
   var row = item || {};
   var urls = (row.sourceUrls || []).map(function (source) { return source.url; }).join("\n");
-  return '<form class="form" data-form="item" data-id="' + esc(row.id || "") + '" data-issue="' + esc(ideaIssue) + '"><label>Title<input id="i-title" required value="' + esc(row.title || "") + '"></label><div class="row2"><label>Type<select id="i-type">' + selectOptions(["idea", "poll", "opposition"], row.type || "idea", { idea: "Idea", poll: "Poll", opposition: "Opposition" }) + '</select></label><label>Status<select id="i-status">' + selectOptions(["untested", "vetted"], row.status || "untested", { untested: "Untested", vetted: "Vetted" }) + '</select></label></div><div class="row2"><label>Lens<select id="i-lens"><option value="">No lens</option>' + selectOptions(["practical", "structural", "cultural"], row.lens || "", { practical: "Practical", structural: "Structural", cultural: "Cultural" }) + '</select></label><label>Empiricism<select id="i-emp"><option value=""> </option>' + selectOptions(["cited", "indirect", "none"], row.empiricism || "", { cited: "Cited", indirect: "Indirect", none: "Not confirmed" }) + '</select></label></div><div class="row2"><label>' + (row.scoreAxis === "how widely held" ? "How widely held" : "Ease") + '<input id="' + (row.scoreAxis === "how widely held" ? "i-held" : "i-ease") + '" inputmode="numeric" value="' + ((row.scoreAxis === "how widely held" ? row.held : row.ease) == null ? "" : esc(String(row.scoreAxis === "how widely held" ? row.held : row.ease))) + '"></label><label>Impact<input id="i-impact" inputmode="numeric" value="' + (row.impact == null ? "" : esc(String(row.impact))) + '"></label></div><label>Text<textarea id="i-text" rows="3">' + esc(row.body || "") + '</textarea></label><label>Evidence<textarea id="i-evidence" rows="3">' + esc(row.evidence || "") + '</textarea></label><label>Source links<textarea id="i-sources" rows="2" placeholder="https://">' + esc(urls) + '</textarea></label><div class="row-actions"><button class="btn" type="submit">' + (row.id ? "Save" : "Add item") + "</button>" + (row.id ? '<button class="btn ghost" type="button" data-act="remove-item" data-id="' + esc(row.id) + '">Remove</button>' : "") + "</div></form>";
+  return '<form class="form" data-form="item" data-id="' + esc(row.id || "") + '" data-issue="' + esc(ideaIssue) + '"><label>Title<input id="i-title" required value="' + esc(row.title || "") + '"></label><div class="row2"><label>Type<select id="i-type">' + selectOptions(["idea", "poll", "opposition"], row.type || "idea", { idea: "Idea", poll: "Poll", opposition: "Opposition" }) + '</select></label><label>Status<select id="i-status">' + selectOptions(["untested", "vetted"], row.status || "untested", { untested: "Untested", vetted: "Vetted" }) + '</select></label></div><div class="row2"><label>Lens<select id="i-lens"><option value="">No lens</option>' + selectOptions(["practical", "structural", "cultural"], row.lens || "", { practical: "Practical", structural: "Structural", cultural: "Cultural" }) + '</select></label><label>Empiricism<select id="i-emp"><option value=""> </option>' + selectOptions(["cited", "indirect", "none"], row.empiricism || "", { cited: "Cited", indirect: "Indirect", none: "Not confirmed" }) + '</select></label></div><div class="row2"><label>' + (row.scoreAxis === "how widely held" ? "How widely held" : "Ease") + '<input id="' + (row.scoreAxis === "how widely held" ? "i-held" : "i-ease") + '" inputmode="numeric" value="' + ((row.scoreAxis === "how widely held" ? row.held : row.ease) == null ? "" : esc(String(row.scoreAxis === "how widely held" ? row.held : row.ease))) + '"></label><label>Impact<input id="i-impact" inputmode="numeric" value="' + (row.impact == null ? "" : esc(String(row.impact))) + '"></label></div><label>Text<textarea id="i-text" rows="3">' + esc(row.body || "") + '</textarea></label><label>Evidence<textarea id="i-evidence" rows="3">' + esc(row.evidence || "") + '</textarea></label><label>Source links<textarea id="i-sources" rows="2" placeholder="https://">' + esc(urls) + '</textarea></label><div class="row-actions"><button class="btn" type="submit">' + (row.id ? "Save" : "Add item") + "</button>" + (row.id ? '<button class="btn ghost" type="button" data-act="cancel-item">Cancel</button>' : "") + (row.id ? '<button class="btn ghost" type="button" data-act="remove-item" data-id="' + esc(row.id) + '">Remove</button>' : "") + "</div></form>";
 }
 function publicControls(item) {
   if (!room.staff) return "";
@@ -479,13 +480,16 @@ function itemCard(item) {
   var titleHtml;
   var nameActions = "";
   if (room.staff && editingName === item.id) {
-    titleHtml = '<input class="title-edit" value="' + esc(item.title) + '" data-name-input="' + esc(item.id) + '" maxlength="200">';
-    nameActions = '<button type="button" class="btn ghost tiny" data-act="save-name" data-id="' + esc(item.id) + '">Save</button><button type="button" class="btn ghost tiny" data-act="cancel-name">Cancel</button>';
+    var editor = '<div class="name-edit"><input class="title-edit" value="' + esc(item.title) + '" data-name-input="' + esc(item.id) + '" maxlength="200" aria-label="Name"><div class="name-actions"><button type="button" class="link-btn plain" data-act="cancel-name">Cancel</button><button type="button" class="btn tiny" data-act="save-name" data-id="' + esc(item.id) + '">Save</button></div></div>';
+    titleHtml = "";
+    nameActions = editor;
   } else {
     titleHtml = '<b>' + esc(item.title) + '</b>';
-    if (room.staff) nameActions = '<button type="button" class="btn ghost tiny" data-act="edit-name" data-id="' + esc(item.id) + '">Edit</button>';
+    if (room.staff) nameActions = '<button type="button" class="icon-btn" data-act="edit-name" data-id="' + esc(item.id) + '" aria-label="Edit name"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button>';
   }
-  var head = '<div class="item-head"><button type="button" class="item-open" data-act="toggle-item" data-id="' + esc(item.id) + '">' + titleHtml + '<span class="badges">' + badge(item.type) + badge(item.status) + "</span></button>" + nameActions + "</div>";
+  var head = titleHtml
+    ? '<div class="item-head"><button type="button" class="item-open" data-act="toggle-item" data-id="' + esc(item.id) + '">' + titleHtml + '<span class="badges">' + badge(item.type) + badge(item.status) + "</span></button>" + nameActions + "</div>"
+    : nameActions;
   var cls = "item" + (item.type === "opposition" ? " opposition" : "");
   var gate = publicControls(item);
   var clients = clientAssign(item);
@@ -519,9 +523,16 @@ function ideasPage() {
   var main = '<h1 class="display">Ideas</h1>' + issueDrawer();
   if (!list.length) return main + '<p class="muted">Nothing here yet.</p>' + (room.staff ? '<form class="form" data-form="issue"><label>Issue<input id="n-issue" required></label><button class="btn" type="submit">Add issue</button></form>' : "");
   var issue = currentIssue();
-  var visible = (issue.items || []).filter(function (item) { return (item.lens || "") === ideaLens; });
+  /* Ideas with no lens never vanish: "No lens" lists them, and the default view also shows them
+     to staff and to the person who submitted them. */
+  var visible = (issue.items || []).filter(function (item) {
+    var lens = item.lens || "";
+    if (ideaLens === "none") return !lens;
+    if (lens === ideaLens) return true;
+    return !lens && ideaLens === "practical" && (room.staff || item.own);
+  });
   var add = "";
-  if (room.staff && !addingItem) add = '<p class="mt-s"><button type="button" class="btn ghost" data-act="add-item" data-lens="' + esc(ideaLens) + '">Add idea</button></p>';
+  if (room.staff && !addingItem) add = '<p class="mt-s"><button type="button" class="btn ghost" data-act="add-item" data-lens="' + esc(ideaLens === "none" ? "practical" : ideaLens) + '">Add idea</button></p>';
   var body = '<section class="lens-block">' + lensSelect() + visible.map(itemCard).join("") + add + "</section>";
   if (!visible.length) body = '<section class="lens-block">' + lensSelect() + '<p class="muted">Nothing here yet.</p>' + add + "</section>";
   var composer = room.staff && addingItem ? staffAddForm() : "";
@@ -657,8 +668,49 @@ function admin() {
   });
   return '<div class="kicker">Junto Nova</div><h1 class="display">Admin</h1><p class="muted">Add a client\'s email and what they can see.</p><form class="form" data-form="person"><div class="row2"><label>Name<input id="c-name" required></label><label>Email<input id="c-email" type="email" required></label></div><label>Access<select id="c-role"><option value="director">Director</option><option value="board">Board</option><option value="member">Member</option>' + (admin ? '<option value="jn">Junto Nova staff</option>' : "") + '</select></label><label>Organization<select id="c-org">' + orgOptions(false) + '</select></label><label>New organization name<input id="c-org-name" placeholder="Only if you chose New organization"></label><label class="check"><input id="c-bill" type="checkbox"> Billing</label><button class="btn" type="submit">Give access</button></form>' + table(["Client", "Organization", "Access", ""], rows) + addForm("admin");
 }
+/* Editors (inline rename and the full edit form) keep what was typed. Any re-render while one is
+   open carries the typed values over, and nothing else closes an editor that has unsaved text.
+   Only Save sends it; only Cancel or Escape throws it away. */
+var EDITOR_SELECTOR = "[data-name-input], form[data-form='item'] input, form[data-form='item'] textarea, form[data-form='item'] select";
+function editorSnapshot() {
+  var out = [];
+  var els = document.querySelectorAll("#app " + EDITOR_SELECTOR.split(", ").join(", #app "));
+  for (var i = 0; i < els.length; i++) {
+    var el = els[i];
+    var key = el.getAttribute("data-name-input") ? "name:" + el.getAttribute("data-name-input") : el.id ? "form:" + el.id : "";
+    if (!key) continue;
+    out.push({ key: key, value: el.type === "checkbox" ? el.checked : el.value, dirty: fieldDirty(el), focused: document.activeElement === el, start: el.selectionStart, end: el.selectionEnd });
+  }
+  return out;
+}
+function fieldDirty(el) {
+  if (el.type === "checkbox") return el.checked !== el.defaultChecked;
+  if (el.tagName === "SELECT") {
+    for (var i = 0; i < el.options.length; i++) if (el.options[i].selected !== el.options[i].defaultSelected) return true;
+    return false;
+  }
+  return el.value !== el.defaultValue;
+}
+function editorDirty() {
+  return editorSnapshot().some(function (f) { return f.dirty; });
+}
+function editorRestore(snap) {
+  snap.forEach(function (f) {
+    var el = f.key.indexOf("name:") === 0
+      ? document.querySelector("#app [data-name-input='" + (window.CSS && CSS.escape ? CSS.escape(f.key.slice(5)) : f.key.slice(5)) + "']")
+      : document.getElementById(f.key.slice(5));
+    if (!el || !el.closest("#app")) return;
+    if (!f.dirty) { /* untouched: take the fresh value */ } else if (el.type === "checkbox") el.checked = f.value; else el.value = f.value;
+    if (f.focused) {
+      el.focus();
+      try { if (f.start != null) el.setSelectionRange(f.start, f.end); } catch (e) {}
+    }
+  });
+}
 function render() {
+  var snap = editorSnapshot();
   document.getElementById("app").innerHTML = page();
+  editorRestore(snap);
   paintMenu();
   var activeTab = document.querySelector('.portal-tabs button[aria-current="page"]');
   if (activeTab && activeTab.scrollIntoView) activeTab.scrollIntoView({ block: "nearest", inline: "nearest" });
@@ -761,6 +813,15 @@ async function saveIssueName() {
   if (match) ideaIssue = match.id;
   render();
 }
+/* Source links compared in order. The form sends URLs only, so a label on a saved link counts as
+   a change (the save would drop it). */
+function sourcesChanged(before, after) {
+  var a = (before || []).map(function (x) { return typeof x === "string" ? { url: x, label: "" } : { url: x.url, label: x.label || "" }; });
+  var b = (after || []).map(function (x) { return typeof x === "string" ? { url: x, label: "" } : { url: x.url, label: x.label || "" }; });
+  if (a.length !== b.length) return true;
+  for (var i = 0; i < a.length; i++) if (a[i].url !== b[i].url || a[i].label !== b[i].label) return true;
+  return false;
+}
 async function saveItemForm(form) {
   var lines = field("i-sources").split(/\n/).map(function (line) { return line.trim(); }).filter(Boolean);
   var body = {
@@ -780,6 +841,14 @@ async function saveItemForm(form) {
   };
   var id = form.getAttribute("data-id");
   if (id) body.id = id;
+  /* A published idea whose title, text or evidence changes goes back to the publishing queue
+     first, so the change is never public before the gate is cleared again. */
+  var prev = null;
+  if (id) (room.issues || []).forEach(function (issue) { (issue.items || []).forEach(function (row) { if (row.id === id) prev = row; }); });
+  if (prev && prev.publicState === "published" && (body.title !== (prev.title || "") || body.text !== (prev.body || "") || body.evidence !== (prev.evidence || "") || sourcesChanged(prev.sourceUrls, body.sourceUrls))) {
+    var queued = await api({ action: "setItemPublic", id: id, on: true });
+    if (!takeRoom(queued)) return;
+  }
   var data = await api(body);
   if (!takeRoom(data)) return;
   editingItem = "";
@@ -972,6 +1041,7 @@ document.addEventListener("click", function (event) {
     if (!inside) menu(false);
   }
   var dot = event.target.closest ? event.target.closest("#issue-grid button[data-id]") : null;
+  if (dot && editorDirty()) return;
   if (dot) {
     var dotId = dot.getAttribute("data-id") || "";
     openItem = dotId;
@@ -1011,12 +1081,15 @@ document.addEventListener("click", function (event) {
     }
   }
   else if (act === "toggle-item") {
+    if (editorDirty()) return;
     var itemId = target.getAttribute("data-id");
     openItem = openItem === itemId ? "" : itemId;
     if (openItem !== itemId) editingItem = "";
     editingName = "";
     render();
   }
+  else if ((act === "edit-item" || act === "edit-name") && editorDirty()) return;
+  else if (act === "cancel-item") { editingItem = ""; render(); }
   else if (act === "edit-item") { editingItem = target.getAttribute("data-id"); openItem = editingItem; editingName = ""; render(); }
   else if (act === "edit-name") { editingName = target.getAttribute("data-id"); openItem = ""; editingItem = ""; render(); setTimeout(function () { var inp = document.querySelector("[data-name-input]"); if (inp) { inp.focus(); inp.select(); } }, 0); }
   else if (act === "cancel-name") { editingName = ""; render(); }
@@ -1052,6 +1125,7 @@ document.addEventListener("submit", function (event) {
 document.addEventListener("change", function (event) {
   if (event.target && event.target.hasAttribute && event.target.hasAttribute("data-lens-select")) {
     ideaLens = event.target.value || "practical";
+    if (editorDirty()) { render(); return; }
     openItem = "";
     editingItem = "";
     editingName = "";
@@ -1072,11 +1146,9 @@ document.addEventListener("change", function (event) {
   }
 });
 document.addEventListener("keydown", function (event) {
-  if (event.key === "Escape") { menu(false); if (editingName) { editingName = ""; render(); } }
-  if (event.key === "Enter" && event.target && event.target.hasAttribute && event.target.hasAttribute("data-name-input")) {
-    event.preventDefault();
-    saveName(event.target.getAttribute("data-name-input")).catch(fail);
-  }
+  if (event.key === "Escape") { menu(false); if (editingName) { editingName = ""; render(); } else if (editingItem) { editingItem = ""; render(); } }
+  /* Enter in the name field does nothing: only the Save button saves. */
+  if (event.key === "Enter" && event.target && event.target.hasAttribute && event.target.hasAttribute("data-name-input")) event.preventDefault();
 });
 var gridTimer = 0;
 window.addEventListener("resize", function () {
@@ -1101,6 +1173,7 @@ function previewRoom(kind) {
     previewItem("E3", "Who writes the grid rules", "idea", "untested", "structural", null, null),
     Object.assign(previewItem("E4", "How widely the cost is felt", "idea", "vetted", "cultural", null, 60), { publicState: "queued", held: 55, scoreAxis: "how widely held", stance: "Watch" }),
     Object.assign(previewItem("E5", "A second structural change", "idea", "untested", "structural", 20, 30), { publicState: "queued" }),
+    previewItem("E6", "Ask the co-op first", "idea", "untested", "", 40, 50),
   ];
   var housing = [
     { id: "staff-starter-commission", issueId: "issue-housing", type: "idea", status: "untested", lens: "practical", title: "Real estate commission rates", body: "", ease: null, impact: null, evidence: "", empiricism: "", source: "staff", sourceUrls: [] },
@@ -1290,9 +1363,16 @@ async function saveName(itemId) {
     empiricism: item.empiricism || "",
     ease: item.ease,
     impact: item.impact,
-    sourceUrls: (item.sourceUrls || []).map(function (s) { return s.url || s; }),
+    sourceUrls: (item.sourceUrls || []).map(function (s) { return typeof s === "string" ? s : { url: s.url, label: s.label || "" }; }),
   };
   if (item.scoreAxis === "how widely held") body.held = item.held;
+  /* A published idea with a new name goes back to the publishing queue first, so the new name is
+     never public until the gate is cleared again. setItemPublic on: true moves published to queued
+     and clears the gate. */
+  if (item.publicState === "published" && title !== item.title) {
+    var queued = await api({ action: "setItemPublic", id: itemId, on: true });
+    if (!takeRoom(queued)) return;
+  }
   var data = await api(body);
   if (!takeRoom(data)) return;
   editingName = "";
