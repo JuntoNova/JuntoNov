@@ -360,7 +360,7 @@ function publicControls(item) {
   var extra = "";
   var eligible = item.status === "vetted" && item.type !== "opposition" && item.source !== "client";
   if (state === "queued" && eligible) {
-    extra = '<form class="form" data-form="clear-gate" data-id="' + esc(item.id) + '"><label>Note<input required maxlength="500"></label><button class="btn" type="submit">Mark gate cleared</button></form>';
+    extra = '<form class="form" data-form="clear-gate" data-id="' + esc(item.id) + '"><label>Note<input required maxlength="500"></label><button class="btn" type="submit">Publish</button></form>';
   } else if (state === "published" && item.publicClearedBy && item.publicClearedBy.name) {
     var when = item.publicClearedAt ? " · " + esc(item.publicClearedAt) : "";
     var note = item.publicClearNote ? " · " + esc(item.publicClearNote) : "";
@@ -1329,6 +1329,19 @@ function previewMutate(body) {
         if (item.id !== body.id) return;
         item.publicState = body.on ? "queued" : "private";
         if (!body.on) { item.publicClearedBy = null; item.publicClearedAt = ""; item.publicClearNote = ""; }
+      });
+    });
+    previewStore();
+    return room;
+  }
+  if (action === "clearPublicGate") {
+    (room.issues || []).forEach(function (issue) {
+      (issue.items || []).forEach(function (item) {
+        if (item.id !== body.id) return;
+        item.publicState = "published";
+        item.publicClearedBy = { id: "staff", name: "Staff One", email: "staff@example.test" };
+        item.publicClearedAt = "2026-03-02";
+        item.publicClearNote = body.note || "";
       });
     });
     previewStore();

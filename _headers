@@ -11,3 +11,6 @@
 
 /portal.html
   X-Robots-Tag: noindex
+
+/assets/*.mjs
+  Content-Type: text/javascript; charset=utf-8
