@@ -17,7 +17,8 @@ var addingItem = false;
 var addLens = "practical";
 var clientSaved = "";
 var issueOpen = false;
-var ideaLens = "";
+var ideaLens = "practical";
+var editingName = "";
 var msEnabled = false;
 /* Sign-in is a server session cookie on portal-api (HttpOnly). The page never holds a token:
    `token` is only "session" when signed in, "" when not. Old Google tokens are cleared. */
@@ -212,12 +213,12 @@ function issueDrawer() {
   }).join("");
   return '<div class="drawer">' + button + '<div class="drawer-list">' + list + "</div></div>";
 }
-function lensChips() {
-  var lenses = [["", "All"], ["practical", "Practical"], ["structural", "Structural"], ["cultural", "Cultural"]];
-  return '<div class="chips lens-row" role="group" aria-label="Lens">' + lenses.map(function (pair) {
-    var on = ideaLens === pair[0];
-    return '<button type="button" data-act="lens" data-lens="' + esc(pair[0]) + '" class="' + (on ? "active" : "") + '"' + (on ? ' aria-current="true"' : "") + ">" + pair[1] + "</button>";
-  }).join("") + "</div>";
+function lensSelect() {
+  var lenses = [["practical", "Practical"], ["structural", "Structural"], ["cultural", "Cultural"]];
+  if (!ideaLens || lenses.every(function (p) { return p[0] !== ideaLens; })) ideaLens = "practical";
+  return '<select class="lens-select" data-lens-select aria-label="Lens">' + lenses.map(function (pair) {
+    return '<option value="' + esc(pair[0]) + '"' + (ideaLens === pair[0] ? " selected" : "") + ">" + pair[1] + "</option>";
+  }).join("") + "</select>";
 }
 function itemGroups(items) {
   var order = ["practical", "structural", "cultural", ""];
@@ -363,7 +364,16 @@ function paintIssueGrid() {
 }
 function itemCard(item) {
   var open = openItem === item.id;
-  var head = '<button type="button" class="item-open" data-act="toggle-item" data-id="' + esc(item.id) + '"><b>' + esc(item.title) + '</b><span class="badges">' + badge(item.type) + badge(item.status) + "</span></button>";
+  var titleHtml;
+  var nameActions = "";
+  if (room.staff && editingName === item.id) {
+    titleHtml = '<input class="title-edit" value="' + esc(item.title) + '" data-name-input="' + esc(item.id) + '" maxlength="200">';
+    nameActions = '<button type="button" class="btn ghost tiny" data-act="save-name" data-id="' + esc(item.id) + '">Save</button><button type="button" class="btn ghost tiny" data-act="cancel-name">Cancel</button>';
+  } else {
+    titleHtml = '<b>' + esc(item.title) + '</b>';
+    if (room.staff) nameActions = '<button type="button" class="btn ghost tiny" data-act="edit-name" data-id="' + esc(item.id) + '">Edit</button>';
+  }
+  var head = '<div class="item-head"><button type="button" class="item-open" data-act="toggle-item" data-id="' + esc(item.id) + '">' + titleHtml + '<span class="badges">' + badge(item.type) + badge(item.status) + "</span></button>" + nameActions + "</div>";
   var cls = "item" + (item.type === "opposition" ? " opposition" : "");
   var gate = publicControls(item);
   var clients = clientAssign(item);
@@ -394,16 +404,14 @@ function submitIdeaForm(issue) {
 }
 function ideasPage() {
   var list = room.issues || [];
-  var main = '<h1 class="display">Ideas</h1>' + issueDrawer() + lensChips();
+  var main = '<h1 class="display">Ideas</h1>' + issueDrawer();
   if (!list.length) return main + '<p class="muted">Nothing here yet.</p>' + (room.staff ? '<form class="form" data-form="issue"><label>Issue<input id="n-issue" required></label><button class="btn" type="submit">Add issue</button></form>' : "");
   var issue = currentIssue();
-  var visible = (issue.items || []).filter(function (item) { return !ideaLens || (item.lens || "") === ideaLens; });
-  var body = itemGroups(visible).map(function (group) {
-    var add = "";
-    if (room.staff && group.lens && !addingItem) add = '<p class="mt-s"><button type="button" class="btn ghost" data-act="add-item" data-lens="' + esc(group.lens) + '">Add idea</button></p>';
-    return '<section class="lens-block"><h2 class="kicker">' + esc(lensLabel(group.lens)) + "</h2>" + group.items.map(itemCard).join("") + add + "</section>";
-  }).join("");
-  if (!visible.length) body = '<p class="muted">Nothing here yet.</p>' + (room.staff && !addingItem ? '<p class="mt-s"><button type="button" class="btn ghost" data-act="add-item" data-lens="' + esc(ideaLens || "practical") + '">Add idea</button></p>' : "");
+  var visible = (issue.items || []).filter(function (item) { return (item.lens || "") === ideaLens; });
+  var add = "";
+  if (room.staff && !addingItem) add = '<p class="mt-s"><button type="button" class="btn ghost" data-act="add-item" data-lens="' + esc(ideaLens) + '">Add idea</button></p>';
+  var body = '<section class="lens-block">' + lensSelect() + visible.map(itemCard).join("") + add + "</section>";
+  if (!visible.length) body = '<section class="lens-block">' + lensSelect() + '<p class="muted">Nothing here yet.</p>' + add + "</section>";
   var composer = room.staff && addingItem ? staffAddForm() : "";
   var remove = room.staff ? '<p class="mt-s"><button type="button" class="btn ghost" data-act="remove-issue" data-id="' + esc(issue.id) + '">Remove issue</button></p>' : "";
   var create = room.staff ? '<form class="form" data-form="issue"><label>Issue<input id="n-issue" required></label><button class="btn" type="submit">Add issue</button></form>' : "";
@@ -878,9 +886,13 @@ document.addEventListener("click", function (event) {
     var itemId = target.getAttribute("data-id");
     openItem = openItem === itemId ? "" : itemId;
     if (openItem !== itemId) editingItem = "";
+    editingName = "";
     render();
   }
-  else if (act === "edit-item") { editingItem = target.getAttribute("data-id"); openItem = editingItem; render(); }
+  else if (act === "edit-item") { editingItem = target.getAttribute("data-id"); openItem = editingItem; editingName = ""; render(); }
+  else if (act === "edit-name") { editingName = target.getAttribute("data-id"); openItem = ""; editingItem = ""; render(); setTimeout(function () { var inp = document.querySelector("[data-name-input]"); if (inp) { inp.focus(); inp.select(); } }, 0); }
+  else if (act === "cancel-name") { editingName = ""; render(); }
+  else if (act === "save-name") { saveName(target.getAttribute("data-id")).catch(fail); }
   else if (act === "add-item") {
     var from = target.getAttribute("data-lens") || ideaLens || "practical";
     if (from !== "practical" && from !== "structural" && from !== "cultural") from = "practical";
@@ -909,6 +921,14 @@ document.addEventListener("submit", function (event) {
   else if (kind === "clear-gate") clearPublicGate(form).catch(fail);
 });
 document.addEventListener("change", function (event) {
+  if (event.target && event.target.hasAttribute && event.target.hasAttribute("data-lens-select")) {
+    ideaLens = event.target.value || "practical";
+    openItem = "";
+    editingItem = "";
+    editingName = "";
+    render();
+    return;
+  }
   if (event.target && event.target.id === "d-vis") syncOrgWrap();
   if (event.target && event.target.hasAttribute && event.target.hasAttribute("data-public")) {
     setItemPublic(event.target.getAttribute("data-public"), event.target.checked).catch(fail);
@@ -923,7 +943,11 @@ document.addEventListener("change", function (event) {
   }
 });
 document.addEventListener("keydown", function (event) {
-  if (event.key === "Escape") menu(false);
+  if (event.key === "Escape") { menu(false); if (editingName) { editingName = ""; render(); } }
+  if (event.key === "Enter" && event.target && event.target.hasAttribute && event.target.hasAttribute("data-name-input")) {
+    event.preventDefault();
+    saveName(event.target.getAttribute("data-name-input")).catch(fail);
+  }
 });
 var gridTimer = 0;
 window.addEventListener("resize", function () {
@@ -1110,6 +1134,43 @@ function previewMutate(body) {
   }
   return room;
 }
+
+async function saveName(itemId) {
+  var inp = document.querySelector("[data-name-input]");
+  if (!inp) return;
+  var title = inp.value.trim();
+  if (!title) { error = "Name can't be empty."; render(); return; }
+  var item = null;
+  var issueId = "";
+  (room.issues || []).forEach(function (issue) {
+    (issue.items || []).forEach(function (row) {
+      if (row.id === itemId) { item = row; issueId = issue.id; }
+    });
+  });
+  if (!item) return;
+  var body = {
+    action: "saveItem",
+    id: itemId,
+    issueId: issueId,
+    type: item.type || "idea",
+    status: item.status || "untested",
+    lens: item.lens || "",
+    title: title,
+    text: item.body || "",
+    evidence: item.evidence || "",
+    empiricism: item.empiricism || "",
+    ease: item.ease,
+    impact: item.impact,
+    sourceUrls: (item.sourceUrls || []).map(function (s) { return s.url || s; }),
+  };
+  if (item.scoreAxis === "how widely held") body.held = item.held;
+  var data = await api(body);
+  if (!takeRoom(data)) return;
+  editingName = "";
+  error = "";
+  render();
+}
+
 function boot() {
   var preview = previewKind();
   if (preview === "staff" || preview === "client") {
