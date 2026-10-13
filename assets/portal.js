@@ -1310,7 +1310,7 @@ async function saveName(itemId) {
     empiricism: item.empiricism || "",
     ease: item.ease,
     impact: item.impact,
-    sourceUrls: (item.sourceUrls || []).map(function (s) { return s.url || s; }),
+    sourceUrls: (item.sourceUrls || []).map(function (s) { return typeof s === "string" ? s : { url: s.url, label: s.label || "" }; }),
   };
   if (item.scoreAxis === "how widely held") body.held = item.held;
   /* A published idea with a new name goes back to the publishing queue first, so the new name is
