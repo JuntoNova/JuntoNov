@@ -20,6 +20,15 @@ var issueOpen = false;
 var ideaLens = "practical";
 var editingName = "";
 var msEnabled = false;
+/* Email sign-in (code by email, then an authenticator app). Shown only when the API says it is on. */
+var emailEnabled = false;
+var emailStep = "";
+var emailNote = "";
+var emailAddr = "";
+var setup = null;
+var recoveryCodes = null;
+var useRecovery = false;
+var busyNow = false;
 /* Sign-in is a server session cookie on portal-api (HttpOnly). The page never holds a token:
    `token` is only "session" when signed in, "" when not. Old Google tokens are cleared. */
 try {
@@ -104,8 +113,111 @@ function readSigninOutcome() {
 function loadProviders() {
   return fetch(API + "/auth/providers", { credentials: "omit" })
     .then(function (r) { return r.ok ? r.json() : {}; })
-    .then(function (p) { msEnabled = Boolean(p && p.microsoft); })
-    .catch(function () { msEnabled = false; });
+    .then(function (p) { msEnabled = Boolean(p && p.microsoft); emailEnabled = Boolean(p && p.email); })
+    .catch(function () { msEnabled = false; emailEnabled = false; });
+}
+async function authPost(path, body) {
+  var res = await fetch(API + path, {
+    method: "POST",
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body || {}),
+  });
+  var data = await res.json().catch(function () { return {}; });
+  return { status: res.status, ok: res.ok, data: data || {} };
+}
+function resetEmail(msg) {
+  emailStep = ""; emailNote = ""; setup = null; useRecovery = false;
+  error = msg || "";
+}
+async function emailFlow(kind, form) {
+  if (busyNow) return;
+  busyNow = true;
+  error = "";
+  try {
+    var input = form.querySelector("input");
+    var value = input ? input.value.trim() : "";
+    var r;
+    if (kind === "email-start") {
+      r = await authPost("/auth/email/start", { email: value });
+      if (r.ok) { emailAddr = value; emailStep = "code"; emailNote = r.data.message || ""; }
+      else error = r.data.error || SIGNIN_FAILED;
+    } else if (kind === "email-code") {
+      r = await authPost("/auth/email/verify", { code: value });
+      if (r.ok && r.data.next === "enroll") {
+        var s = await authPost("/auth/totp/setup", {});
+        if (s.ok) { setup = s.data; emailStep = "enroll"; }
+        else resetEmail(s.data.error || SIGNIN_FAILED);
+      } else if (r.ok) { emailStep = "totp"; }
+      else error = r.data.error || SIGNIN_FAILED;
+    } else if (kind === "totp-enroll") {
+      r = await authPost("/auth/totp/confirm", { code: value });
+      if (r.ok) { setup = null; recoveryCodes = r.data.recoveryCodes || []; emailStep = "codes"; }
+      else if (r.data.restart) resetEmail(r.data.error);
+      else error = r.data.error || SIGNIN_FAILED;
+    } else if (kind === "totp") {
+      r = await authPost("/auth/totp/verify", useRecovery ? { recoveryCode: value } : { code: value });
+      if (r.ok) { resetEmail(""); token = "session"; await refresh(); }
+      else if (r.data.restart) resetEmail(r.data.error);
+      else error = r.data.error || SIGNIN_FAILED;
+    }
+  } catch (e) {
+    error = "The portal can't be reached. Try again.";
+  }
+  busyNow = false;
+  render();
+  var next = document.querySelector("#app form[data-form] input");
+  if (next) next.focus();
+}
+async function finishRecovery() {
+  recoveryCodes = null;
+  resetEmail("");
+  token = "session";
+  try { await refresh(); } catch (e) {}
+  render();
+}
+function copyRecovery(btn) {
+  var text = (recoveryCodes || []).join("\n");
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(function () { btn.textContent = "Copied"; }, function () {});
+  }
+}
+function emailCard() {
+  var err = error ? '<div class="err" role="alert">' + esc(error) + "</div>" : "";
+  var head = function (title) { return '<main class="wrap"><div class="login-shell"><div class="login-card card signin-card"><div class="kicker">Client portal</div><h1 class="display t-lg">' + title + "</h1>" + err; };
+  var foot = "</div></div></main>";
+  var codeInput = function (id, label) {
+    return '<label class="code-field">' + label + '<input id="' + id + '" class="code-input" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9 ]*" maxlength="7" required></label>';
+  };
+  var back = '<button type="button" class="link-btn" data-act="email-back">Start over</button>';
+  if (emailStep === "code") {
+    return head("Check your email") + '<p class="muted note">' + esc(emailNote) + '</p><form class="form signin-form" data-form="email-code">' + codeInput("e-code", "Code") + '<button class="btn wide" type="submit">Continue</button></form>' + back + foot;
+  }
+  if (emailStep === "enroll" && setup) {
+    var qr = /^data:image\/svg\+xml;base64,[A-Za-z0-9+\/=]+$/.test(setup.qr || "") ? setup.qr : "";
+    return head("Set up your authenticator app") +
+      '<ol class="steps"><li>Open an authenticator app on your phone, such as Google Authenticator or Microsoft Authenticator.</li><li>Scan this code.</li></ol>' +
+      (qr ? '<img class="qr" src="' + qr + '" width="208" height="208" alt="QR code for your authenticator app">' : "") +
+      '<details class="key"><summary>Can\'t scan the code? Type this key instead</summary><code class="secret">' + esc(setup.secret) + '</code><div class="muted small">Account: ' + esc(setup.account) + "</div></details>" +
+      '<form class="form signin-form" data-form="totp-enroll">' + codeInput("t-code", "Code from the app") + '<button class="btn wide" type="submit">Continue</button></form>' + back + foot;
+  }
+  if (emailStep === "codes" && recoveryCodes) {
+    return head("Save your recovery codes") +
+      '<p class="muted note">If you lose your phone, each code signs you in once. Keep them somewhere safe. You won\'t see them again.</p>' +
+      '<ul class="recovery">' + recoveryCodes.map(function (c) { return "<li><code>" + esc(c) + "</code></li>"; }).join("") + "</ul>" +
+      '<div class="row-actions"><button type="button" class="btn ghost wide" data-act="copy-recovery">Copy codes</button><button type="button" class="btn wide" data-act="recovery-done">I saved them</button></div>' + foot;
+  }
+  if (emailStep === "totp") {
+    var form = useRecovery
+      ? '<form class="form signin-form" data-form="totp"><label class="code-field">Recovery code<input id="r-code" autocomplete="off" autocapitalize="none" spellcheck="false" maxlength="20" required></label><button class="btn wide" type="submit">Continue</button></form><button type="button" class="link-btn" data-act="use-app">Use the app instead</button>'
+      : '<form class="form signin-form" data-form="totp">' + codeInput("t-code", "Code from your authenticator app") + '<button class="btn wide" type="submit">Continue</button></form><button type="button" class="link-btn" data-act="use-recovery">Use a recovery code</button>';
+    return head("Enter your app code") + form + back + foot;
+  }
+  return "";
+}
+function emailForm() {
+  if (!emailEnabled) return "";
+  return '<div class="or" aria-hidden="true"><span>or</span></div><form class="form signin-form" data-form="email-start"><label>Email<input id="e-email" type="email" autocomplete="email" autocapitalize="none" spellcheck="false" maxlength="254" required value="' + esc(emailAddr) + '"></label><button class="btn wide" type="submit">Email me a code</button></form>';
 }
 function initGoogle() {
   var host = document.getElementById("google-btn");
@@ -485,8 +597,13 @@ function disclosureBlock() {
 }
 function safeB64(s) { return String(s || "").replace(/[^A-Za-z0-9+\/=]/g, ""); }
 function page() {
+  if (!token && emailStep) {
+    var step = emailCard();
+    if (step) return step;
+  }
   if (!token) {
     var ms = msEnabled ? '<a class="btn signin ms" href="' + API + '/auth/microsoft/start"><svg class="signin-logo" viewBox="0 0 21 21" aria-hidden="true"><path fill="#f25022" d="M0 0h10v10H0z"/><path fill="#7fba00" d="M11 0h10v10H11z"/><path fill="#00a4ef" d="M0 11h10v10H0z"/><path fill="#ffb900" d="M11 11h10v10H11z"/></svg><span>Sign in with Microsoft</span></a>' : "";
+    ms += emailForm();
     return '<main class="wrap"><div class="login-shell"><div class="login-card card signin-card"><div class="kicker">Client portal</div><h1 class="display t-lg">Sign in</h1>' + (error ? '<div class="err" role="alert">' + esc(error) + "</div>" : "") + '<div class="signin-stack"><div id="google-btn"></div><button type="button" class="btn signin google" id="google-fallback" data-act="google"><svg class="signin-logo" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg><span>Sign in with Google</span></button>' + ms + '</div></div></div></main>';
   }
   if (!room) {
@@ -535,10 +652,10 @@ function admin() {
   var admin = isAdmin();
   var rows = (room.directory || []).map(function (person) {
     var staffRow = person.role === "jn" || person.role === "admin";
-    var action = staffRow && !admin ? "" : '<button type="button" class="btn ghost" data-act="remove-person" data-id="' + esc(person.id) + '">Remove</button>';
+    var action = staffRow && !admin ? "" : '<button type="button" class="btn ghost" data-act="remove-person" data-id="' + esc(person.id) + '">Remove</button>' + (emailEnabled ? ' <button type="button" class="btn ghost" data-act="reset-2fa" data-id="' + esc(person.id) + '">Reset app</button>' : "");
     return [esc(person.name) + '<div class="file-meta">' + esc(person.email) + "</div>", esc(person.orgId ? room.orgs[person.orgId] : "None"), esc(layer(person)), action];
   });
-  return '<div class="kicker">Junto Nova</div><h1 class="display">Admin</h1><p class="muted">Add a client\'s Google account and what they can see.</p><form class="form" data-form="person"><div class="row2"><label>Name<input id="c-name" required></label><label>Email<input id="c-email" type="email" required></label></div><label>Access<select id="c-role"><option value="director">Director</option><option value="board">Board</option><option value="member">Member</option>' + (admin ? '<option value="jn">Junto Nova staff</option>' : "") + '</select></label><label>Organization<select id="c-org">' + orgOptions(false) + '</select></label><label>New organization name<input id="c-org-name" placeholder="Only if you chose New organization"></label><label class="check"><input id="c-bill" type="checkbox"> Billing</label><button class="btn" type="submit">Give access</button></form>' + table(["Client", "Organization", "Access", ""], rows) + addForm("admin");
+  return '<div class="kicker">Junto Nova</div><h1 class="display">Admin</h1><p class="muted">Add a client\'s email and what they can see.</p><form class="form" data-form="person"><div class="row2"><label>Name<input id="c-name" required></label><label>Email<input id="c-email" type="email" required></label></div><label>Access<select id="c-role"><option value="director">Director</option><option value="board">Board</option><option value="member">Member</option>' + (admin ? '<option value="jn">Junto Nova staff</option>' : "") + '</select></label><label>Organization<select id="c-org">' + orgOptions(false) + '</select></label><label>New organization name<input id="c-org-name" placeholder="Only if you chose New organization"></label><label class="check"><input id="c-bill" type="checkbox"> Billing</label><button class="btn" type="submit">Give access</button></form>' + table(["Client", "Organization", "Access", ""], rows) + addForm("admin");
 }
 function render() {
   document.getElementById("app").innerHTML = page();
@@ -561,6 +678,11 @@ async function savePerson() {
   });
   if (data.error) { error = data.error; render(); return; }
   room = data; error = ""; render();
+}
+async function resetTwoFactor(id, btn) {
+  var data = await api({ action: "resetTwoFactor", id: id });
+  if (data.error) { error = data.error; render(); return; }
+  if (btn) { btn.textContent = "Reset"; btn.disabled = true; }
 }
 async function removePerson(id) {
   var data = await api({ action: "removePerson", id: id });
@@ -866,8 +988,14 @@ document.addEventListener("click", function (event) {
   else if (act === "view") setView(target.getAttribute("data-view"));
   else if (act === "logout") logout();
   else if (act === "google") signInGoogle();
+  else if (act === "email-back") { resetEmail(""); render(); }
+  else if (act === "use-recovery") { useRecovery = true; error = ""; render(); }
+  else if (act === "use-app") { useRecovery = false; error = ""; render(); }
+  else if (act === "copy-recovery") copyRecovery(target);
+  else if (act === "recovery-done") finishRecovery();
   else if (act === "open") openDoc(target.getAttribute("data-id")).catch(fail);
   else if (act === "remove-person") removePerson(target.getAttribute("data-id")).catch(fail);
+  else if (act === "reset-2fa") resetTwoFactor(target.getAttribute("data-id"), target).catch(fail);
   else if (act === "idea") { ideaIssue = target.getAttribute("data-id") || ""; issueOpen = false; openItem = ""; editingItem = ""; addingItem = false; view = "ideas"; render(); }
   else if (act === "issue-drawer") { issueOpen = !issueOpen; render(); }
   else if (act === "lens") { ideaLens = target.getAttribute("data-lens") || ""; openItem = ""; editingItem = ""; render(); }
@@ -912,6 +1040,7 @@ document.addEventListener("submit", function (event) {
   var kind = form && form.getAttribute ? form.getAttribute("data-form") : null;
   if (!kind) return;
   event.preventDefault();
+  if (kind === "email-start" || kind === "email-code" || kind === "totp-enroll" || kind === "totp") { emailFlow(kind, form); return; }
   if (kind === "person") savePerson().catch(fail);
   else if (kind === "doc") saveDoc(form.getAttribute("data-section")).catch(fail);
   else if (kind === "issue") saveIssueName().catch(fail);
