@@ -772,6 +772,15 @@ async function saveIssueName() {
   if (match) ideaIssue = match.id;
   render();
 }
+/* Source links compared in order. The form sends URLs only, so a label on a saved link counts as
+   a change (the save would drop it). */
+function sourcesChanged(before, after) {
+  var a = (before || []).map(function (x) { return typeof x === "string" ? { url: x, label: "" } : { url: x.url, label: x.label || "" }; });
+  var b = (after || []).map(function (x) { return typeof x === "string" ? { url: x, label: "" } : { url: x.url, label: x.label || "" }; });
+  if (a.length !== b.length) return true;
+  for (var i = 0; i < a.length; i++) if (a[i].url !== b[i].url || a[i].label !== b[i].label) return true;
+  return false;
+}
 async function saveItemForm(form) {
   var lines = field("i-sources").split(/\n/).map(function (line) { return line.trim(); }).filter(Boolean);
   var body = {
@@ -795,7 +804,7 @@ async function saveItemForm(form) {
      first, so the change is never public before the gate is cleared again. */
   var prev = null;
   if (id) (room.issues || []).forEach(function (issue) { (issue.items || []).forEach(function (row) { if (row.id === id) prev = row; }); });
-  if (prev && prev.publicState === "published" && (body.title !== (prev.title || "") || body.text !== (prev.body || "") || body.evidence !== (prev.evidence || ""))) {
+  if (prev && prev.publicState === "published" && (body.title !== (prev.title || "") || body.text !== (prev.body || "") || body.evidence !== (prev.evidence || "") || sourcesChanged(prev.sourceUrls, body.sourceUrls))) {
     var queued = await api({ action: "setItemPublic", id: id, on: true });
     if (!takeRoom(queued)) return;
   }
