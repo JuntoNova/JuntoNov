@@ -317,3 +317,4 @@ h1{font-size:1.7rem;margin:0 0 .5rem;overflow-wrap:anywhere}
 .signin-card .row-actions{gap:.5rem}
 .login-shell{padding-block:24px}
 .signin-card h1{line-height:1.15}
+.signin-card .key summary{text-align:center;text-wrap:balance}
