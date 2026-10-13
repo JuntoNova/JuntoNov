@@ -348,7 +348,7 @@ function itemGroups(items) {
 function itemForm(item) {
   var row = item || {};
   var urls = (row.sourceUrls || []).map(function (source) { return source.url; }).join("\n");
-  return '<form class="form" data-form="item" data-id="' + esc(row.id || "") + '" data-issue="' + esc(ideaIssue) + '"><label>Title<input id="i-title" required value="' + esc(row.title || "") + '"></label><div class="row2"><label>Type<select id="i-type">' + selectOptions(["idea", "poll", "opposition"], row.type || "idea", { idea: "Idea", poll: "Poll", opposition: "Opposition" }) + '</select></label><label>Status<select id="i-status">' + selectOptions(["untested", "vetted"], row.status || "untested", { untested: "Untested", vetted: "Vetted" }) + '</select></label></div><div class="row2"><label>Lens<select id="i-lens"><option value="">No lens</option>' + selectOptions(["practical", "structural", "cultural"], row.lens || "", { practical: "Practical", structural: "Structural", cultural: "Cultural" }) + '</select></label><label>Empiricism<select id="i-emp"><option value=""> </option>' + selectOptions(["cited", "indirect", "none"], row.empiricism || "", { cited: "Cited", indirect: "Indirect", none: "Not confirmed" }) + '</select></label></div><div class="row2"><label>' + (row.scoreAxis === "how widely held" ? "How widely held" : "Ease") + '<input id="' + (row.scoreAxis === "how widely held" ? "i-held" : "i-ease") + '" inputmode="numeric" value="' + ((row.scoreAxis === "how widely held" ? row.held : row.ease) == null ? "" : esc(String(row.scoreAxis === "how widely held" ? row.held : row.ease))) + '"></label><label>Impact<input id="i-impact" inputmode="numeric" value="' + (row.impact == null ? "" : esc(String(row.impact))) + '"></label></div><label>Text<textarea id="i-text" rows="3">' + esc(row.body || "") + '</textarea></label><label>Evidence<textarea id="i-evidence" rows="3">' + esc(row.evidence || "") + '</textarea></label><label>Source links<textarea id="i-sources" rows="2" placeholder="https://">' + esc(urls) + '</textarea></label><div class="row-actions"><button class="btn" type="submit">' + (row.id ? "Save" : "Add item") + "</button>" + (row.id ? '<button class="btn ghost" type="button" data-act="cancel-item">Cancel</button>' : "") + (row.id ? '<button class="btn ghost" type="button" data-act="remove-item" data-id="' + esc(row.id) + '">Remove</button>' : "") + "</div></form>";
+  return '<form class="form" data-form="item" data-id="' + esc(row.id || "") + '" data-issue="' + esc(ideaIssue) + '"><label>Title<input id="i-title" required value="' + esc(row.title || "") + '"></label><div class="row2"><label>Type<select id="i-type">' + selectOptions(["idea", "poll", "opposition"], row.type || "idea", { idea: "Idea", poll: "Poll", opposition: "Opposition" }) + '</select></label><label>Status<select id="i-status">' + selectOptions(["untested", "vetted"], row.status || "untested", { untested: "Untested", vetted: "Vetted" }) + '</select></label></div><div class="row2"><label>Lens<select id="i-lens"><option value="">No lens</option>' + selectOptions(["practical", "structural", "cultural"], row.lens || "", { practical: "Practical", structural: "Structural", cultural: "Cultural" }) + '</select></label><label>Empiricism<select id="i-emp"><option value=""> </option>' + selectOptions(["cited", "indirect", "none"], row.empiricism || "", { cited: "Cited", indirect: "Indirect", none: "Not confirmed" }) + '</select></label></div>' + scaleField(row.scoreAxis === "how widely held" ? "held" : "effort", row.scoreAxis === "how widely held" ? "How widely held" : "Effort", row.scoreAxis === "how widely held" ? row.held : row.ease) + scaleField("impact", "Impact", row.impact) + ' <label>Text<textarea id="i-text" rows="3">' + esc(row.body || "") + '</textarea></label><label>Evidence<textarea id="i-evidence" rows="3">' + esc(row.evidence || "") + '</textarea></label><label>Source links<textarea id="i-sources" rows="2" placeholder="https://">' + esc(urls) + '</textarea></label><div class="row-actions"><button class="btn" type="submit">' + (row.id ? "Save" : "Add item") + "</button>" + (row.id ? '<button class="btn ghost" type="button" data-act="cancel-item">Cancel</button>' : "") + (row.id ? '<button class="btn ghost" type="button" data-act="remove-item" data-id="' + esc(row.id) + '">Remove</button>' : "") + "</div></form>";
 }
 function publicControls(item) {
   if (!room.staff) return "";
@@ -400,15 +400,33 @@ function clientAssign(item) {
   }).join("");
   return '<div class="clients"><div class="clients-head"><div class="kicker">Clients</div>' + saved + '</div><div class="checks">' + boxes + "</div></div>";
 }
+function scaleStep(stored) {
+  if (stored == null || stored === "") return null;
+  var n = Number(stored);
+  if (!Number.isInteger(n) || n < 10 || n > 100 || n % 10 !== 0) return null;
+  return n / 10;
+}
+function scaleField(group, label, stored) {
+  var step = scaleStep(stored);
+  var storedAttr = stored == null || stored === "" ? "" : String(stored);
+  var note = stored != null && stored !== "" && step == null ? '<p class="muted scale-note">Stored ' + esc(String(stored)) + "</p>" : "";
+  var buttons = "";
+  for (var n = 1; n <= 10; n++) {
+    var on = step === n;
+    buttons += '<button type="button" data-act="pick-scale" data-value="' + n + '" class="' + (on ? "active" : "") + '" aria-pressed="' + (on ? "true" : "false") + '">' + n + "</button>";
+  }
+  return '<div class="field"><span class="kicker">' + esc(label) + '</span><div class="scale" role="group" aria-label="' + esc(label) + '" data-scale-group="' + esc(group) + '" data-stored="' + esc(storedAttr) + '">' + buttons + "</div>" + note + "</div>";
+}
 function scoreFields(item) {
   if (!room.staff) return "";
   var axisHeld = item.scoreAxis === "how widely held";
-  var xLabel = axisHeld ? "How widely held" : "Ease";
+  var xLabel = axisHeld ? "How widely held" : "Effort";
+  var xGroup = axisHeld ? "held" : "effort";
   var xVal = axisHeld ? item.held : item.ease;
-  return '<form class="form scores" data-form="scores" data-id="' + esc(item.id) + '"><div class="row2"><label>' + xLabel + '<input id="score-x" inputmode="numeric" value="' + (xVal == null ? "" : esc(String(xVal))) + '"></label><label>Impact<input id="score-y" inputmode="numeric" value="' + (item.impact == null ? "" : esc(String(item.impact))) + '"></label></div></form>';
+  return '<form class="form scores" data-form="scores" data-id="' + esc(item.id) + '">' + scaleField(xGroup, xLabel, xVal) + scaleField("impact", "Impact", item.impact) + "</form>";
 }
 function staffAddForm() {
-  var options = (room.issues || []).map(function (issue) {
+  var options = '<option value="">Choose an issue</option>' + (room.issues || []).map(function (issue) {
     return '<option value="' + esc(issue.id) + '"' + (issue.id === ideaIssue ? " selected" : "") + ">" + esc(issue.name) + "</option>";
   }).join("");
   var lenses = [["practical", "Practical"], ["structural", "Structural"], ["cultural", "Cultural"]];
@@ -420,7 +438,7 @@ function staffAddForm() {
   var clients = Object.keys(orgs).map(function (id) {
     return '<label class="check tap"><input type="checkbox" data-add-client value="' + esc(id) + '"><span>' + esc(orgs[id]) + "</span></label>";
   }).join("");
-  return '<form class="form card" data-form="add-idea"><div class="kicker">Add idea</div><label>Title<input id="s-title" required></label><label>Text<textarea id="s-text" rows="3"></textarea></label><label>Source<input id="s-source" type="url" placeholder="https://"></label><label>Issue<select id="s-issue">' + options + '</select></label><div class="field"><span class="kicker">Lens</span>' + chips + '</div><div class="clients"><div class="kicker">Clients</div><div class="checks">' + clients + '</div></div><label class="switch"><input id="s-public" type="checkbox"><span>Public</span></label><button class="btn" type="submit">Add idea</button></form>';
+  return '<form class="form card" data-form="add-idea"><div class="kicker">Add idea</div><label>Title<input id="s-title" required></label><label>Text<textarea id="s-text" rows="3"></textarea></label><label>Source<input id="s-source" type="url" placeholder="https://"></label><label>Issue<select id="s-issue" required>' + options + '</select></label><div class="field"><span class="kicker">Lens</span>' + chips + '</div>' + scaleField("effort", "Effort", null) + scaleField("impact", "Impact", null) + '<div class="clients"><div class="kicker">Clients</div><div class="checks">' + clients + '</div></div><label class="switch"><input id="s-public" type="checkbox"><span>Public</span></label><button class="btn" type="submit">Add idea</button></form>';
 }
 function researchHtml(text) {
   var parts = String(text).split(/(https:\/\/\S+)/i);
@@ -500,7 +518,7 @@ function itemCard(item) {
   if (!room.staff && (item.ease != null || item.impact != null || (axisHeld && item.held != null))) {
     var scores = [];
     if (axisHeld && item.held != null) scores.push("How widely held " + item.held);
-    else if (item.ease != null) scores.push("Ease " + item.ease);
+    else if (item.ease != null) scores.push("Effort " + item.ease);
     if (item.impact != null) scores.push("Impact " + item.impact);
     bits += "<p><b>" + esc(scores.join(" · ")) + "</b></p>";
   }
@@ -518,10 +536,14 @@ function submitIdeaForm(issue) {
   if (room.staff) return "";
   return '<form class="form short card" data-form="submit-idea" data-issue="' + esc(issue.id) + '"><div class="kicker">Add idea</div><label>Title<input id="s-title" required></label><label>Text<textarea id="s-text" rows="3"></textarea></label><label>Source<input id="s-source" type="url" placeholder="https://"></label><button class="btn" type="submit">Add idea</button></form>';
 }
+function newIssueForm() {
+  if (!room.staff) return "";
+  return '<details class="new-issue"><summary>New issue</summary><form class="form" data-form="issue"><label>Issue name<input id="n-issue" required maxlength="80"></label><button class="btn" type="submit">Add issue</button></form></details>';
+}
 function ideasPage() {
   var list = room.issues || [];
   var main = '<h1 class="display">Ideas</h1>' + issueDrawer();
-  if (!list.length) return main + '<p class="muted">Nothing here yet.</p>' + (room.staff ? '<form class="form" data-form="issue"><label>Issue<input id="n-issue" required></label><button class="btn" type="submit">Add issue</button></form>' : "");
+  if (!list.length) return main + '<p class="muted">Nothing here yet.</p>' + newIssueForm();
   var issue = currentIssue();
   /* Ideas with no lens never vanish: "No lens" lists them, and the default view also shows them
      to staff and to the person who submitted them. */
@@ -537,7 +559,7 @@ function ideasPage() {
   if (!visible.length) body = '<section class="lens-block">' + lensSelect() + '<p class="muted">Nothing here yet.</p>' + add + "</section>";
   var composer = room.staff && addingItem ? staffAddForm() : "";
   var remove = room.staff ? '<p class="mt-s"><button type="button" class="btn ghost" data-act="remove-issue" data-id="' + esc(issue.id) + '">Remove issue</button></p>' : "";
-  var create = room.staff ? '<form class="form" data-form="issue"><label>Issue<input id="n-issue" required></label><button class="btn" type="submit">Add issue</button></form>' : "";
+  var create = newIssueForm();
   return main + '<div id="issue-grid" class="jn-grid"></div>' + composer + body + (room.staff ? "" : submitIdeaForm(issue)) + remove + create;
 }
 function table(headers, rows) {
@@ -794,12 +816,6 @@ async function saveDoc(section) {
     render();
   }
 }
-function numOrNull(id) {
-  var raw = field(id).trim();
-  if (!raw) return null;
-  var n = Number(raw);
-  return Number.isInteger(n) ? n : raw;
-}
 function takeRoom(data) {
   if (!data || data.error) { error = (data && data.error) || "Something went wrong. Try again."; render(); return false; }
   room = data;
@@ -822,8 +838,48 @@ function sourcesChanged(before, after) {
   for (var i = 0; i < a.length; i++) if (a[i].url !== b[i].url || a[i].label !== b[i].label) return true;
   return false;
 }
+function formAlert(form, message) {
+  if (!form) return;
+  var note = form.querySelector(".scale-error");
+  if (!note) {
+    note = document.createElement("p");
+    note.className = "err scale-error";
+    note.setAttribute("role", "alert");
+    form.insertBefore(note, form.firstChild);
+  }
+  note.textContent = message;
+}
+function pickedStep(group) {
+  var root = document.querySelector('#app [data-scale-group="' + group + '"]');
+  if (!root) return undefined;
+  var on = root.querySelector('[aria-pressed="true"]');
+  if (!on) return null;
+  var n = Number(on.getAttribute("data-value"));
+  return Number.isInteger(n) && n >= 1 && n <= 10 ? n : null;
+}
+function storedNumber(group) {
+  var root = document.querySelector('#app [data-scale-group="' + group + '"]');
+  if (!root) return undefined;
+  var raw = root.getAttribute("data-stored");
+  if (raw == null || raw === "") return null;
+  var n = Number(raw);
+  return Number.isInteger(n) ? n : null;
+}
+function axisPayload() {
+  var xName = document.querySelector('#app [data-scale-group="held"]') ? "held" : "effort";
+  var xPick = pickedStep(xName);
+  var yPick = pickedStep("impact");
+  if (xPick === undefined || yPick === undefined) return "Pick effort and impact.";
+  var xStored = storedNumber(xName);
+  var yStored = storedNumber("impact");
+  if ((xPick == null && xStored == null) || (yPick == null && yStored == null)) return "Pick effort and impact.";
+  if (xPick != null && yPick != null) return { held: xName === "held", scoreScale: "1-10", x: xPick, y: yPick };
+  return { held: xName === "held", scoreScale: "", x: xPick != null ? xPick * 10 : xStored, y: yPick != null ? yPick * 10 : yStored };
+}
 async function saveItemForm(form) {
   var lines = field("i-sources").split(/\n/).map(function (line) { return line.trim(); }).filter(Boolean);
+  var axis = axisPayload();
+  if (typeof axis === "string") { formAlert(form, axis); return; }
   var body = {
     action: "saveItem",
     issueId: form.getAttribute("data-issue"),
@@ -834,11 +890,12 @@ async function saveItemForm(form) {
     text: field("i-text"),
     evidence: field("i-evidence"),
     empiricism: field("i-emp"),
-    ease: document.getElementById("i-held") ? null : numOrNull("i-ease"),
-    held: document.getElementById("i-held") ? numOrNull("i-held") : undefined,
-    impact: numOrNull("i-impact"),
+    ease: axis.held ? null : axis.x,
+    impact: axis.y,
     sourceUrls: lines,
   };
+  if (axis.held) body.held = axis.x;
+  if (axis.scoreScale) body.scoreScale = axis.scoreScale;
   var id = form.getAttribute("data-id");
   if (id) body.id = id;
   /* A published idea whose title, text or evidence changes goes back to the publishing queue
@@ -856,14 +913,8 @@ async function saveItemForm(form) {
   openItem = id || "";
   render();
 }
-function wholeScore(id) {
-  var raw = field(id).trim();
-  if (!raw) return null;
-  var n = Number(raw);
-  if (!Number.isInteger(n) || n < 0 || n > 100) return undefined;
-  return n;
-}
 async function saveScores(itemId) {
+  var form = document.querySelector('form[data-form="scores"]');
   var item = null;
   var issueId = "";
   (room.issues || []).forEach(function (issue) {
@@ -872,10 +923,8 @@ async function saveScores(itemId) {
     });
   });
   if (!item) return;
-  var x = wholeScore("score-x");
-  var y = wholeScore("score-y");
-  if (x === undefined || y === undefined) return;
-  var axisHeld = item.scoreAxis === "how widely held";
+  var axis = axisPayload();
+  if (typeof axis === "string") { formAlert(form, axis); return; }
   var data = await api({
     action: "saveItem",
     id: item.id,
@@ -887,9 +936,10 @@ async function saveScores(itemId) {
     text: item.body || "",
     evidence: item.evidence || "",
     empiricism: item.empiricism || "",
-    ease: axisHeld ? null : x,
-    held: axisHeld ? x : undefined,
-    impact: y,
+    ease: axis.held ? null : axis.x,
+    held: axis.held ? axis.x : undefined,
+    impact: axis.y,
+    scoreScale: axis.scoreScale || undefined,
   });
   if (!takeRoom(data)) return;
   openItem = itemId;
@@ -904,6 +954,9 @@ function grantIds(orgId, issueId) {
 }
 async function addStaffIdea(form) {
   var issueId = field("s-issue");
+  if (!issueId) { formAlert(form, "Choose an issue."); return; }
+  var axis = axisPayload();
+  if (typeof axis === "string") { formAlert(form, axis); return; }
   var lens = addLens || "practical";
   var source = field("s-source").trim();
   var before = {};
@@ -920,8 +973,9 @@ async function addStaffIdea(form) {
     text: field("s-text"),
     evidence: "",
     empiricism: "",
-    ease: null,
-    impact: null,
+    ease: axis.x,
+    impact: axis.y,
+    scoreScale: "1-10",
     sourceUrls: source ? [source] : [],
   });
   if (!takeRoom(data)) return;
@@ -1105,6 +1159,18 @@ document.addEventListener("click", function (event) {
     clientSaved = "";
     render();
   }
+  else if (act === "pick-scale") {
+    var scale = target.closest ? target.closest("[data-scale-group]") : null;
+    if (!scale) return;
+    var buttons = scale.querySelectorAll("[data-act='pick-scale']");
+    for (var s = 0; s < buttons.length; s++) {
+      var pressed = buttons[s] === target;
+      buttons[s].classList.toggle("active", pressed);
+      buttons[s].setAttribute("aria-pressed", pressed ? "true" : "false");
+    }
+    var scoreForm = target.closest("form");
+    if (scoreForm && scoreForm.getAttribute("data-form") === "scores") saveScores(scoreForm.getAttribute("data-id")).catch(fail);
+  }
   else if (act === "remove-item") removeIdeaItem(target.getAttribute("data-id")).catch(fail);
   else if (act === "remove-issue") removeIdeaIssue(target.getAttribute("data-id")).catch(fail);
 });
@@ -1138,11 +1204,6 @@ document.addEventListener("change", function (event) {
   }
   if (event.target && event.target.hasAttribute && event.target.hasAttribute("data-client")) {
     toggleClient(event.target.getAttribute("data-client"), event.target.getAttribute("data-org"), event.target.checked).catch(fail);
-  }
-  if (event.target && (event.target.id === "score-x" || event.target.id === "score-y")) {
-    var scoreForm = event.target.closest ? event.target.closest("form") : null;
-    var scoreId = scoreForm && scoreForm.getAttribute("data-id");
-    if (scoreId) saveScores(scoreId).catch(fail);
   }
 });
 document.addEventListener("keydown", function (event) {
@@ -1252,6 +1313,13 @@ function previewApply(kind) {
     });
   });
 }
+function previewScaled(body, key) {
+  if (body.scoreScale === "1-10") {
+    var n = body[key];
+    return typeof n === "number" && Number.isInteger(n) && n >= 1 && n <= 10 ? n * 10 : null;
+  }
+  return body[key] == null ? null : body[key];
+}
 function previewMutate(body) {
   var action = body && body.action;
   if (!action || action === "load") return room;
@@ -1267,8 +1335,9 @@ function previewMutate(body) {
           item.body = body.text || "";
           item.evidence = body.evidence || "";
           item.empiricism = body.empiricism || "";
-          item.ease = body.ease == null ? null : body.ease;
-          item.impact = body.impact == null ? null : body.impact;
+          item.ease = previewScaled(body, "ease");
+          item.impact = previewScaled(body, "impact");
+          if (body.scoreScale === "1-10" && Object.prototype.hasOwnProperty.call(body, "held")) item.held = previewScaled(body, "held");
           if (Object.prototype.hasOwnProperty.call(body, "held")) item.held = body.held;
           if (Array.isArray(body.sourceUrls)) {
             item.sourceUrls = body.sourceUrls.map(function (entry) {
@@ -1288,8 +1357,8 @@ function previewMutate(body) {
         lens: body.lens || "",
         title: body.title || "",
         body: body.text || "",
-        ease: body.ease == null ? null : body.ease,
-        impact: body.impact == null ? null : body.impact,
+        ease: previewScaled(body, "ease"),
+        impact: previewScaled(body, "impact"),
         held: null,
         scoreAxis: "ease",
         stance: null,
