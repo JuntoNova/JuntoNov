@@ -274,10 +274,27 @@ h1{font-size:1.7rem;margin:0 0 .5rem;overflow-wrap:anywhere}
 .portal-tabs{border-bottom:1px solid var(--border);background:#fff}
 .portal-tabs nav{display:flex;flex-wrap:nowrap;gap:.25rem;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain}
 .portal-tabs nav::-webkit-scrollbar{display:none}
-.portal-tabs button{flex:0 0 auto;white-space:nowrap;min-height:44px;padding:0 .8rem;border-radius:0;border:0;border-bottom:2px solid transparent;background:none;font:inherit;font-size:.875rem;font-weight:500;color:var(--muted);cursor:pointer}
-.portal-tabs button:hover{color:var(--charcoal)}
-.portal-tabs button.active{color:var(--charcoal);font-weight:600;border-bottom-color:var(--ember)}
-.portal-tabs button:focus-visible{outline:2px solid var(--ember);outline-offset:-2px}
+.portal-tabs a,.portal-tabs button{flex:0 0 auto;white-space:nowrap;min-height:44px;padding:0 .8rem;border-radius:0;border:0;border-bottom:2px solid transparent;background:none;font:inherit;font-size:.875rem;font-weight:500;color:var(--muted);cursor:pointer;text-decoration:none;display:inline-flex;align-items:center}
+.portal-tabs a:hover,.portal-tabs button:hover{color:var(--charcoal)}
+.portal-tabs a.active,.portal-tabs button.active{color:var(--charcoal);font-weight:600;border-bottom-color:var(--ember)}
+.portal-tabs a:focus-visible,.portal-tabs button:focus-visible{outline:2px solid var(--ember);outline-offset:-2px}
+.home-card{display:block;color:inherit;text-decoration:none}
+.home-card .btn{pointer-events:none}
+.section-grid{width:100%;border-collapse:separate;border-spacing:0}
+.section-grid thead{display:none}
+.section-grid tr{display:block;margin:0 0 .75rem;padding:.85rem 1rem;border:1px solid var(--border);border-radius:.7rem;background:#fff}
+.section-grid td{display:block;padding:.2rem 0}
+.section-grid td::before{content:attr(data-label);display:block;font-size:.75rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+.section-grid td:first-child::before{display:none}
+.section-grid td:first-child button,.section-grid td:first-child a{min-height:44px;padding:0;font-weight:600;text-align:left}
+@media(min-width:720px){
+  .section-grid{border:1px solid var(--border);border-radius:.7rem;overflow:hidden}
+  .section-grid thead{display:table-header-group}
+  .section-grid th{text-align:left;font-size:.75rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);padding:.75rem}
+  .section-grid tr{display:table-row;margin:0;padding:0;border:0;border-radius:0;background:transparent}
+  .section-grid td{display:table-cell;padding:.75rem;border-top:1px solid var(--border);vertical-align:middle}
+  .section-grid td::before{display:none}
+}
 .portal-tabs+main{padding-top:1.5rem}
 /* Name and Sign out sit small at the right of the header. */
 .head-end{display:flex;align-items:center;gap:.5rem;min-width:0}

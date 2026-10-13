@@ -97,4 +97,13 @@ test("the issues page reads the live feed and does not embed a snapshot", () => 
   assert.match(portal, /room\.person\.role !== "admin"/);
   assert.equal(portal.includes('data-act="remove-issue"'), false);
   assert.equal(portal.includes(">Remove issue<"), false);
+  assert.match(portal, /PAGE_VIEWS = \["home", "ideas", "proposals", "research", "billing", "admin"\]/);
+  assert.match(portal, /"\/portal\/" \+ id/);
+  assert.match(portal, />Add new</);
+  assert.match(portal, /section-grid/);
+  assert.match(portal, /loadHome/);
+  assert.match(portal, /loadIdeas/);
+  assert.match(portal, /loadDocuments/);
+  assert.match(portal, /loadAdmin/);
+  assert.match(portal, /You can\\'t open that\./);
 });

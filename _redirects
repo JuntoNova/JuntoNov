@@ -11,3 +11,6 @@
 /organization.html /organization 301
 /govern.html /govern 301
 /costs/social-security.html /costs/social-security 301
+/portal /portal.html 200
+/portal/ /portal.html 200
+/portal/* /portal.html 200

@@ -7,7 +7,10 @@ var GOOGLE_CLIENT_ID = "696574706151-9qjv11se3a3us5k86o2fodtktb4m5r2d.apps.googl
 var API = "https://portal-api.juntonova.com";
 var token = "";
 var room = null;
-var view = "ideas";
+var view = "home";
+var denied = false;
+var addingNew = false;
+var lastStatus = 0;
 var error = "";
 var reading = null;
 var ideaIssue = "";
@@ -73,14 +76,76 @@ async function api(body) {
     body: JSON.stringify(body),
   });
   var data = await res.json().catch(function () { return { error: "The portal can't be reached." }; });
+  lastStatus = res.status;
   if (res.status === 401) { signedOut(); throw new Error(""); }
   return data;
 }
-async function refresh() {
-  var data = await api({ action: "load" });
-  if (data.access === "none") { room = null; error = data.email || ""; return; }
+var PAGE_VIEWS = ["home", "ideas", "proposals", "research", "billing", "admin"];
+function pathFor(id) { return id === "home" ? "/portal" : "/portal/" + id; }
+function viewFromLocation() {
+  var path = location.pathname || "";
+  if (path.endsWith("/portal.html")) path = "/portal";
+  path = path.replace(/\/+$/, "") || "/";
+  if (path === "/portal") return "home";
+  var match = /\/portal\/([a-z]+)$/.exec(path);
+  if (!match || PAGE_VIEWS.indexOf(match[1]) < 0 || match[1] === "home") return "home";
+  return match[1];
+}
+function pathIsKnown() {
+  var path = (location.pathname || "").replace(/\/+$/, "");
+  if (path.endsWith("/portal.html") || path === "/portal") return true;
+  var match = /\/portal\/([a-z]+)$/.exec(path);
+  return Boolean(match && PAGE_VIEWS.indexOf(match[1]) >= 0 && match[1] !== "home");
+}
+function dateWord(value) {
+  var text = String(value || "");
+  return text.length >= 10 ? text.slice(0, 10) : "";
+}
+function lensWord(value) {
+  return { practical: "Practical", structural: "Structural", cultural: "Cultural" }[value] || "No lens";
+}
+function visWord(value) {
+  return { clients: "All clients", org: "This organization", director: "Director", board: "Board", billing: "Billing" }[value] || value || "";
+}
+function sectionBody() {
+  var action = view === "home" ? "loadHome" : view === "ideas" ? "loadIdeas" : view === "admin" ? "loadAdmin" : "loadDocuments";
+  var body = { action: action };
+  if (action === "loadDocuments") body.section = view;
+  return body;
+}
+function clearSectionData() {
+  if (!room) return;
+  room.documents = [];
+  room.issues = [];
+  room.directory = undefined;
+  room.assignments = undefined;
+  room.disclosures = {};
+  room.counts = undefined;
+  var own = {};
+  if (room.person && room.person.orgId && room.person.orgName) own[room.person.orgId] = room.person.orgName;
+  room.orgs = own;
+}
+function applySection(data) {
+  if (lastStatus === 403 && data && data.error === "You can't open that.") {
+    denied = true;
+    error = "";
+    clearSectionData();
+    return;
+  }
+  if (!data || data.access === "none") { room = null; error = (data && data.email) || ""; return; }
+  if (data.error) { error = data.error; return; }
+  denied = false;
   room = data;
-  error = data.error || "";
+  error = "";
+}
+async function loadCurrent() {
+  if (previewKind()) return;
+  denied = false;
+  var data = await api(sectionBody());
+  applySection(data);
+}
+async function refresh() {
+  await loadCurrent();
 }
 var NOT_LISTED = "This account doesn't have portal access. Ask your Junto Nova contact to add it.";
 var SIGNIN_FAILED = "Sign-in didn't work. Try again.";
@@ -271,8 +336,58 @@ function sections() {
 function sectionLabel(id) { return id[0].toUpperCase() + id.slice(1); }
 function nav() {
   return sections().map(function (id) {
-    return '<button type="button" data-act="view" data-view="' + id + '" class="' + (view === id ? "active" : "") + '"' + (view === id ? ' aria-current="page"' : "") + ">" + sectionLabel(id) + "</button>";
+    var current = view === id;
+    return '<a href="' + pathFor(id) + '" data-act="view" data-view="' + id + '" class="' + (current ? "active" : "") + '"' + (current ? ' aria-current="page"' : "") + ">" + sectionLabel(id) + "</a>";
   }).join("");
+}
+function showAddNew() {
+  if (!room || !room.person || view === "home" || denied) return false;
+  if (room.staff) return true;
+  return room.person.role === "director" && view === "ideas";
+}
+function addNewButton() {
+  if (!showAddNew() || addingNew) return "";
+  return '<p class="mt-s"><button type="button" class="btn" data-act="add-new">Add new</button></p>';
+}
+function dataGrid(headers, rows) {
+  if (!rows.length) return '<p class="muted">Nothing here yet.</p>';
+  var head = "<thead><tr>" + headers.map(function (label) { return "<th>" + esc(label) + "</th>"; }).join("") + "</tr></thead>";
+  var body = "<tbody>" + rows.map(function (row) {
+    return "<tr>" + row.map(function (cell, i) {
+      return '<td data-label="' + esc(headers[i]) + '">' + cell + "</td>";
+    }).join("") + "</tr>";
+  }).join("") + "</tbody>";
+  return '<table class="section-grid">' + head + body + "</table>";
+}
+function ideaTable() {
+  var items = [];
+  (room.issues || []).forEach(function (issue) {
+    (issue.items || []).forEach(function (item) { items.push({ issue: issue, item: item }); });
+  });
+  var headers = ["Title", "Lens", "Status", "Date"];
+  if (room.staff) headers.push("Public");
+  return dataGrid(headers, items.map(function (row) {
+    var item = row.item;
+    var cells = [
+      '<button type="button" data-act="open-idea" data-id="' + esc(item.id) + '" data-issue="' + esc(row.issue.id) + '">' + esc(item.title) + "</button>",
+      esc(lensWord(item.lens)),
+      esc(item.status === "vetted" ? "Vetted" : "Untested"),
+      esc(dateWord(item.createdAt)),
+    ];
+    if (room.staff) cells.push(esc(item.publicState === "published" ? "Published" : item.publicState === "queued" ? "Queued" : "Private"));
+    return cells;
+  }));
+}
+function docRows(section) {
+  var headers = ["Title", "Who can see it", "Date"];
+  if (room.staff) headers.splice(1, 0, "Client");
+  var rows = (room.documents || []).filter(function (doc) { return doc.section === section; }).map(function (doc) {
+    var title = '<button type="button" data-act="open" data-id="' + esc(doc.id) + '">' + esc(doc.title) + "</button>";
+    var cells = [title, esc(visWord(doc.visibility)), esc(dateWord(doc.createdAt))];
+    if (room.staff) cells.splice(1, 0, esc((room.orgs || {})[doc.orgId] || "All clients"));
+    return cells;
+  });
+  return dataGrid(headers, rows);
 }
 function paintMenu() {
   var slot = document.getElementById("portal-menu");
@@ -286,7 +401,23 @@ function paintMenu() {
   who.hidden = !signedIn;
   who.innerHTML = signedIn ? '<span class="who-name" title="' + esc(room.person.name) + '">' + esc(room.person.name) + '</span><button type="button" data-act="logout">Sign out</button>' : "";
 }
-function setView(id) { if (sections().indexOf(id) < 0) id = "ideas"; view = id; reading = null; menu(false); render(); }
+function setView(id) {
+  if (PAGE_VIEWS.indexOf(id) < 0) id = "home";
+  view = id;
+  reading = null;
+  addingNew = false;
+  addingItem = false;
+  denied = false;
+  menu(false);
+  var next = pathFor(id);
+  var current = (location.pathname || "").replace(/\/+$/, "");
+  if (current.endsWith("/portal.html")) current = "/portal";
+  if (current !== next) {
+    try { history.pushState({ view: id }, "", next + location.search); } catch (e) {}
+  }
+  if (!token || previewKind()) { render(); return; }
+  loadCurrent().then(function () { render(); }).catch(fail);
+}
 function ideaTotal() {
   var n = 0;
   (room.issues || []).forEach(function (issue) { n += (issue.items || []).length; });
@@ -571,10 +702,17 @@ function dangerZone(issue) {
   }
   return head + '<form class="form" data-form="remove-issue" data-id="' + esc(issue.id) + '" data-name="' + esc(issue.name) + '"><p class="muted">' + esc(countPhrase(n.grants, "grant", "grants") + " would be removed with this issue.") + '</p><label>Type the issue name to confirm<input data-confirm-name autocomplete="off" autocapitalize="off" spellcheck="false" maxlength="80"></label><button class="link-btn" type="submit" disabled>Delete this issue</button></form></details>';
 }
+function ideaComposer() {
+  if (!addingNew || !room || !room.person) return "";
+  if (room.staff) return staffAddForm();
+  if (room.person.role !== "director") return "";
+  var issue = currentIssue();
+  return issue ? submitIdeaForm(issue) : "";
+}
 function ideasPage() {
   var list = room.issues || [];
-  var main = '<h1 class="display">Ideas</h1>' + issueDrawer();
-  if (!list.length) return main + '<p class="muted">Nothing here yet.</p>' + newIssueForm();
+  var head = '<h1 class="display">Ideas</h1>' + addNewButton() + ideaTable() + ideaComposer();
+  if (!list.length) return head + newIssueForm();
   var issue = currentIssue();
   /* Ideas with no lens never vanish: "No lens" lists them, and the default view also shows them
      to staff and to the person who submitted them. */
@@ -584,13 +722,9 @@ function ideasPage() {
     if (lens === ideaLens) return true;
     return !lens && ideaLens === "practical" && (room.staff || item.own);
   });
-  var add = "";
-  if (room.staff && !addingItem) add = '<p class="mt-s"><button type="button" class="btn ghost" data-act="add-item" data-lens="' + esc(ideaLens === "none" ? "practical" : ideaLens) + '">Add idea</button></p>';
-  var body = '<section class="lens-block">' + lensSelect() + visible.map(itemCard).join("") + add + "</section>";
-  if (!visible.length) body = '<section class="lens-block">' + lensSelect() + '<p class="muted">Nothing here yet.</p>' + add + "</section>";
-  var composer = room.staff && addingItem ? staffAddForm() : "";
-  var create = newIssueForm();
-  return main + '<div id="issue-grid" class="jn-grid"></div>' + composer + body + (room.staff ? "" : submitIdeaForm(issue)) + create + dangerZone(issue);
+  var rows = visible.length ? visible.map(itemCard).join("") : '<p class="muted">Nothing here yet.</p>';
+  var body = '<section class="lens-block">' + lensSelect() + rows + "</section>";
+  return head + '<div id="issue-grid" class="jn-grid"></div>' + issueDrawer() + body + newIssueForm() + dangerZone(issue);
 }
 function table(headers, rows) {
   if (!rows.length) return '<p class="muted">Nothing here yet.</p>';
@@ -659,6 +793,19 @@ function disclosureBlock() {
   return head + '<p><span class="pill">' + esc(d.label) + '</span></p><p class="muted">We will not name you or describe you in a way people could recognize.</p></div>';
 }
 function safeB64(s) { return String(s || "").replace(/[^A-Za-z0-9+\/=]/g, ""); }
+function sectionClosed() {
+  if (!room || !room.person) return denied;
+  if (denied) return true;
+  if (view === "admin" && !room.staff) return true;
+  if (view === "billing" && !(room.person.billing || room.staff)) return true;
+  return false;
+}
+function countWord(key) {
+  var counts = room.counts || {};
+  if (key === "billing" && counts.billing == null) return "None";
+  var n = counts[key];
+  return n == null ? 0 : n;
+}
 function page() {
   if (!token && emailStep) {
     var step = emailCard();
@@ -669,33 +816,33 @@ function page() {
     ms += emailForm();
     return '<main class="wrap"><div class="login-shell"><div class="login-card card signin-card"><div class="kicker">Client portal</div><h1 class="display t-lg">Sign in</h1>' + (error ? '<div class="err" role="alert">' + esc(error) + "</div>" : "") + '<div class="signin-stack"><div id="google-btn"></div><button type="button" class="btn signin google" id="google-fallback" data-act="google"><svg class="signin-logo" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg><span>Sign in with Google</span></button>' + ms + '</div></div></div></main>';
   }
+  if (!room && denied) {
+    return '<main class="wrap"><h1 class="display">You can\'t open that.</h1><p class="mt-s"><a href="/portal">Home</a></p></main>';
+  }
   if (!room) {
     return '<main class="wrap"><div class="login-card card"><h1 class="display t-lg">This account isn\'t on the list</h1><p class="muted">' + esc(error || "Ask Junto Nova to add this Google account.") + '</p><button type="button" class="btn ghost" data-act="logout">Sign out</button></div></main>';
   }
   var org = room.staff ? "All clients" : (room.person.orgName || "Your organization");
   var main = "";
-  if (view === "home") {
+  if (sectionClosed()) {
+    main = '<h1 class="display">You can\'t open that.</h1>';
+  } else if (view === "home") {
     main = '<div class="kicker">Workspace</div><h1 class="display">' + esc(org) + '</h1><div class="grid">' +
-      card("Ideas", ideaTotal(), "ideas") +
-      card("Proposals", docs("proposals").length, "proposals") +
-      card("Research", docs("research").length, "research") +
-      card("Billing", room.person.billing || room.staff ? docs("billing").length : "None", "billing") +
-      (room.staff ? card("Admin", room.directory ? room.directory.length : 0, "admin") : "") + "</div>";
+      card("Ideas", countWord("ideas"), "ideas") +
+      card("Proposals", countWord("proposals"), "proposals") +
+      card("Research", countWord("research"), "research") +
+      card("Billing", countWord("billing"), "billing") +
+      (room.staff ? card("Admin", countWord("admin"), "admin") : "") + "</div>";
   } else if (view === "ideas") {
     main = ideasPage();
-  } else if (view === "billing" && !(room.person.billing || room.staff)) {
-    main = '<div class="kicker">' + esc(org) + '</div><h1 class="display">Billing</h1><p class="muted">This login can\'t see billing.</p>';
-  } else if (view === "admin" && room.staff) {
-    main = admin();
   } else if (view === "admin") {
-    view = "ideas";
-    main = ideasPage();
+    main = admin();
   } else {
     var titles = { proposals: "Proposals", research: "Research", billing: "Billing" };
-    var list = view === "proposals" || view === "research" ? (docs(view).map(offerCard).join("") || '<p class="muted">Nothing posted yet.</p>') : docTable(view);
-    main = '<div class="kicker">' + esc(org) + '</div><h1 class="display">' + titles[view] + "</h1>" + (view === "research" ? disclosureBlock() : "") + list + addForm(view);
+    var form = addingNew && room.staff ? addForm(view) : "";
+    main = '<div class="kicker">' + esc(org) + '</div><h1 class="display">' + titles[view] + "</h1>" + (view === "research" ? disclosureBlock() : "") + addNewButton() + form + docRows(view);
   }
-  if (reading) {
+  if (reading && !sectionClosed()) {
     var download = "";
     if (reading.contentB64) {
       download = '<p class="mt-m"><a class="btn" download="' + esc(reading.filename || "document") + '" href="data:' + esc(reading.mime || "application/octet-stream") + ";base64," + safeB64(reading.contentB64) + '">Download</a></p>';
@@ -705,20 +852,24 @@ function page() {
   return '<div class="portal-tabs"><nav class="wrap" aria-label="Portal sections">' + nav() + '</nav></div><main class="wrap">' + (error ? '<div class="err" role="alert">' + esc(error) + "</div>" : "") + main + "</main>";
 }
 function card(label, n, id) {
-  return '<div class="card"><div class="muted">' + label + '</div><div class="stat">' + n + '</div><button type="button" class="btn ghost" data-act="view" data-view="' + id + '">Open</button></div>';
+  return '<a class="card home-card" href="' + pathFor(id) + '" data-act="view" data-view="' + id + '"><div class="muted">' + label + '</div><div class="stat">' + esc(n) + '</div><span class="btn ghost">Open</span></a>';
+}
+function personForm() {
+  // Only an admin can grant staff (the Worker enforces it; the page just doesn't offer it).
+  var admin = isAdmin();
+  return '<form class="form" data-form="person"><div class="row2"><label>Name<input id="c-name" required></label><label>Email<input id="c-email" type="email" required></label></div><label>Access<select id="c-role"><option value="director">Director</option><option value="board">Board</option><option value="member">Member</option>' + (admin ? '<option value="jn">Junto Nova staff</option>' : "") + '</select></label><label>Organization<select id="c-org">' + orgOptions(false) + '</select></label><label>New organization name<input id="c-org-name" placeholder="Only if you chose New organization"></label><label class="check"><input id="c-bill" type="checkbox"> Billing</label><button class="btn" type="submit">Give access</button></form>';
 }
 function admin() {
-  if (!room.staff) {
-    return '<div class="kicker">' + esc(room.person.orgName || "") + '</div><h1 class="display">Admin</h1><p class="muted">This is the access Junto Nova has given you.</p>' + table(["Person", "Access"], [[esc(room.person.name), esc(layer(room.person))]]);
-  }
-  // Only an admin can grant or remove staff (the Worker enforces it; the page just doesn't offer it).
-  var admin = isAdmin();
+  if (!room.staff) return '<h1 class="display">You can\'t open that.</h1>';
+  var adminRole = isAdmin();
+  var headers = ["Name", "Organization", "Access", "Added"];
   var rows = (room.directory || []).map(function (person) {
     var staffRow = person.role === "jn" || person.role === "admin";
-    var action = staffRow && !admin ? "" : '<button type="button" class="btn ghost" data-act="remove-person" data-id="' + esc(person.id) + '">Remove</button>' + (emailEnabled ? ' <button type="button" class="btn ghost" data-act="reset-2fa" data-id="' + esc(person.id) + '">Reset app</button>' : "");
-    return [esc(person.name) + '<div class="file-meta">' + esc(person.email) + "</div>", esc(person.orgId ? room.orgs[person.orgId] : "None"), esc(layer(person)), action];
+    var action = staffRow && !adminRole ? "" : '<button type="button" class="btn ghost" data-act="remove-person" data-id="' + esc(person.id) + '">Remove</button>' + (emailEnabled ? ' <button type="button" class="btn ghost" data-act="reset-2fa" data-id="' + esc(person.id) + '">Reset app</button>' : "");
+    var name = esc(person.name) + '<div class="file-meta">' + esc(person.email) + "</div>" + action;
+    return [name, esc(person.orgId ? (room.orgs || {})[person.orgId] : "None"), esc(layer(person)), esc(dateWord(person.createdAt))];
   });
-  return '<div class="kicker">Junto Nova</div><h1 class="display">Admin</h1><p class="muted">Add a client\'s email and what they can see.</p><form class="form" data-form="person"><div class="row2"><label>Name<input id="c-name" required></label><label>Email<input id="c-email" type="email" required></label></div><label>Access<select id="c-role"><option value="director">Director</option><option value="board">Board</option><option value="member">Member</option>' + (admin ? '<option value="jn">Junto Nova staff</option>' : "") + '</select></label><label>Organization<select id="c-org">' + orgOptions(false) + '</select></label><label>New organization name<input id="c-org-name" placeholder="Only if you chose New organization"></label><label class="check"><input id="c-bill" type="checkbox"> Billing</label><button class="btn" type="submit">Give access</button></form>' + table(["Client", "Organization", "Access", ""], rows) + addForm("admin");
+  return '<div class="kicker">Junto Nova</div><h1 class="display">Admin</h1>' + addNewButton() + (addingNew ? personForm() : "") + dataGrid(headers, rows);
 }
 /* Editors (inline rename and the full edit form) keep what was typed. Any re-render while one is
    open carries the typed values over, and nothing else closes an editor that has unsaved text.
@@ -764,7 +915,7 @@ function render() {
   document.getElementById("app").innerHTML = page();
   editorRestore(snap);
   paintMenu();
-  var activeTab = document.querySelector('.portal-tabs button[aria-current="page"]');
+  var activeTab = document.querySelector('.portal-tabs a[aria-current="page"]');
   if (activeTab && activeTab.scrollIntoView) activeTab.scrollIntoView({ block: "nearest", inline: "nearest" });
   paintIssueGrid();
   if (!token) initGoogle();
@@ -780,8 +931,9 @@ async function savePerson() {
     orgName: document.getElementById("c-org-name").value,
     billing: document.getElementById("c-bill").checked,
   });
-  if (data.error) { error = data.error; render(); return; }
-  room = data; error = ""; render();
+  if (!await takeRoom(data)) return;
+  addingNew = false;
+  render();
 }
 async function resetTwoFactor(id, btn) {
   var data = await api({ action: "resetTwoFactor", id: id });
@@ -790,8 +942,8 @@ async function resetTwoFactor(id, btn) {
 }
 async function removePerson(id) {
   var data = await api({ action: "removePerson", id: id });
-  if (data.error) { error = data.error; render(); return; }
-  room = data; render();
+  if (!await takeRoom(data)) return;
+  render();
 }
 function field(id) { var el = document.getElementById(id); return el ? el.value : ""; }
 async function saveDoc(section) {
@@ -836,25 +988,26 @@ async function saveDoc(section) {
       filename: filename,
       mime: mime,
     });
-    if (data.error) { error = data.error; render(); return; }
-    room = data;
-    error = "";
+    if (!await takeRoom(data)) return;
     reading = null;
+    addingNew = false;
     render();
   } catch (e) {
     error = e.message || "Couldn't save that.";
     render();
   }
 }
-function takeRoom(data) {
+async function takeRoom(data) {
   if (!data || data.error) { error = (data && data.error) || "Something went wrong. Try again."; render(); return false; }
-  room = data;
   error = "";
+  if (previewKind()) { room = data; previewCounts(); return true; }
+  await loadCurrent();
+  if (denied || error) { render(); return false; }
   return true;
 }
 async function saveIssueName() {
   var data = await api({ action: "saveIssue", name: field("n-issue") });
-  if (!takeRoom(data)) return;
+  if (!await takeRoom(data)) return;
   var match = (room.issues || []).filter(function (issue) { return issue.name === field("n-issue"); })[0];
   if (match) ideaIssue = match.id;
   render();
@@ -934,10 +1087,10 @@ async function saveItemForm(form) {
   if (id) (room.issues || []).forEach(function (issue) { (issue.items || []).forEach(function (row) { if (row.id === id) prev = row; }); });
   if (prev && prev.publicState === "published" && (body.title !== (prev.title || "") || body.text !== (prev.body || "") || body.evidence !== (prev.evidence || "") || sourcesChanged(prev.sourceUrls, body.sourceUrls))) {
     var queued = await api({ action: "setItemPublic", id: id, on: true });
-    if (!takeRoom(queued)) return;
+    if (!await takeRoom(queued)) return;
   }
   var data = await api(body);
-  if (!takeRoom(data)) return;
+  if (!await takeRoom(data)) return;
   editingItem = "";
   addingItem = false;
   openItem = id || "";
@@ -971,7 +1124,7 @@ async function saveScores(itemId) {
     impact: axis.y,
     scoreScale: axis.scoreScale || undefined,
   });
-  if (!takeRoom(data)) return;
+  if (!await takeRoom(data)) return;
   openItem = itemId;
   render();
 }
@@ -1008,7 +1161,7 @@ async function addStaffIdea(form) {
     scoreScale: "1-10",
     sourceUrls: source ? [source] : [],
   });
-  if (!takeRoom(data)) return;
+  if (!await takeRoom(data)) return;
   var created = "";
   (room.issues || []).forEach(function (issue) {
     (issue.items || []).forEach(function (item) {
@@ -1024,14 +1177,15 @@ async function addStaffIdea(form) {
     var ids = grantIds(orgId, issueId);
     if (ids.indexOf(created) === -1) ids.push(created);
     var assigned = await api({ action: "setAssignment", orgId: orgId, issueId: issueId, assigned: true, itemIds: ids });
-    if (!takeRoom(assigned)) return;
+    if (!await takeRoom(assigned)) return;
   }
   var pub = document.getElementById("s-public");
   if (pub && pub.checked && created) {
     var queued = await api({ action: "setItemPublic", id: created, on: true });
-    if (!takeRoom(queued)) return;
+    if (!await takeRoom(queued)) return;
   }
   addingItem = false;
+  addingNew = false;
   ideaIssue = issueId;
   ideaLens = lens;
   openItem = created;
@@ -1056,20 +1210,20 @@ async function toggleClient(itemId, orgId, checked) {
     assigned: ids.length > 0,
     itemIds: ids,
   });
-  if (!takeRoom(data)) return;
+  if (!await takeRoom(data)) return;
   clientSaved = itemId;
   openItem = itemId;
   render();
 }
 async function setItemPublic(id, on) {
   var data = await api({ action: "setItemPublic", id: id, on: on });
-  if (!takeRoom(data)) return;
+  if (!await takeRoom(data)) return;
   render();
 }
 async function clearPublicGate(form) {
   var note = form.querySelector("input");
   var data = await api({ action: "clearPublicGate", id: form.getAttribute("data-id"), note: note ? note.value : "" });
-  if (!takeRoom(data)) return;
+  if (!await takeRoom(data)) return;
   render();
 }
 async function submitIdea(form) {
@@ -1080,19 +1234,20 @@ async function submitIdea(form) {
     text: field("s-text"),
     source: field("s-source"),
   });
-  if (!takeRoom(data)) return;
+  if (!await takeRoom(data)) return;
+  addingNew = false;
   render();
 }
 async function removeIdeaItem(id) {
   var data = await api({ action: "removeItem", id: id });
-  if (!takeRoom(data)) return;
+  if (!await takeRoom(data)) return;
   if (openItem === id) openItem = "";
   editingItem = "";
   render();
 }
 async function removeIdeaIssue(id, confirmName) {
   var data = await api({ action: "removeIssue", id: id, confirmName: confirmName });
-  if (!takeRoom(data)) return;
+  if (!await takeRoom(data)) return;
   if (ideaIssue === id) ideaIssue = "";
   openItem = "";
   editingItem = "";
@@ -1139,7 +1294,31 @@ document.addEventListener("click", function (event) {
   var act = target.getAttribute("data-act");
   if (act === "menu") menu();
   else if (act === "menu-close") menu(false);
-  else if (act === "view") setView(target.getAttribute("data-view"));
+  else if (act === "view") { event.preventDefault(); setView(target.getAttribute("data-view")); }
+  else if (act === "add-new") {
+    if (!showAddNew()) return;
+    addingNew = true;
+    if (view === "ideas" && room && room.staff) {
+      var from = ideaLens && ideaLens !== "none" ? ideaLens : "practical";
+      if (from !== "practical" && from !== "structural" && from !== "cultural") from = "practical";
+      addLens = from;
+      ideaLens = from;
+      addingItem = true;
+      editingItem = "";
+      openItem = "";
+    }
+    render();
+  }
+  else if (act === "open-idea") {
+    if (editorDirty()) return;
+    ideaIssue = target.getAttribute("data-issue") || "";
+    openItem = target.getAttribute("data-id") || "";
+    editingItem = "";
+    editingName = "";
+    render();
+    var openedIdea = document.querySelector("#app .item-open[data-id='" + (window.CSS && CSS.escape ? CSS.escape(openItem) : openItem) + "']");
+    if (openedIdea && openedIdea.scrollIntoView) openedIdea.scrollIntoView({ block: "nearest" });
+  }
   else if (act === "logout") logout();
   else if (act === "google") signInGoogle();
   else if (act === "email-back") { resetEmail(""); render(); }
@@ -1266,7 +1445,7 @@ function previewKind() {
   } catch (e) { return ""; }
 }
 function previewItem(id, title, type, status, lens, ease, impact) {
-  return { id: id, issueId: "issue-energy", type: type, status: status, lens: lens, title: title, body: "", ease: ease, impact: impact, evidence: "", empiricism: "", source: "staff", sourceUrls: [], own: false, publicState: "private" };
+  return { id: id, issueId: "issue-energy", type: type, status: status, lens: lens, title: title, body: "", ease: ease, impact: impact, evidence: "", empiricism: "", source: "staff", sourceUrls: [], own: false, publicState: "private", createdAt: "2026-03-01T12:00:00.000Z" };
 }
 function previewRoom(kind) {
   var energy = [
@@ -1281,8 +1460,9 @@ function previewRoom(kind) {
     { id: "staff-starter-commission", issueId: "issue-housing", type: "idea", status: "untested", lens: "practical", title: "Real estate commission rates", body: "", ease: null, impact: null, evidence: "", empiricism: "", source: "staff", sourceUrls: [] },
     { id: "staff-starter-agents", issueId: "issue-housing", type: "idea", status: "untested", lens: "practical", title: "Number of real estate agents per transaction or market", body: "", ease: null, impact: null, evidence: "", empiricism: "", source: "staff", sourceUrls: [] },
     { id: "staff-starter-title-fees", issueId: "issue-housing", type: "idea", status: "untested", lens: "practical", title: "Title company cut and fees", body: "", ease: null, impact: null, evidence: "", empiricism: "", source: "staff", sourceUrls: [] },
-    { id: "staff-starter-forced-agent", issueId: "issue-housing", type: "idea", status: "untested", lens: "structural", title: "Laws and rules that effectively force buyers and sellers to use a real estate agent and title company", body: "", ease: null, impact: null, evidence: "", empiricism: "", source: "staff", sourceUrls: [] },
+    { id: "staff-starter-forced-agent", issueId: "issue-housing", type: "idea", status: "untested", lens: "structural", title: "Laws and rules that effectively force buyers and sellers to use a real estate agent and title company", body: "", ease: null, impact: null, evidence: "", empiricism: "", source: "staff", sourceUrls: [], createdAt: "2026-03-01T12:00:00.000Z" },
   ];
+  housing.forEach(function (item) { if (!item.createdAt) item.createdAt = "2026-03-01T12:00:00.000Z"; });
   var staff = kind === "staff";
   var issues = staff
     ? [{ id: "issue-energy", slug: "energy", name: "Energy", notes: "", drive: "", items: energy }, { id: "issue-housing", slug: "housing", name: "Housing", notes: "", drive: "", items: housing }]
@@ -1293,11 +1473,14 @@ function previewRoom(kind) {
     staff: staff,
     person: { id: staff ? "staff" : "ada", name: staff ? "Staff One" : "Ada Client", email: staff ? "staff@example.test" : "ada@example.test", role: staff ? "admin" : "director", billing: false, orgId: staff ? null : "orgA", orgName: staff ? "" : "Example Org A" },
     orgs: staff ? { orgA: "Example Org A", orgB: "Contoso" } : { orgA: "Example Org A" },
-    disclosures: {},
-    documents: [],
+    disclosures: { orgA: { setting: "no", label: "No", changedAt: null } },
+    documents: [
+      { id: "doc-proposal", section: "proposals", title: "Spring focus group", visibility: "org", orgId: "orgA", createdAt: "2026-03-01T12:00:00.000Z", body: "A short proposal.", hasFile: false },
+      { id: "doc-research", section: "research", title: "Grid cost notes", visibility: "clients", orgId: null, createdAt: "2026-02-11T12:00:00.000Z", body: "Shared notes.", hasFile: false },
+    ].concat(staff ? [{ id: "doc-billing", section: "billing", title: "March invoice", visibility: "billing", orgId: "orgA", createdAt: "2026-03-04T12:00:00.000Z", body: "Invoice.", hasFile: false }] : []),
     issues: issues,
     assignments: staff ? [{ orgId: "orgA", issueId: "issue-energy", itemIds: ["E1", "E2"] }] : undefined,
-    directory: staff ? [{ id: "ada", name: "Ada Client", email: "ada@example.test", role: "director", billing: false, orgId: "orgA" }] : undefined,
+    directory: staff ? [{ id: "ada", name: "Ada Client", email: "ada@example.test", role: "director", billing: false, orgId: "orgA", createdAt: "2026-01-15T12:00:00.000Z" }] : undefined,
   };
 }
 function previewExtra() {
@@ -1318,6 +1501,21 @@ function previewStore() {
   try {
     sessionStorage.setItem("jn_preview_extra", JSON.stringify({ items: items, assignments: room.assignments || [] }));
   } catch (e) {}
+}
+function previewCounts() {
+  if (!room || !room.person) return;
+  var ideas = 0;
+  (room.issues || []).forEach(function (issue) { ideas += (issue.items || []).length; });
+  var n = function (section) {
+    return (room.documents || []).filter(function (doc) { return doc.section === section; }).length;
+  };
+  room.counts = {
+    ideas: ideas,
+    proposals: n("proposals"),
+    research: n("research"),
+    billing: room.person.billing || room.staff ? n("billing") : null,
+  };
+  if (room.staff) room.counts.admin = (room.directory || []).length;
 }
 function previewApply(kind) {
   var extra = previewExtra();
@@ -1522,42 +1720,69 @@ async function saveName(itemId) {
      and clears the gate. */
   if (item.publicState === "published" && title !== item.title) {
     var queued = await api({ action: "setItemPublic", id: itemId, on: true });
-    if (!takeRoom(queued)) return;
+    if (!await takeRoom(queued)) return;
   }
   var data = await api(body);
-  if (!takeRoom(data)) return;
+  if (!await takeRoom(data)) return;
   editingName = "";
   error = "";
   render();
 }
 
+window.addEventListener("popstate", function () {
+  view = viewFromLocation();
+  reading = null;
+  addingNew = false;
+  addingItem = false;
+  denied = false;
+  menu(false);
+  if (!token || previewKind()) { render(); return; }
+  loadCurrent().then(function () { render(); }).catch(fail);
+});
 function boot() {
+  view = viewFromLocation();
+  if (!pathIsKnown()) {
+    view = "home";
+    try { history.replaceState({ view: "home" }, "", "/portal" + location.search); } catch (e) {}
+  }
   var preview = previewKind();
   if (preview === "staff" || preview === "client") {
     token = "preview";
     room = previewRoom(preview);
     previewApply(preview);
-    view = "ideas";
+    previewCounts();
     ideaIssue = "issue-energy";
     render();
     return;
   }
   readSigninOutcome();
-  var signedInCheck = fetch(API + "/api/portal", {
+  var sessionCheck = fetch(API + "/api/portal", {
     method: "POST",
     credentials: "include",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ action: "load" }),
+    body: JSON.stringify(sectionBody()),
   }).then(function (res) {
+    lastStatus = res.status;
     if (res.status === 401) return null;
-    return res.json().then(function (data) {
-      if (!res.ok) throw new Error(data && data.error);
-      return data;
-    });
+    return res.json().catch(function () { return { error: "The portal can't be reached." }; });
   });
-  Promise.all([signedInCheck, loadProviders()])
+  Promise.all([sessionCheck, loadProviders()])
     .then(function (out) {
-      if (out[0]) { token = "session"; room = out[0]; }
+      if (lastStatus === 401 || out[0] == null) { render(); return; }
+      if (lastStatus !== 200) {
+        if (lastStatus === 403 && out[0].error === "You can't open that.") {
+          token = "session";
+          applySection(out[0]);
+          render();
+          return;
+        }
+        error = out[0].error || "The portal can't be reached. Try again.";
+        token = "";
+        render();
+        return;
+      }
+      token = "session";
+      applySection(out[0]);
       render();
     })
     .catch(function () { error = "The portal can't be reached. Try again."; token = ""; render(); });
