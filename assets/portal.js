@@ -10,6 +10,9 @@ var room = null;
 var view = "home";
 var denied = false;
 var addingNew = false;
+var ideaFilter = "";
+var manageIssue = "";
+var manageOpen = false;
 var lastStatus = 0;
 var error = "";
 var reading = null;
@@ -347,7 +350,8 @@ function showAddNew() {
 }
 function addNewButton() {
   if (!showAddNew() || addingNew) return "";
-  return '<p class="mt-s"><button type="button" class="btn" data-act="add-new">Add new</button></p>';
+  if (view === "ideas") return '<p class="page-action"><button type="button" class="btn" data-act="add-new">Add idea</button></p>';
+  return '<p class="page-action"><button type="button" class="btn" data-act="add-new">Add new</button></p>';
 }
 function dataGrid(headers, rows) {
   if (!rows.length) return '<p class="muted">Nothing here yet.</p>';
@@ -537,7 +541,7 @@ function scaleStep(stored) {
   if (!Number.isInteger(n) || n < 10 || n > 100 || n % 10 !== 0) return null;
   return n / 10;
 }
-function scaleField(group, label, stored) {
+function scaleField(group, label, stored, plain) {
   var step = scaleStep(stored);
   var storedAttr = stored == null || stored === "" ? "" : String(stored);
   var note = stored != null && stored !== "" && step == null ? '<p class="muted scale-note">Stored ' + esc(String(stored)) + "</p>" : "";
@@ -546,7 +550,8 @@ function scaleField(group, label, stored) {
     var on = step === n;
     buttons += '<button type="button" data-act="pick-scale" data-value="' + n + '" class="' + (on ? "active" : "") + '" aria-pressed="' + (on ? "true" : "false") + '">' + n + "</button>";
   }
-  return '<div class="field"><span class="kicker">' + esc(label) + '</span><div class="scale" role="group" aria-label="' + esc(label) + '" data-scale-group="' + esc(group) + '" data-stored="' + esc(storedAttr) + '">' + buttons + "</div>" + note + "</div>";
+  var caption = plain ? '<span class="field-label">' + esc(label) + "</span>" : '<span class="kicker">' + esc(label) + "</span>";
+  return '<div class="field">' + caption + '<div class="scale" role="group" aria-label="' + esc(label) + '" data-scale-group="' + esc(group) + '" data-stored="' + esc(storedAttr) + '">' + buttons + "</div>" + note + "</div>";
 }
 function scoreFields(item) {
   if (!room.staff) return "";
@@ -556,20 +561,20 @@ function scoreFields(item) {
   var xVal = axisHeld ? item.held : item.ease;
   return '<form class="form scores" data-form="scores" data-id="' + esc(item.id) + '">' + scaleField(xGroup, xLabel, xVal) + scaleField("impact", "Impact", item.impact) + "</form>";
 }
-function staffAddForm() {
-  var options = '<option value="">Choose an issue</option>' + (room.issues || []).map(function (issue) {
-    return '<option value="' + esc(issue.id) + '"' + (issue.id === ideaIssue ? " selected" : "") + ">" + esc(issue.name) + "</option>";
+function ideaForm() {
+  if (!addingNew || !room || !room.person) return "";
+  if (!room.staff && room.person.role !== "director") return "";
+  var picked = activeIssueFilter();
+  var options = (room.issues || []).map(function (issue) {
+    var on = picked ? issue.id === picked : false;
+    return '<option value="' + esc(issue.id) + '"' + (on ? " selected" : "") + ">" + esc(issue.name) + "</option>";
   }).join("");
   var lenses = [["practical", "Practical"], ["structural", "Structural"], ["cultural", "Cultural"]];
-  var chips = '<div class="chips" role="group" aria-label="Lens">' + lenses.map(function (pair) {
-    var on = addLens === pair[0];
-    return '<button type="button" data-act="add-lens" data-lens="' + pair[0] + '" class="' + (on ? "active" : "") + '" aria-pressed="' + (on ? "true" : "false") + '">' + pair[1] + "</button>";
-  }).join("") + "</div>";
-  var orgs = room.orgs || {};
-  var clients = Object.keys(orgs).map(function (id) {
-    return '<label class="check tap"><input type="checkbox" data-add-client value="' + esc(id) + '"><span>' + esc(orgs[id]) + "</span></label>";
+  var lensOptions = lenses.map(function (pair) {
+    return '<option value="' + pair[0] + '"' + (pair[0] === "practical" ? " selected" : "") + ">" + pair[1] + "</option>";
   }).join("");
-  return '<form class="form card" data-form="add-idea"><div class="kicker">Add idea</div><label>Title<input id="s-title" required></label><label>Text<textarea id="s-text" rows="3"></textarea></label><label>Source<input id="s-source" type="url" placeholder="https://"></label><label>Issue<select id="s-issue" required>' + options + '</select></label><div class="field"><span class="kicker">Lens</span>' + chips + '</div>' + scaleField("effort", "Effort", null) + scaleField("impact", "Impact", null) + '<div class="clients"><div class="kicker">Clients</div><div class="checks">' + clients + '</div></div><label class="switch"><input id="s-public" type="checkbox"><span>Public</span></label><button class="btn" type="submit">Add idea</button></form>';
+  var kind = room.staff ? "add-idea" : "submit-idea";
+  return '<form class="form card idea-form" data-form="' + kind + '"><label>Issue<select id="s-issue" required>' + options + '</select></label><label>Lens<select id="s-lens" required>' + lensOptions + '</select></label><label>Idea<input id="s-title" required maxlength="200"></label>' + scaleField("effort", "Effort", null, true) + scaleField("impact", "Impact", null, true) + '<div class="form-actions"><button class="btn" type="submit">Save</button><button class="btn ghost" type="button" data-act="cancel-new">Cancel</button></div></form>';
 }
 function researchHtml(text) {
   var parts = String(text).split(/(https:\/\/\S+)/i);
@@ -702,29 +707,66 @@ function dangerZone(issue) {
   }
   return head + '<form class="form" data-form="remove-issue" data-id="' + esc(issue.id) + '" data-name="' + esc(issue.name) + '"><p class="muted">' + esc(countPhrase(n.grants, "grant", "grants") + " would be removed with this issue.") + '</p><label>Type the issue name to confirm<input data-confirm-name autocomplete="off" autocapitalize="off" spellcheck="false" maxlength="80"></label><button class="link-btn" type="submit" disabled>Delete this issue</button></form></details>';
 }
-function ideaComposer() {
-  if (!addingNew || !room || !room.person) return "";
-  if (room.staff) return staffAddForm();
-  if (room.person.role !== "director") return "";
-  var issue = currentIssue();
-  return issue ? submitIdeaForm(issue) : "";
+function activeIssueFilter() {
+  if (!ideaFilter) return "";
+  var found = (room.issues || []).some(function (issue) { return issue.id === ideaFilter; });
+  return found ? ideaFilter : "";
+}
+function tenWord(value) {
+  var step = scaleStep(value);
+  if (step != null) return String(step);
+  if (value == null || value === "") return "";
+  return String(value);
+}
+function effortWord(item) {
+  if (item.scoreAxis === "how widely held") return tenWord(item.held);
+  return tenWord(item.ease);
+}
+function ideaGrid(items) {
+  return dataGrid(["Idea", "Lens", "Effort", "Impact"], items.map(function (item) {
+    return [esc(item.title || ""), esc(lensWord(item.lens)), esc(effortWord(item)), esc(tenWord(item.impact))];
+  }));
+}
+function ideaGroups() {
+  var filter = activeIssueFilter();
+  var groups = [];
+  (room.issues || []).forEach(function (issue) {
+    if (filter && issue.id !== filter) return;
+    var items = issue.items || [];
+    if (!filter && !items.length) return;
+    groups.push({ issue: issue, items: items });
+  });
+  return groups;
+}
+function managedIssue() {
+  var list = room.issues || [];
+  for (var i = 0; i < list.length; i++) if (list[i].id === manageIssue) return list[i];
+  return list[0] || null;
+}
+function manageIssues() {
+  if (!room || !room.staff) return "";
+  var current = managedIssue();
+  var existing = "";
+  if (current) {
+    var options = (room.issues || []).map(function (issue) {
+      return '<option value="' + esc(issue.id) + '"' + (issue.id === current.id ? " selected" : "") + ">" + esc(issue.name) + "</option>";
+    }).join("");
+    existing = '<label class="issue-filter">Existing issue<select data-manage-issue>' + options + "</select></label>" + dangerZone(current);
+  }
+  return '<details class="manage-issues"' + (manageOpen ? " open" : "") + '><summary>Manage issues</summary><p class="muted manage-note">An issue is a topic, like Education.</p><form class="form" data-form="issue"><label>New issue<input id="n-issue" required maxlength="80"></label><button class="btn" type="submit">Add issue</button></form>' + existing + "</details>";
 }
 function ideasPage() {
-  var list = room.issues || [];
-  var head = '<h1 class="display">Ideas</h1>' + addNewButton() + ideaTable() + ideaComposer();
-  if (!list.length) return head + newIssueForm();
-  var issue = currentIssue();
-  /* Ideas with no lens never vanish: "No lens" lists them, and the default view also shows them
-     to staff and to the person who submitted them. */
-  var visible = (issue.items || []).filter(function (item) {
-    var lens = item.lens || "";
-    if (ideaLens === "none") return !lens;
-    if (lens === ideaLens) return true;
-    return !lens && ideaLens === "practical" && (room.staff || item.own);
-  });
-  var rows = visible.length ? visible.map(itemCard).join("") : '<p class="muted">Nothing here yet.</p>';
-  var body = '<section class="lens-block">' + lensSelect() + rows + "</section>";
-  return head + '<div id="issue-grid" class="jn-grid"></div>' + issueDrawer() + body + newIssueForm() + dangerZone(issue);
+  var filter = activeIssueFilter();
+  var groups = ideaGroups();
+  var grid = groups.map(function (group) {
+    var body = group.items.length ? ideaGrid(group.items) : '<p class="muted">No ideas yet.</p>';
+    return '<section class="issue-group"><h2>' + esc(group.issue.name) + "</h2>" + body + "</section>";
+  }).join("");
+  if (!grid) grid = '<p class="muted">No ideas yet.</p>';
+  var filterOptions = '<option value="">All issues</option>' + (room.issues || []).map(function (issue) {
+    return '<option value="' + esc(issue.id) + '"' + (filter === issue.id ? " selected" : "") + ">" + esc(issue.name) + "</option>";
+  }).join("");
+  return '<h1 class="display">Ideas</h1>' + addNewButton() + ideaForm() + '<label class="issue-filter">Issue<select data-idea-filter>' + filterOptions + "</select></label>" + grid + manageIssues();
 }
 function table(headers, rows) {
   if (!rows.length) return '<p class="muted">Nothing here yet.</p>';
@@ -1009,7 +1051,11 @@ async function saveIssueName() {
   var data = await api({ action: "saveIssue", name: field("n-issue") });
   if (!await takeRoom(data)) return;
   var match = (room.issues || []).filter(function (issue) { return issue.name === field("n-issue"); })[0];
-  if (match) ideaIssue = match.id;
+  if (match) {
+    ideaIssue = match.id;
+    manageIssue = match.id;
+    manageOpen = true;
+  }
   render();
 }
 /* Source links compared in order. The form sends URLs only, so a label on a saved link counts as
@@ -1138,59 +1184,34 @@ function grantIds(orgId, issueId) {
 async function addStaffIdea(form) {
   var issueId = field("s-issue");
   if (!issueId) { formAlert(form, "Choose an issue."); return; }
+  var title = field("s-title").trim();
+  if (!title) { formAlert(form, "Write the idea."); return; }
   var axis = axisPayload();
   if (typeof axis === "string") { formAlert(form, axis); return; }
-  var lens = addLens || "practical";
-  var source = field("s-source").trim();
-  var before = {};
-  (room.issues || []).forEach(function (issue) {
-    (issue.items || []).forEach(function (item) { before[item.id] = true; });
-  });
+  var lens = field("s-lens") || "practical";
   var data = await api({
     action: "saveItem",
     issueId: issueId,
     type: "idea",
     status: "untested",
     lens: lens,
-    title: field("s-title"),
-    text: field("s-text"),
+    title: title,
+    text: "",
     evidence: "",
     empiricism: "",
     ease: axis.x,
     impact: axis.y,
     scoreScale: "1-10",
-    sourceUrls: source ? [source] : [],
+    sourceUrls: [],
   });
   if (!await takeRoom(data)) return;
-  var created = "";
-  (room.issues || []).forEach(function (issue) {
-    (issue.items || []).forEach(function (item) {
-      if (!before[item.id]) created = item.id;
-    });
-  });
-  var boxes = form.querySelectorAll("[data-add-client]");
-  var any = false;
-  for (var i = 0; i < boxes.length; i++) {
-    if (!boxes[i].checked || !created) continue;
-    any = true;
-    var orgId = boxes[i].value;
-    var ids = grantIds(orgId, issueId);
-    if (ids.indexOf(created) === -1) ids.push(created);
-    var assigned = await api({ action: "setAssignment", orgId: orgId, issueId: issueId, assigned: true, itemIds: ids });
-    if (!await takeRoom(assigned)) return;
-  }
-  var pub = document.getElementById("s-public");
-  if (pub && pub.checked && created) {
-    var queued = await api({ action: "setItemPublic", id: created, on: true });
-    if (!await takeRoom(queued)) return;
-  }
   addingItem = false;
   addingNew = false;
   ideaIssue = issueId;
+  ideaFilter = issueId;
   ideaLens = lens;
-  openItem = created;
+  openItem = "";
   editingItem = "";
-  clientSaved = any ? created : "";
   render();
 }
 async function toggleClient(itemId, orgId, checked) {
@@ -1227,15 +1248,27 @@ async function clearPublicGate(form) {
   render();
 }
 async function submitIdea(form) {
+  var issueId = field("s-issue") || form.getAttribute("data-issue");
+  if (!issueId) { formAlert(form, "Choose an issue."); return; }
+  var title = field("s-title").trim();
+  if (!title) { formAlert(form, "Write the idea."); return; }
+  var axis = axisPayload();
+  if (typeof axis === "string") { formAlert(form, axis); return; }
+  var lens = field("s-lens") || "practical";
   var data = await api({
     action: "submitIdea",
-    issueId: form.getAttribute("data-issue"),
-    title: field("s-title"),
-    text: field("s-text"),
-    source: field("s-source"),
+    issueId: issueId,
+    title: title,
+    text: "",
+    source: "",
+    lens: lens,
+    ease: axis.x,
+    impact: axis.y,
+    scoreScale: "1-10",
   });
   if (!await takeRoom(data)) return;
   addingNew = false;
+  ideaFilter = issueId;
   render();
 }
 async function removeIdeaItem(id) {
@@ -1298,17 +1331,10 @@ document.addEventListener("click", function (event) {
   else if (act === "add-new") {
     if (!showAddNew()) return;
     addingNew = true;
-    if (view === "ideas" && room && room.staff) {
-      var from = ideaLens && ideaLens !== "none" ? ideaLens : "practical";
-      if (from !== "practical" && from !== "structural" && from !== "cultural") from = "practical";
-      addLens = from;
-      ideaLens = from;
-      addingItem = true;
-      editingItem = "";
-      openItem = "";
-    }
+    if (view === "ideas") { addingItem = false; editingItem = ""; openItem = ""; }
     render();
   }
+  else if (act === "cancel-new") { addingNew = false; render(); }
   else if (act === "open-idea") {
     if (editorDirty()) return;
     ideaIssue = target.getAttribute("data-issue") || "";
@@ -1408,7 +1434,23 @@ document.addEventListener("input", function (event) {
   var button = form.querySelector("button");
   if (button) button.disabled = event.target.value !== (form.getAttribute("data-name") || "");
 });
+document.addEventListener("toggle", function (event) {
+  var node = event.target;
+  if (!node || !node.classList || !node.classList.contains("manage-issues")) return;
+  manageOpen = node.open;
+}, true);
 document.addEventListener("change", function (event) {
+  if (event.target && event.target.hasAttribute && event.target.hasAttribute("data-idea-filter")) {
+    ideaFilter = event.target.value || "";
+    render();
+    return;
+  }
+  if (event.target && event.target.hasAttribute && event.target.hasAttribute("data-manage-issue")) {
+    manageIssue = event.target.value || "";
+    manageOpen = true;
+    render();
+    return;
+  }
   if (event.target && event.target.hasAttribute && event.target.hasAttribute("data-lens-select")) {
     ideaLens = event.target.value || "practical";
     if (editorDirty()) { render(); return; }
@@ -1562,6 +1604,22 @@ function previewScaled(body, key) {
 function previewMutate(body) {
   var action = body && body.action;
   if (!action || action === "load") return room;
+  if (action === "submitIdea") {
+    body = {
+      action: "saveItem",
+      issueId: body.issueId,
+      type: "idea",
+      status: "untested",
+      lens: body.lens || "",
+      title: body.title || "",
+      text: body.text || "",
+      ease: body.ease,
+      impact: body.impact,
+      scoreScale: body.scoreScale || "1-10",
+      sourceUrls: [],
+    };
+    action = "saveItem";
+  }
   if (action === "saveItem") {
     if (body.id) {
       (room.issues || []).forEach(function (issue) {

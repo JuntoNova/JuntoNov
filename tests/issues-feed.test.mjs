@@ -82,8 +82,15 @@ test("the issues page reads the live feed and does not embed a snapshot", () => 
   assert.match(page, /cache:\s*"no-store"/);
   assert.match(portal, />Publish</);
   assert.equal(portal.includes("Mark gate"), false);
-  assert.match(portal, /<select id="s-issue" required>/);
-  assert.match(portal, /Choose an issue/);
+  assert.match(portal, /<label>Issue<select id="s-issue" required>/);
+  assert.match(portal, /<label>Lens<select id="s-lens" required>/);
+  assert.match(portal, /<label>Idea<input id="s-title" required/);
+  assert.match(portal, />Save</);
+  assert.match(portal, /data-act="cancel-new"/);
+  assert.match(portal, />Manage issues</);
+  assert.match(portal, /An issue is a topic, like Education/);
+  assert.match(portal, /<label>New issue<input id="n-issue"/);
+  assert.match(portal, /data-manage-issue/);
   assert.match(portal, /data-scale-group/);
   assert.match(portal, /data-act="pick-scale"/);
   assert.equal(portal.includes('id="score-x"'), false);
