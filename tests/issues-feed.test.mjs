@@ -84,7 +84,13 @@ test("the issues page reads the live feed and does not embed a snapshot", () => 
   assert.equal(portal.includes("Mark gate"), false);
   assert.match(portal, /<label>Issue<select id="s-issue" required>/);
   assert.match(portal, /<label>Lens<select id="s-lens" required>/);
-  assert.match(portal, /<label>Idea<input id="s-title" required/);
+  assert.match(portal, /<label>Title<input id="s-title" required maxlength="200"/);
+  assert.match(portal, /<label>Text<textarea id="s-text"/);
+  assert.match(portal, /data-lens-filter/);
+  assert.match(portal, /\["", "All"\], \["practical", "Practical"\], \["structural", "Structural"\], \["cultural", "Cultural"\]/);
+  assert.match(portal, /data-act="edit-idea"/);
+  assert.match(portal, /method: "PATCH"/);
+  assert.match(portal, /\/ideas\//);
   assert.match(portal, />Save</);
   assert.match(portal, /data-act="cancel-new"/);
   assert.match(portal, />Manage issues</);

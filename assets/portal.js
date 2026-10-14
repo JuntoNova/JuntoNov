@@ -11,6 +11,8 @@ var view = "home";
 var denied = false;
 var addingNew = false;
 var ideaFilter = "";
+var lensFilter = "";
+var editingIdea = "";
 var manageIssue = "";
 var manageOpen = false;
 var lastStatus = 0;
@@ -410,6 +412,7 @@ function setView(id) {
   view = id;
   reading = null;
   addingNew = false;
+  editingIdea = "";
   addingItem = false;
   denied = false;
   menu(false);
@@ -561,20 +564,40 @@ function scoreFields(item) {
   var xVal = axisHeld ? item.held : item.ease;
   return '<form class="form scores" data-form="scores" data-id="' + esc(item.id) + '">' + scaleField(xGroup, xLabel, xVal) + scaleField("impact", "Impact", item.impact) + "</form>";
 }
+function canEditIdeas() {
+  return Boolean(room && room.person && (room.staff || room.person.role === "director"));
+}
+function findIdea(id) {
+  var found = null;
+  (room.issues || []).forEach(function (issue) {
+    (issue.items || []).forEach(function (item) {
+      if (item.id === id) found = { issue: issue, item: item };
+    });
+  });
+  return found;
+}
 function ideaForm() {
-  if (!addingNew || !room || !room.person) return "";
-  if (!room.staff && room.person.role !== "director") return "";
-  var picked = activeIssueFilter();
+  if (!addingNew || !canEditIdeas()) return "";
+  var editing = editingIdea ? findIdea(editingIdea) : null;
+  if (editingIdea && !editing) return "";
+  var picked = editing ? editing.issue.id : activeIssueFilter();
+  var lens = editing && editing.item.lens ? editing.item.lens : "practical";
+  if (lens !== "practical" && lens !== "structural" && lens !== "cultural") lens = "practical";
   var options = (room.issues || []).map(function (issue) {
     var on = picked ? issue.id === picked : false;
     return '<option value="' + esc(issue.id) + '"' + (on ? " selected" : "") + ">" + esc(issue.name) + "</option>";
   }).join("");
   var lenses = [["practical", "Practical"], ["structural", "Structural"], ["cultural", "Cultural"]];
   var lensOptions = lenses.map(function (pair) {
-    return '<option value="' + pair[0] + '"' + (pair[0] === "practical" ? " selected" : "") + ">" + pair[1] + "</option>";
+    return '<option value="' + pair[0] + '"' + (pair[0] === lens ? " selected" : "") + ">" + pair[1] + "</option>";
   }).join("");
-  var kind = room.staff ? "add-idea" : "submit-idea";
-  return '<form class="form card idea-form" data-form="' + kind + '"><label>Issue<select id="s-issue" required>' + options + '</select></label><label>Lens<select id="s-lens" required>' + lensOptions + '</select></label><label>Idea<input id="s-title" required maxlength="200"></label>' + scaleField("effort", "Effort", null, true) + scaleField("impact", "Impact", null, true) + '<div class="form-actions"><button class="btn" type="submit">Save</button><button class="btn ghost" type="button" data-act="cancel-new">Cancel</button></div></form>';
+  var title = editing ? esc(editing.item.title || "") : "";
+  var text = editing ? esc(editing.item.body || "") : "";
+  var ease = editing ? (editing.item.scoreAxis === "how widely held" ? editing.item.held : editing.item.ease) : null;
+  var impact = editing ? editing.item.impact : null;
+  var kind = editing ? "edit-idea" : (room.staff ? "add-idea" : "submit-idea");
+  var idAttr = editing ? ' data-id="' + esc(editing.item.id) + '"' : "";
+  return '<form class="form card idea-form" data-form="' + kind + '"' + idAttr + '><label>Issue<select id="s-issue" required>' + options + '</select></label><label>Lens<select id="s-lens" required>' + lensOptions + '</select></label><label>Title<input id="s-title" required maxlength="200" value="' + title + '"></label><label>Text<textarea id="s-text" rows="3">' + text + "</textarea></label>" + scaleField("effort", "Effort", ease, true) + scaleField("impact", "Impact", impact, true) + '<div class="form-actions"><button class="btn" type="submit">Save</button><button class="btn ghost" type="button" data-act="cancel-new">Cancel</button></div></form>';
 }
 function researchHtml(text) {
   var parts = String(text).split(/(https:\/\/\S+)/i);
@@ -712,6 +735,10 @@ function activeIssueFilter() {
   var found = (room.issues || []).some(function (issue) { return issue.id === ideaFilter; });
   return found ? ideaFilter : "";
 }
+function activeLensFilter() {
+  if (lensFilter === "practical" || lensFilter === "structural" || lensFilter === "cultural") return lensFilter;
+  return "";
+}
 function tenWord(value) {
   var step = scaleStep(value);
   if (step != null) return String(step);
@@ -724,15 +751,21 @@ function effortWord(item) {
 }
 function ideaGrid(items) {
   return dataGrid(["Idea", "Lens", "Effort", "Impact"], items.map(function (item) {
-    return [esc(item.title || ""), esc(lensWord(item.lens)), esc(effortWord(item)), esc(tenWord(item.impact))];
+    var name = '<div class="idea-line"><span>' + esc(item.title || "") + "</span>";
+    if (canEditIdeas()) name += '<button type="button" class="icon-btn" data-act="edit-idea" data-id="' + esc(item.id) + '" aria-label="Edit idea"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button>';
+    name += "</div>";
+    return [name, esc(lensWord(item.lens)), esc(effortWord(item)), esc(tenWord(item.impact))];
   }));
 }
 function ideaGroups() {
   var filter = activeIssueFilter();
+  var lens = activeLensFilter();
   var groups = [];
   (room.issues || []).forEach(function (issue) {
     if (filter && issue.id !== filter) return;
-    var items = issue.items || [];
+    var items = (issue.items || []).filter(function (item) {
+      return !lens || (item.lens || "") === lens;
+    });
     if (!filter && !items.length) return;
     groups.push({ issue: issue, items: items });
   });
@@ -766,7 +799,11 @@ function ideasPage() {
   var filterOptions = '<option value="">All issues</option>' + (room.issues || []).map(function (issue) {
     return '<option value="' + esc(issue.id) + '"' + (filter === issue.id ? " selected" : "") + ">" + esc(issue.name) + "</option>";
   }).join("");
-  return '<h1 class="display">Ideas</h1>' + addNewButton() + ideaForm() + '<label class="issue-filter">Issue<select data-idea-filter>' + filterOptions + "</select></label>" + grid + manageIssues();
+  var lens = activeLensFilter();
+  var lensOptions = [["", "All"], ["practical", "Practical"], ["structural", "Structural"], ["cultural", "Cultural"]].map(function (pair) {
+    return '<option value="' + pair[0] + '"' + (lens === pair[0] ? " selected" : "") + ">" + pair[1] + "</option>";
+  }).join("");
+  return '<h1 class="display">Ideas</h1>' + addNewButton() + ideaForm() + '<div class="filter-row"><label class="issue-filter">Issue<select data-idea-filter>' + filterOptions + '</select></label><label class="issue-filter">Lens<select data-lens-filter>' + lensOptions + "</select></label></div>" + grid + manageIssues();
 }
 function table(headers, rows) {
   if (!rows.length) return '<p class="muted">Nothing here yet.</p>';
@@ -1181,35 +1218,48 @@ function grantIds(orgId, issueId) {
   });
   return ids;
 }
-async function addStaffIdea(form) {
+function ideaFields(form) {
   var issueId = field("s-issue");
-  if (!issueId) { formAlert(form, "Choose an issue."); return; }
+  if (!issueId) return "Choose an issue.";
   var title = field("s-title").trim();
-  if (!title) { formAlert(form, "Write the idea."); return; }
+  if (!title) return "Write the idea.";
   var axis = axisPayload();
-  if (typeof axis === "string") { formAlert(form, axis); return; }
-  var lens = field("s-lens") || "practical";
-  var data = await api({
-    action: "saveItem",
+  if (typeof axis === "string") return axis;
+  return {
     issueId: issueId,
-    type: "idea",
-    status: "untested",
-    lens: lens,
     title: title,
-    text: "",
-    evidence: "",
-    empiricism: "",
+    text: field("s-text").trim(),
+    lens: field("s-lens") || "practical",
     ease: axis.x,
     impact: axis.y,
-    scoreScale: "1-10",
+    scoreScale: axis.scoreScale === "1-10" ? "1-10" : "",
+  };
+}
+async function addStaffIdea(form) {
+  var fields = ideaFields(form);
+  if (typeof fields === "string") { formAlert(form, fields); return; }
+  var data = await api({
+    action: "saveItem",
+    issueId: fields.issueId,
+    type: "idea",
+    status: "untested",
+    lens: fields.lens,
+    title: fields.title,
+    text: fields.text,
+    evidence: "",
+    empiricism: "",
+    ease: fields.ease,
+    impact: fields.impact,
+    scoreScale: fields.scoreScale || undefined,
     sourceUrls: [],
   });
   if (!await takeRoom(data)) return;
   addingItem = false;
   addingNew = false;
-  ideaIssue = issueId;
-  ideaFilter = issueId;
-  ideaLens = lens;
+  editingIdea = "";
+  ideaIssue = fields.issueId;
+  ideaFilter = fields.issueId;
+  ideaLens = fields.lens;
   openItem = "";
   editingItem = "";
   render();
@@ -1247,28 +1297,62 @@ async function clearPublicGate(form) {
   if (!await takeRoom(data)) return;
   render();
 }
+async function patchIdea(id, payload) {
+  if (previewKind()) return previewPatchIdea(id, payload);
+  var res = await fetch(API + "/ideas/" + encodeURIComponent(id), {
+    method: "PATCH",
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  var data = await res.json().catch(function () { return null; });
+  lastStatus = res.status;
+  if (res.status === 401) { signedOut(); throw new Error(""); }
+  if (!res.ok) return { error: (data && data.error) || "Couldn't save that idea." };
+  return data || { ok: true };
+}
+async function saveEditedIdea(form) {
+  var id = (form && form.getAttribute("data-id")) || editingIdea;
+  var fields = ideaFields(form);
+  if (typeof fields === "string") { formAlert(form, fields); return; }
+  var prev = findIdea(id);
+  if (prev && prev.item.publicState === "published" && (fields.title !== (prev.item.title || "") || fields.text !== (prev.item.body || ""))) {
+    var queued = await api({ action: "setItemPublic", id: id, on: true });
+    if (!await takeRoom(queued)) return;
+  }
+  var payload = {
+    issueId: fields.issueId,
+    lens: fields.lens,
+    title: fields.title,
+    text: fields.text,
+    ease: fields.ease,
+    impact: fields.impact,
+  };
+  if (fields.scoreScale) payload.scoreScale = fields.scoreScale;
+  var data = await patchIdea(id, payload);
+  if (!await takeRoom(data)) return;
+  addingNew = false;
+  editingIdea = "";
+  render();
+}
 async function submitIdea(form) {
-  var issueId = field("s-issue") || form.getAttribute("data-issue");
-  if (!issueId) { formAlert(form, "Choose an issue."); return; }
-  var title = field("s-title").trim();
-  if (!title) { formAlert(form, "Write the idea."); return; }
-  var axis = axisPayload();
-  if (typeof axis === "string") { formAlert(form, axis); return; }
-  var lens = field("s-lens") || "practical";
+  var fields = ideaFields(form);
+  if (typeof fields === "string") { formAlert(form, fields); return; }
   var data = await api({
     action: "submitIdea",
-    issueId: issueId,
-    title: title,
-    text: "",
+    issueId: fields.issueId,
+    title: fields.title,
+    text: fields.text,
     source: "",
-    lens: lens,
-    ease: axis.x,
-    impact: axis.y,
-    scoreScale: "1-10",
+    lens: fields.lens,
+    ease: fields.ease,
+    impact: fields.impact,
+    scoreScale: fields.scoreScale || undefined,
   });
   if (!await takeRoom(data)) return;
   addingNew = false;
-  ideaFilter = issueId;
+  editingIdea = "";
+  ideaFilter = fields.issueId;
   render();
 }
 async function removeIdeaItem(id) {
@@ -1331,10 +1415,20 @@ document.addEventListener("click", function (event) {
   else if (act === "add-new") {
     if (!showAddNew()) return;
     addingNew = true;
-    if (view === "ideas") { addingItem = false; editingItem = ""; openItem = ""; }
+    if (view === "ideas") { addingItem = false; editingItem = ""; editingIdea = ""; openItem = ""; }
     render();
   }
-  else if (act === "cancel-new") { addingNew = false; render(); }
+  else if (act === "cancel-new") { addingNew = false; editingIdea = ""; render(); }
+  else if (act === "edit-idea") {
+    if (!canEditIdeas()) return;
+    editingIdea = target.getAttribute("data-id") || "";
+    addingNew = true;
+    render();
+    var ideaFormEl = document.querySelector(".idea-form");
+    if (ideaFormEl && ideaFormEl.scrollIntoView) ideaFormEl.scrollIntoView({ block: "nearest" });
+    var titleInput = document.getElementById("s-title");
+    if (titleInput) titleInput.focus();
+  }
   else if (act === "open-idea") {
     if (editorDirty()) return;
     ideaIssue = target.getAttribute("data-issue") || "";
@@ -1419,6 +1513,7 @@ document.addEventListener("submit", function (event) {
   else if (kind === "issue") saveIssueName().catch(fail);
   else if (kind === "item") saveItemForm(form).catch(fail);
   else if (kind === "add-idea") addStaffIdea(form).catch(fail);
+  else if (kind === "edit-idea") saveEditedIdea(form).catch(fail);
   else if (kind === "submit-idea") submitIdea(form).catch(fail);
   else if (kind === "clear-gate") clearPublicGate(form).catch(fail);
   else if (kind === "remove-issue") {
@@ -1442,6 +1537,11 @@ document.addEventListener("toggle", function (event) {
 document.addEventListener("change", function (event) {
   if (event.target && event.target.hasAttribute && event.target.hasAttribute("data-idea-filter")) {
     ideaFilter = event.target.value || "";
+    render();
+    return;
+  }
+  if (event.target && event.target.hasAttribute && event.target.hasAttribute("data-lens-filter")) {
+    lensFilter = event.target.value || "";
     render();
     return;
   }
@@ -1469,7 +1569,7 @@ document.addEventListener("change", function (event) {
   }
 });
 document.addEventListener("keydown", function (event) {
-  if (event.key === "Escape") { menu(false); if (editingName) { editingName = ""; render(); } else if (editingItem) { editingItem = ""; render(); } }
+  if (event.key === "Escape") { menu(false); if (editingName) { editingName = ""; render(); } else if (editingIdea) { editingIdea = ""; addingNew = false; render(); } else if (editingItem) { editingItem = ""; render(); } }
   /* Enter in the name field does nothing: only the Save button saves. */
   if (event.key === "Enter" && event.target && event.target.hasAttribute && event.target.hasAttribute("data-name-input")) event.preventDefault();
 });
@@ -1600,6 +1700,35 @@ function previewScaled(body, key) {
     return typeof n === "number" && Number.isInteger(n) && n >= 1 && n <= 10 ? n * 10 : null;
   }
   return body[key] == null ? null : body[key];
+}
+function previewPatchIdea(id, body) {
+  var found = null;
+  var from = null;
+  (room.issues || []).forEach(function (issue) {
+    (issue.items || []).forEach(function (item) {
+      if (item.id === id) { found = item; from = issue; }
+    });
+  });
+  if (!found || !from) return { error: "That isn't available." };
+  var dest = from;
+  if (body.issueId && body.issueId !== from.id) {
+    dest = null;
+    (room.issues || []).forEach(function (issue) { if (issue.id === body.issueId) dest = issue; });
+    if (!dest) return { error: "Choose an issue." };
+  }
+  found.lens = body.lens || "";
+  found.title = body.title || found.title;
+  found.body = body.text || "";
+  found.ease = previewScaled(body, "ease");
+  found.impact = previewScaled(body, "impact");
+  found.issueId = dest.id;
+  if (dest !== from) {
+    from.items = (from.items || []).filter(function (item) { return item.id !== id; });
+    dest.items = dest.items || [];
+    dest.items.push(found);
+  }
+  previewStore();
+  return room;
 }
 function previewMutate(body) {
   var action = body && body.action;
@@ -1791,6 +1920,7 @@ window.addEventListener("popstate", function () {
   view = viewFromLocation();
   reading = null;
   addingNew = false;
+  editingIdea = "";
   addingItem = false;
   denied = false;
   menu(false);
