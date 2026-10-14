@@ -493,7 +493,7 @@ function itemGroups(items) {
 function itemForm(item) {
   var row = item || {};
   var urls = (row.sourceUrls || []).map(function (source) { return source.url; }).join("\n");
-  return '<form class="form" data-form="item" data-id="' + esc(row.id || "") + '" data-issue="' + esc(ideaIssue) + '"><label>Title<input id="i-title" required value="' + esc(row.title || "") + '"></label><div class="row2"><label>Type<select id="i-type">' + selectOptions(["idea", "poll", "opposition"], row.type || "idea", { idea: "Idea", poll: "Poll", opposition: "Opposition" }) + '</select></label><label>Status<select id="i-status">' + selectOptions(["untested", "vetted"], row.status || "untested", { untested: "Untested", vetted: "Vetted" }) + '</select></label></div><div class="row2"><label>Lens<select id="i-lens"><option value="">No lens</option>' + selectOptions(["practical", "structural", "cultural"], row.lens || "", { practical: "Practical", structural: "Structural", cultural: "Cultural" }) + '</select></label><label>Empiricism<select id="i-emp"><option value=""> </option>' + selectOptions(["cited", "indirect", "none"], row.empiricism || "", { cited: "Cited", indirect: "Indirect", none: "Not confirmed" }) + '</select></label></div>' + scaleField(row.scoreAxis === "how widely held" ? "held" : "effort", row.scoreAxis === "how widely held" ? "How widely held" : "Effort", row.scoreAxis === "how widely held" ? row.held : row.ease) + scaleField("impact", "Impact", row.impact) + ' <label>Text<textarea id="i-text" rows="3">' + esc(row.body || "") + '</textarea></label><label>Evidence<textarea id="i-evidence" rows="3">' + esc(row.evidence || "") + '</textarea></label><label>Source links<textarea id="i-sources" rows="2" placeholder="https://">' + esc(urls) + '</textarea></label><div class="row-actions"><button class="btn" type="submit">' + (row.id ? "Save" : "Add item") + "</button>" + (row.id ? '<button class="btn ghost" type="button" data-act="cancel-item">Cancel</button>' : "") + (row.id ? '<button class="btn ghost" type="button" data-act="remove-item" data-id="' + esc(row.id) + '">Remove</button>' : "") + "</div></form>";
+  return '<form class="form" data-form="item" data-id="' + esc(row.id || "") + '" data-issue="' + esc(ideaIssue) + '"><label>Title<input id="i-title" required value="' + esc(row.title || "") + '"></label><div class="row2"><label>Type<select id="i-type">' + selectOptions(["idea", "poll", "opposition"], row.type || "idea", { idea: "Idea", poll: "Poll", opposition: "Opposition" }) + '</select></label><label>Status<select id="i-status">' + selectOptions(["untested", "vetted"], row.status || "untested", { untested: "Untested", vetted: "Vetted" }) + '</select></label></div><div class="row2"><label>Lens<select id="i-lens"><option value="">No lens</option>' + selectOptions(["practical", "structural", "cultural"], row.lens || "", { practical: "Practical", structural: "Structural", cultural: "Cultural" }) + '</select></label><label>Empiricism<select id="i-emp"><option value=""> </option>' + selectOptions(["cited", "indirect", "none"], row.empiricism || "", { cited: "Cited", indirect: "Indirect", none: "Not confirmed" }) + '</select></label></div>' + scaleField(row.scoreAxis === "how widely held" ? "held" : "effort", row.scoreAxis === "how widely held" ? "How widely held" : "Effort", row.scoreAxis === "how widely held" ? row.held : row.ease) + scaleField("impact", "Impact", row.impact) + ' <label>Text<textarea id="i-text" rows="3">' + esc(row.body || "") + '</textarea></label><label>Evidence<textarea id="i-evidence" rows="3">' + esc(row.evidence || "") + '</textarea></label><label>Source links<textarea id="i-sources" rows="2" placeholder="https://">' + esc(urls) + '</textarea></label><div class="row-actions"><button class="btn" type="submit">' + (row.id ? "Save" : "Add item") + "</button>" + (row.id ? '<button class="btn ghost" type="button" data-act="cancel-item">Cancel</button>' : "") + "</div></form>";
 }
 function publicControls(item) {
   if (!room.staff) return "";
@@ -563,6 +563,19 @@ function scaleField(group, label, stored, plain) {
   var caption = plain ? '<span class="field-label">' + esc(label) + "</span>" : '<span class="kicker">' + esc(label) + "</span>";
   return '<div class="field">' + caption + '<div class="scale" role="group" aria-label="' + esc(label) + '" data-scale-group="' + esc(group) + '" data-stored="' + esc(storedAttr) + '">' + buttons + "</div>" + note + "</div>";
 }
+function evidenceBlock(axis, item) {
+  var summary = "";
+  var sources = [];
+  if (item) {
+    summary = axis === "ease" ? (item.easeEvidence || "") : (item.impactEvidence || "");
+    sources = (axis === "ease" ? item.easeSources : item.impactSources) || [];
+  }
+  if (!sources.length) sources = [{ label: "", url: "" }];
+  var rows = sources.map(function (source) {
+    return '<div class="source-row"><input data-source-label="' + axis + '" placeholder="Label" maxlength="120" value="' + esc(source.label || "") + '"><input data-source-url="' + axis + '" type="url" inputmode="url" placeholder="https://" maxlength="500" value="' + esc(source.url || "") + '"></div>';
+  }).join("");
+  return '<div class="evidence-block" data-evidence="' + axis + '"><label>Basis<textarea data-evidence-summary="' + axis + '" rows="2" maxlength="500" placeholder="Short basis for this score">' + esc(summary) + "</textarea></label>" + rows + '<button type="button" class="link-btn" data-act="add-source" data-axis="' + axis + '">Add a source</button></div>';
+}
 function scoreFields(item) {
   if (!room.staff) return "";
   var axisHeld = item.scoreAxis === "how widely held";
@@ -619,7 +632,10 @@ function ideaForm() {
     var clients = boxes ? '<div class="clients"><div class="kicker">Clients</div><div class="checks">' + boxes + "</div></div>" : "";
     staffBits = '<label class="switch"><input type="checkbox" id="s-public"' + (isPublic ? " checked" : "") + "><span>Public</span></label>" + clients;
   }
-  return '<form class="form card idea-form" data-form="' + kind + '"' + idAttr + '><label>Issue<select id="s-issue" required>' + options + '</select></label><label>Lens<select id="s-lens" required>' + lensOptions + '</select></label><label>Title<input id="s-title" required maxlength="200" value="' + title + '"></label><label>Text<textarea id="s-text" rows="3">' + text + "</textarea></label>" + scaleField("effort", "Effort", ease, true) + scaleField("impact", "Impact", impact, true) + staffBits + '<div class="form-actions"><button class="btn" type="submit">Save</button><button class="btn ghost" type="button" data-act="cancel-new">Cancel</button></div></form>';
+  var current = editing ? editing.item : null;
+  var form = '<form class="form card idea-form" data-form="' + kind + '"' + idAttr + '><label>Issue<select id="s-issue" required>' + options + '</select></label><label>Lens<select id="s-lens" required>' + lensOptions + '</select></label><label>Title<input id="s-title" required maxlength="200" value="' + title + '"></label><label>Text<textarea id="s-text" rows="3">' + text + "</textarea></label>" + scaleField("effort", "Effort", ease, true) + evidenceBlock("ease", current) + scaleField("impact", "Impact", impact, true) + evidenceBlock("impact", current) + staffBits + '<div class="form-actions"><button class="btn" type="submit">Save</button><button class="btn ghost" type="button" data-act="cancel-new">Cancel</button></div></form>';
+  if (!(editing && room.staff)) return form;
+  return form + '<details class="danger-zone idea-delete"><summary>Delete this idea</summary><form class="form" data-form="remove-idea" data-id="' + esc(editing.item.id) + '" data-title="' + esc(editing.item.title || "") + '"><p class="muted">This removes the idea, its grants, and its sources. A published idea leaves the public feed.</p><label>Type the idea title to confirm<input data-confirm-title autocomplete="off" autocapitalize="off" spellcheck="false" maxlength="200"></label><button class="btn danger" type="submit" disabled>Delete</button></form></details>';
 }
 function researchHtml(text) {
   var parts = String(text).split(/(https:\/\/\S+)/i);
@@ -741,7 +757,7 @@ function issueImpact(issue) {
   return { ideas: ideas, polls: polls, opposition: opposition, grants: grants };
 }
 function attachedSentence(n) {
-  return "This issue still has " + countPhrase(n.ideas, "idea", "ideas") + ", " + countPhrase(n.polls, "poll", "polls") + ", " + countPhrase(n.opposition, "opposition item", "opposition items") + ", and " + countPhrase(n.grants, "grant", "grants") + ". Remove the ideas, polls, and opposition first.";
+  return "This issue still has " + countPhrase(n.ideas, "idea", "ideas") + ", " + countPhrase(n.polls, "poll", "polls") + ", " + countPhrase(n.opposition, "opposition item", "opposition items") + ", and " + countPhrase(n.grants, "grant", "grants") + ". Move or delete them first.";
 }
 function dangerZone(issue) {
   if (!room.person || room.person.role !== "admin") return "";
@@ -750,7 +766,7 @@ function dangerZone(issue) {
   if (n.ideas || n.polls || n.opposition) {
     return head + '<p class="muted">' + esc(attachedSentence(n)) + "</p></details>";
   }
-  return head + '<form class="form" data-form="remove-issue" data-id="' + esc(issue.id) + '" data-name="' + esc(issue.name) + '"><p class="muted">' + esc(countPhrase(n.grants, "grant", "grants") + " would be removed with this issue.") + '</p><label>Type the issue name to confirm<input data-confirm-name autocomplete="off" autocapitalize="off" spellcheck="false" maxlength="80"></label><button class="link-btn" type="submit" disabled>Delete this issue</button></form></details>';
+  return head + '<form class="form" data-form="remove-issue" data-id="' + esc(issue.id) + '" data-name="' + esc(issue.name) + '"><p class="muted">' + esc(countPhrase(n.grants, "grant", "grants") + " would be removed with this issue.") + '</p><label>Type the issue name to confirm<input data-confirm-name autocomplete="off" autocapitalize="off" spellcheck="false" maxlength="80"></label><button class="btn danger" type="submit" disabled>Delete this issue</button></form></details>';
 }
 function activeIssueFilter() {
   if (!ideaFilter) return "";
@@ -771,12 +787,37 @@ function effortWord(item) {
   if (item.scoreAxis === "how widely held") return tenWord(item.held);
   return tenWord(item.ease);
 }
+function scoreShown(item, axis) {
+  if (axis === "impact") return tenWord(item.impact);
+  return effortWord(item);
+}
+function whyNote(item, axis) {
+  var n = scoreShown(item, axis);
+  if (!n) return "";
+  var summary = axis === "ease" ? (item.easeEvidence || "") : (item.impactEvidence || "");
+  var sources = (axis === "ease" ? item.easeSources : item.impactSources) || [];
+  if (!summary && !sources.length) return '<p class="why-empty">No evidence yet</p>';
+  var body = summary ? "<p>" + esc(summary) + "</p>" : "";
+  if (sources.length) {
+    body += "<ul>" + sources.map(function (source) {
+      var url = source && source.url ? source.url : "";
+      if (!/^https:\/\//i.test(url)) return "";
+      return '<li><a href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">' + esc(source.label || url) + "</a></li>";
+    }).join("") + "</ul>";
+  }
+  return '<details class="why"><summary>Why ' + esc(n) + "?</summary>" + body + "</details>";
+}
+function scoreCell(item, axis) {
+  var word = scoreShown(item, axis);
+  if (!word) return "";
+  return '<div class="score-cell"><b>' + esc(word) + "</b>" + whyNote(item, axis) + "</div>";
+}
 function ideaGrid(items) {
   return dataGrid(["Idea", "Lens", "Effort", "Impact"], items.map(function (item) {
     var name = '<div class="idea-line"><span>' + esc(item.title || "") + "</span>";
     if (canEditIdeas()) name += '<button type="button" class="icon-btn" data-act="edit-idea" data-id="' + esc(item.id) + '" aria-label="Edit idea"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button>';
     name += "</div>";
-    return [name, esc(lensWord(item.lens)), esc(effortWord(item)), esc(tenWord(item.impact))];
+    return [name, esc(lensWord(item.lens)), scoreCell(item, "ease"), scoreCell(item, "impact")];
   }));
 }
 function ideaGroups() {
@@ -1281,6 +1322,10 @@ function ideaFields(form) {
   if (!title) return "Write the idea.";
   var axis = axisPayload();
   if (typeof axis === "string") return axis;
+  var easeEv = collectEvidence(form, "ease");
+  if (typeof easeEv === "string") return easeEv;
+  var impactEv = collectEvidence(form, "impact");
+  if (typeof impactEv === "string") return impactEv;
   return {
     issueId: issueId,
     title: title,
@@ -1289,7 +1334,26 @@ function ideaFields(form) {
     ease: axis.x,
     impact: axis.y,
     scoreScale: axis.scoreScale === "1-10" ? "1-10" : "",
+    easeEvidence: easeEv.summary,
+    easeSources: easeEv.sources,
+    impactEvidence: impactEv.summary,
+    impactSources: impactEv.sources,
   };
+}
+function collectEvidence(form, axis) {
+  var summaryEl = form.querySelector("[data-evidence-summary='" + axis + "']");
+  var summary = summaryEl ? summaryEl.value.trim() : "";
+  var labels = form.querySelectorAll("[data-source-label='" + axis + "']");
+  var urls = form.querySelectorAll("[data-source-url='" + axis + "']");
+  var sources = [];
+  for (var i = 0; i < urls.length; i++) {
+    var url = (urls[i].value || "").trim();
+    var label = labels[i] ? (labels[i].value || "").trim() : "";
+    if (!url && !label) continue;
+    if (!label || !/^https:\/\//i.test(url)) return "Each source needs a label and an https:// link.";
+    sources.push({ label: label, url: url });
+  }
+  return { summary: summary, sources: sources };
 }
 async function addStaffIdea(form) {
   var fields = ideaFields(form);
@@ -1309,6 +1373,10 @@ async function addStaffIdea(form) {
     impact: fields.impact,
     scoreScale: fields.scoreScale || undefined,
     sourceUrls: [],
+    easeEvidence: fields.easeEvidence,
+    easeSources: fields.easeSources,
+    impactEvidence: fields.impactEvidence,
+    impactSources: fields.impactSources,
     public: extra.public,
     orgIds: extra.orgIds,
   });
@@ -1381,6 +1449,10 @@ async function saveEditedIdea(form) {
     text: fields.text,
     ease: fields.ease,
     impact: fields.impact,
+    easeEvidence: fields.easeEvidence,
+    easeSources: fields.easeSources,
+    impactEvidence: fields.impactEvidence,
+    impactSources: fields.impactSources,
   };
   if (fields.scoreScale) payload.scoreScale = fields.scoreScale;
   var extra = ideaStaffExtras(form);
@@ -1407,6 +1479,10 @@ async function submitIdea(form) {
     ease: fields.ease,
     impact: fields.impact,
     scoreScale: fields.scoreScale || undefined,
+    easeEvidence: fields.easeEvidence,
+    easeSources: fields.easeSources,
+    impactEvidence: fields.impactEvidence,
+    impactSources: fields.impactSources,
   });
   if (!await takeRoom(data)) return;
   addingNew = false;
@@ -1414,11 +1490,13 @@ async function submitIdea(form) {
   ideaFilter = fields.issueId;
   render();
 }
-async function removeIdeaItem(id) {
-  var data = await api({ action: "removeItem", id: id });
+async function removeIdeaItem(id, confirmTitle) {
+  var data = await api({ action: "removeItem", id: id, confirmTitle: confirmTitle });
   if (!await takeRoom(data)) return;
   if (openItem === id) openItem = "";
   editingItem = "";
+  editingIdea = "";
+  addingNew = false;
   render();
 }
 async function removeIdeaIssue(id, confirmName) {
@@ -1478,6 +1556,27 @@ document.addEventListener("click", function (event) {
     render();
   }
   else if (act === "cancel-new") { addingNew = false; editingIdea = ""; render(); }
+  else if (act === "add-source") {
+    var axisName = target.getAttribute("data-axis");
+    var block = target.closest ? target.closest("[data-evidence]") : null;
+    if ((axisName !== "ease" && axisName !== "impact") || !block) return;
+    var row = document.createElement("div");
+    row.className = "source-row";
+    var labelInput = document.createElement("input");
+    labelInput.setAttribute("data-source-label", axisName);
+    labelInput.placeholder = "Label";
+    labelInput.maxLength = 120;
+    var urlInput = document.createElement("input");
+    urlInput.setAttribute("data-source-url", axisName);
+    urlInput.type = "url";
+    urlInput.setAttribute("inputmode", "url");
+    urlInput.placeholder = "https://";
+    urlInput.maxLength = 500;
+    row.appendChild(labelInput);
+    row.appendChild(urlInput);
+    target.before(row);
+    labelInput.focus();
+  }
   else if (act === "cancel-access") {
     var accessFormEl = target.closest("form");
     if (accessFormEl) accessFormEl.reset();
@@ -1563,7 +1662,6 @@ document.addEventListener("click", function (event) {
     var scoreForm = target.closest("form");
     if (scoreForm && scoreForm.getAttribute("data-form") === "scores") saveScores(scoreForm.getAttribute("data-id")).catch(fail);
   }
-  else if (act === "remove-item") removeIdeaItem(target.getAttribute("data-id")).catch(fail);
 });
 document.addEventListener("submit", function (event) {
   var form = event.target;
@@ -1586,12 +1684,22 @@ document.addEventListener("submit", function (event) {
     if (!typed || typed.value !== expected) return;
     removeIdeaIssue(form.getAttribute("data-id"), typed.value).catch(fail);
   }
+  else if (kind === "remove-idea") {
+    var titleTyped = form.querySelector("[data-confirm-title]");
+    var titleExpected = form.getAttribute("data-title") || "";
+    if (!titleTyped || titleTyped.value !== titleExpected) return;
+    removeIdeaItem(form.getAttribute("data-id"), titleTyped.value).catch(fail);
+  }
 });
 document.addEventListener("input", function (event) {
-  var form = event.target && event.target.closest ? event.target.closest("[data-form='remove-issue']") : null;
-  if (!form || !event.target.hasAttribute || !event.target.hasAttribute("data-confirm-name")) return;
+  var form = event.target && event.target.closest ? event.target.closest("[data-form='remove-issue'], [data-form='remove-idea']") : null;
+  if (!form || !event.target.hasAttribute) return;
+  var expected = "";
+  if (event.target.hasAttribute("data-confirm-name")) expected = form.getAttribute("data-name") || "";
+  else if (event.target.hasAttribute("data-confirm-title")) expected = form.getAttribute("data-title") || "";
+  else return;
   var button = form.querySelector("button");
-  if (button) button.disabled = event.target.value !== (form.getAttribute("data-name") || "");
+  if (button) button.disabled = event.target.value !== expected;
 });
 document.addEventListener("toggle", function (event) {
   var node = event.target;
@@ -1651,11 +1759,11 @@ function previewKind() {
   } catch (e) { return ""; }
 }
 function previewItem(id, title, type, status, lens, ease, impact) {
-  return { id: id, issueId: "issue-energy", type: type, status: status, lens: lens, title: title, body: "", ease: ease, impact: impact, evidence: "", empiricism: "", source: "staff", sourceUrls: [], own: false, publicState: "private", createdAt: "2026-03-01T12:00:00.000Z" };
+  return { id: id, issueId: "issue-energy", type: type, status: status, lens: lens, title: title, body: "", ease: ease, impact: impact, evidence: "", empiricism: "", easeEvidence: "", impactEvidence: "", easeSources: [], impactSources: [], source: "staff", sourceUrls: [], own: false, publicState: "private", createdAt: "2026-03-01T12:00:00.000Z" };
 }
 function previewRoom(kind) {
   var energy = [
-    Object.assign(previewItem("E1", "Time-of-use rates", "idea", "vetted", "practical", 74, 80), { publicState: "published", body: "Charge more when the grid is busy, and less when it is not.", evidence: "Several utilities already bill this way.", empiricism: "cited", stance: "Back", sourceUrls: [{ url: "https://example.test/time-of-use", label: "Utility tariff study" }], publicClearedBy: { id: "staff", name: "Staff One", email: "staff@example.test" }, publicClearedAt: "2026-03-02", publicClearNote: "Cleared for the public list." }),
+    Object.assign(previewItem("E1", "Time-of-use rates", "idea", "vetted", "practical", 74, 80), { publicState: "published", body: "Charge more when the grid is busy, and less when it is not.", evidence: "Several utilities already bill this way.", empiricism: "cited", stance: "Back", sourceUrls: [{ url: "https://example.test/time-of-use", label: "Utility tariff study" }], impactEvidence: "Busy hours cost more to serve.", impactSources: [{ label: "Tariff study", url: "https://example.test/time-of-use" }], publicClearedBy: { id: "staff", name: "Staff One", email: "staff@example.test" }, publicClearedAt: "2026-03-02", publicClearNote: "Cleared for the public list." }),
     previewItem("E2", "Block a new fuel tax", "opposition", "untested", "practical", 40, 70),
     previewItem("E3", "Who writes the grid rules", "idea", "untested", "structural", null, null),
     Object.assign(previewItem("E4", "How widely the cost is felt", "idea", "vetted", "cultural", null, 60), { publicState: "queued", held: 55, scoreAxis: "how widely held", stance: "Watch" }),
@@ -1796,6 +1904,10 @@ function previewPatchIdea(id, body) {
   found.body = body.text || "";
   found.ease = previewScaled(body, "ease");
   found.impact = previewScaled(body, "impact");
+  if (Object.prototype.hasOwnProperty.call(body, "easeEvidence")) found.easeEvidence = body.easeEvidence || "";
+  if (Object.prototype.hasOwnProperty.call(body, "impactEvidence")) found.impactEvidence = body.impactEvidence || "";
+  if (Array.isArray(body.easeSources)) found.easeSources = body.easeSources;
+  if (Array.isArray(body.impactSources)) found.impactSources = body.impactSources;
   found.issueId = dest.id;
   if (dest !== from) {
     from.items = (from.items || []).filter(function (item) { return item.id !== id; });
@@ -1873,6 +1985,10 @@ function previewMutate(body) {
               return { url: url, label: label };
             });
           }
+          if (Object.prototype.hasOwnProperty.call(body, "easeEvidence")) item.easeEvidence = body.easeEvidence || "";
+          if (Object.prototype.hasOwnProperty.call(body, "impactEvidence")) item.impactEvidence = body.impactEvidence || "";
+          if (Array.isArray(body.easeSources)) item.easeSources = body.easeSources;
+          if (Array.isArray(body.impactSources)) item.impactSources = body.impactSources;
           previewAudience(item, item.issueId, body);
         });
       });
@@ -1892,6 +2008,10 @@ function previewMutate(body) {
         stance: null,
         evidence: body.evidence || "",
         empiricism: body.empiricism || "",
+        easeEvidence: body.easeEvidence || "",
+        impactEvidence: body.impactEvidence || "",
+        easeSources: Array.isArray(body.easeSources) ? body.easeSources : [],
+        impactSources: Array.isArray(body.impactSources) ? body.impactSources : [],
         source: "staff",
         sourceUrls: [],
         publicState: "private",
@@ -1942,6 +2062,25 @@ function previewMutate(body) {
       drive: "",
       items: [],
     });
+    return room;
+  }
+  if (action === "removeItem") {
+    if (!room.staff) return { error: "Only Junto Nova staff can do that." };
+    var gone = null;
+    var holder = null;
+    (room.issues || []).forEach(function (issue) {
+      (issue.items || []).forEach(function (item) {
+        if (item.id === body.id) { gone = item; holder = issue; }
+      });
+    });
+    if (!gone || !holder) return { error: "That isn't available." };
+    if (body.confirmTitle !== gone.title) return { error: "Type the idea title exactly." };
+    holder.items = holder.items.filter(function (item) { return item.id !== gone.id; });
+    room.assignments = (room.assignments || []).map(function (row) {
+      if (row.issueId !== holder.id) return row;
+      return { orgId: row.orgId, issueId: row.issueId, itemIds: (row.itemIds || []).filter(function (id) { return id !== gone.id; }) };
+    }).filter(function (row) { return (row.itemIds || []).length; });
+    previewStore();
     return room;
   }
   if (action === "removeIssue") {

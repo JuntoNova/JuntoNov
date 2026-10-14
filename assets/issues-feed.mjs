@@ -61,11 +61,10 @@ export function areasFromFeed(rows) {
       .split("\n")
       .map((line) => line.trim())
       .filter(Boolean);
-    const sources = Array.isArray(row.sources)
-      ? row.sources
-          .filter((source) => source && typeof source.url === "string" && source.url.startsWith("https://"))
-          .map((source) => ({ t: String(source.label || source.url), u: source.url }))
-      : [];
+    const links = (list) => (Array.isArray(list) ? list : [])
+      .filter((source) => source && typeof source.url === "string" && source.url.startsWith("https://"))
+      .map((source) => ({ t: String(source.label || source.url), u: source.url }));
+    const sources = links(row.sources);
     area[lens].push({
       id: dotId(title, used.get(slug)),
       name: title,
@@ -75,6 +74,10 @@ export function areasFromFeed(rows) {
       why: String(row.text || ""),
       proof,
       sources,
+      easeEvidence: String(row.easeEvidence || ""),
+      impactEvidence: String(row.impactEvidence || ""),
+      easeSources: links(row.easeSources),
+      impactSources: links(row.impactSources),
       ev: String(row.empiricism || ""),
     });
   }

@@ -403,3 +403,19 @@ h1{font-size:1.7rem;margin:0 0 .5rem;overflow-wrap:anywhere}
 .idea-form .checks{grid-template-columns:1fr}
 .idea-form .form-actions{margin-top:.25rem}
 .idea-form .form-actions .btn{min-height:44px}
+.btn.danger{background:#9f1239;border-color:#9f1239;color:#fff}
+.btn.danger:disabled{opacity:.45;cursor:default}
+.idea-delete{margin-top:1.25rem;padding-top:1rem;border-top:1px solid var(--border)}
+.danger-zone .btn.danger,.idea-delete .btn.danger{width:100%;min-height:44px}
+.evidence-block{display:grid;gap:.45rem;margin:.35rem 0 .15rem}
+.evidence-block textarea{min-height:4.5rem}
+.source-row{display:grid;gap:.35rem}
+.evidence-block .link-btn{width:auto;justify-content:flex-start;margin:0;min-height:44px}
+.score-cell{display:grid;gap:.15rem}
+.why{margin:0}
+.why summary{display:flex;align-items:center;min-height:44px;cursor:pointer;font-size:.8rem;font-weight:600;color:var(--muted)}
+.why p,.why li{font-size:.85rem;line-height:1.45;color:var(--charcoal)}
+.why ul{margin:.15rem 0 0;padding-left:1.1rem}
+.why a{color:var(--ember)}
+.why-empty{margin:.15rem 0 0;font-size:.75rem;color:var(--muted)}
+

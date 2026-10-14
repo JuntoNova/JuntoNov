@@ -22,6 +22,10 @@ test("education practical comes from the feed and keeps only public fields", () 
       empiricism: "cited",
       sources: [{ label: "EdChoice survey", url: "https://www.edchoice.org/wp-content/uploads/2026/08/2026-SIA.pdf" }],
       evidence: "65% of school parents say they would enroll.\nEnrollment by state.",
+      easeEvidence: "States already run charter programs.",
+      easeSources: [{ label: "State list", url: "https://example.com/charters" }],
+      impactEvidence: "",
+      impactSources: [],
       id: "site-education-secret",
       notes: "Contoso Client private note",
       orgName: "Contoso Client",
@@ -52,6 +56,10 @@ test("education practical comes from the feed and keeps only public fields", () 
   assert.equal(practical[0].y, 70);
   assert.deepEqual(practical[0].proof, ["65% of school parents say they would enroll.", "Enrollment by state."]);
   assert.equal(practical[0].why, "The cited figure is stated intent only.");
+  assert.equal(practical[0].easeEvidence, "States already run charter programs.");
+  assert.deepEqual(practical[0].easeSources, [{ t: "State list", u: "https://example.com/charters" }]);
+  assert.equal(practical[0].impactEvidence, "");
+  assert.deepEqual(practical[0].impactSources, []);
   const cultural = data.areas[1].cultural[0];
   assert.equal(cultural.x, 33);
   assert.equal(cultural.ev, "none");
@@ -118,6 +126,22 @@ test("the issues page reads the live feed and does not embed a snapshot", () => 
   assert.match(portal, /data-form="remove-issue"/);
   assert.match(portal, /Type the issue name to confirm/);
   assert.match(portal, />Delete this issue</);
+  assert.match(portal, /Move or delete them first/);
+  assert.match(portal, /data-form="remove-idea"/);
+  assert.match(portal, />Delete this idea</);
+  assert.match(portal, /Type the idea title to confirm/);
+  assert.match(portal, /class="btn danger"/);
+  assert.match(portal, /confirmTitle/);
+  assert.match(portal, /evidenceBlock\("ease", current\)/);
+  assert.match(portal, /evidenceBlock\("impact", current\)/);
+  assert.match(portal, /data-evidence="' \+ axis \+ '"/);
+  assert.match(portal, /data-evidence-summary="' \+ axis \+ '"/);
+  assert.match(portal, /data-act="add-source"/);
+  assert.match(portal, /Why /);
+  assert.match(portal, /No evidence yet/);
+  assert.match(page, /function whyScore/);
+  assert.match(page, /No evidence yet/);
+  assert.equal(portal.includes('data-act="remove-item"'), false);
   assert.match(portal, /room\.person\.role !== "admin"/);
   assert.equal(portal.includes('data-act="remove-issue"'), false);
   assert.equal(portal.includes(">Remove issue<"), false);

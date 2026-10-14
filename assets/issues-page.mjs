@@ -238,6 +238,16 @@ if (document.fonts) {
 }
 let resizeTimer = 0;
 window.addEventListener("resize", () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(paintMatrix, 150); });
+function whyScore(score, summary, sources) {
+  const n = typeof score === "number" && score >= 10 && score <= 100 && score % 10 === 0 ? String(score / 10) : String(score);
+  const text = String(summary || "").trim();
+  const links = Array.isArray(sources) ? sources : [];
+  if (!text && !links.length) return '<p class="mt-1 text-xs" style="color:var(--muted)">No evidence yet</p>';
+  const list = links.length
+    ? '<ul class="mt-1 list-disc pl-5 text-sm leading-relaxed">' + links.map((source) => '<li><a href="' + esc(source.u) + '" target="_blank" rel="noopener" class="underline">' + esc(source.t) + "</a></li>").join("") + "</ul>"
+    : "";
+  return '<details class="mt-2"><summary class="text-xs" style="color:var(--muted);cursor:pointer">Why ' + esc(n) + "?</summary>" + (text ? '<p class="mt-1 text-sm leading-relaxed">' + esc(text) + "</p>" : "") + list + "</details>";
+}
 function paintDetail() {
   const area = areaBy(areaId);
   const item = items(area, lens).find((p) => p.id === selected);
@@ -257,6 +267,8 @@ function paintDetail() {
     (item.why ? '<p class="mt-3 text-sm leading-relaxed">' + esc(item.why) + "</p>" : "") +
     '<div class="mt-3 flex flex-wrap gap-2">' + stance + (none ? "" : chip(esc(quad))) + (loud && !none ? chip("Say it loudly", true) : "") + (item.shared ? chip("Shared with " + esc(item.shared)) : "") + "</div>" +
     '<div class="mt-2 flex flex-wrap gap-2">' + pos(cfg.yp, item.y) + pos(cfg.xp, item.x) + "</div>" +
+    whyScore(item.x, item.easeEvidence, item.easeSources) +
+    whyScore(item.y, item.impactEvidence, item.impactSources) +
     '<div class="mt-5">' + head("Proof points") + (item.proof.length ? '<ul class="mt-2 list-disc pl-5 text-sm leading-relaxed" style="color:var(--muted)">' + item.proof.map((x) => "<li>" + esc(x) + "</li>").join("") + "</ul>" : '<p class="mt-2 text-sm" style="color:var(--muted)">Not confirmed.</p>') +
     (item.sources.length ? '<p class="mt-2 text-xs leading-relaxed" style="color:var(--muted)">' + item.sources.map((x) => typeof x === "string" ? esc(x) : '<a href="' + esc(x.u) + '" target="_blank" rel="noopener" class="underline">' + esc(x.t) + "</a>").join(". ") + ".</p>" : "") +
     (item.need ? '<p class="mt-2 text-xs leading-relaxed" style="color:var(--muted)">Not confirmed: ' + esc(item.need) + "</p>" : "") + "</div>" +
