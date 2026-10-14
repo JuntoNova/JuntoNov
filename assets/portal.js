@@ -152,7 +152,7 @@ async function loadCurrent() {
 async function refresh() {
   await loadCurrent();
 }
-var NOT_LISTED = "This account doesn't have portal access. Ask your Junto Nova contact to add it.";
+var NOT_LISTED = "This account doesn't have portal access. Ask your Junto Nova contact to add this account.";
 var SIGNIN_FAILED = "Sign-in didn't work. Try again.";
 async function onGoogle(response) {
   error = "";
