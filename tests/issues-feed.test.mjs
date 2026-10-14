@@ -154,4 +154,11 @@ test("the issues page reads the live feed and does not embed a snapshot", () => 
   assert.match(portal, /loadDocuments/);
   assert.match(portal, /loadAdmin/);
   assert.match(portal, /You don\\'t have access to this page\./);
+  assert.equal(portal.includes("You can't " + "open"), false);
+  assert.match(portal, /function denySection\(\)/);
+  assert.match(portal, /if \(lastStatus === 403\) \{ denySection\(\); return; \}/);
+  assert.match(portal, /if \(lastStatus === 403\) \{ denySection\(\); render\(\); return; \}/);
+  assert.match(portal, /if \(lastStatus === 403\) \{ denySection\(\); render\(\); return false; \}/);
+  assert.match(portal, /if \(lastStatus === 403\) \{\n\s*token = "session";/);
+  assert.match(portal, /error: "You don't have access to this page\."/);
 });

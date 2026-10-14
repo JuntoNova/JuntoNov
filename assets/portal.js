@@ -130,13 +130,13 @@ function clearSectionData() {
   if (room.person && room.person.orgId && room.person.orgName) own[room.person.orgId] = room.person.orgName;
   room.orgs = own;
 }
+function denySection() {
+  denied = true;
+  error = "";
+  clearSectionData();
+}
 function applySection(data) {
-  if (lastStatus === 403 && data && data.error === "You can't open that.") {
-    denied = true;
-    error = "";
-    clearSectionData();
-    return;
-  }
+  if (lastStatus === 403) { denySection(); return; }
   if (!data || data.access === "none") { room = null; error = (data && data.email) || ""; return; }
   if (data.error) { error = data.error; return; }
   denied = false;
@@ -1104,6 +1104,7 @@ async function savePerson() {
 }
 async function resetTwoFactor(id, btn) {
   var data = await api({ action: "resetTwoFactor", id: id });
+  if (lastStatus === 403) { denySection(); render(); return; }
   if (data.error) { error = data.error; render(); return; }
   if (btn) { btn.textContent = "Reset"; btn.disabled = true; }
 }
@@ -1165,6 +1166,7 @@ async function saveDoc(section) {
   }
 }
 async function takeRoom(data) {
+  if (lastStatus === 403) { denySection(); render(); return false; }
   if (!data || data.error) { error = (data && data.error) || "Something went wrong. Try again."; render(); return false; }
   error = "";
   if (previewKind()) { room = data; previewCounts(); return true; }
@@ -2031,7 +2033,7 @@ function previewMutate(body) {
     return room;
   }
   if (action === "setSectionAccess") {
-    if (!room.staff && !(room.person && room.person.clientAdmin)) return { error: "You can't open that." };
+    if (!room.staff && !(room.person && room.person.clientAdmin)) return { error: "You don't have access to this page." };
     var edited = null;
     (room.directory || []).forEach(function (row) { if (row.id === body.id) edited = row; });
     if (!edited) return { error: "That isn't available." };
@@ -2218,7 +2220,7 @@ function boot() {
     .then(function (out) {
       if (lastStatus === 401 || out[0] == null) { render(); return; }
       if (lastStatus !== 200) {
-        if (lastStatus === 403 && out[0].error === "You can't open that.") {
+        if (lastStatus === 403) {
           token = "session";
           applySection(out[0]);
           render();
