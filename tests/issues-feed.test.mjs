@@ -91,6 +91,17 @@ test("the issues page reads the live feed and does not embed a snapshot", () => 
   assert.match(portal, /data-act="edit-idea"/);
   assert.match(portal, /method: "PATCH"/);
   assert.match(portal, /\/ideas\//);
+  assert.match(portal, /id="s-public"/);
+  assert.match(portal, />Public</);
+  assert.match(portal, />Clients</);
+  assert.match(portal, /data-org/);
+  assert.match(portal, /class="form-actions"><button class="btn" type="submit">Save<\/button><button class="btn ghost" type="button" data-act="cancel-new">Cancel<\/button>/);
+  assert.match(portal, /setSectionAccess/);
+  assert.match(portal, /Last edited by /);
+  assert.match(portal, /Every section/);
+  assert.match(portal, /<label>Role<select id="c-role">/);
+  assert.match(portal, /data-act="cancel-access"/);
+  assert.match(portal, /function canOpenTab/);
   assert.match(portal, />Save</);
   assert.match(portal, /data-act="cancel-new"/);
   assert.match(portal, />Manage issues</);

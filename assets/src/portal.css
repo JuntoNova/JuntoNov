@@ -394,3 +394,12 @@ h1{font-size:1.7rem;margin:0 0 .5rem;overflow-wrap:anywhere}
 .manage-note{margin:.25rem 0 .75rem}
 .manage-issues .danger-zone{margin-top:.5rem}
 .form .field .kicker{margin-bottom:0}
+.access-form{margin-top:.35rem}
+.access-edited{margin:.35rem 0 .5rem;font-size:.85rem}
+.access-form .form-actions{margin-top:.5rem}
+.access-form .form-actions .btn{min-height:44px}
+.idea-form label.switch{display:flex;align-items:center;width:100%;min-height:48px;padding:.2rem .75rem;border:1px solid var(--border);border-radius:.7rem;background:#fff;font-size:1rem;font-weight:600;color:var(--charcoal)}
+.idea-form .clients{margin-top:0}
+.idea-form .checks{grid-template-columns:1fr}
+.idea-form .form-actions{margin-top:.25rem}
+.idea-form .form-actions .btn{min-height:44px}

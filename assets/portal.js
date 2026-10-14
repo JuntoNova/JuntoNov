@@ -327,16 +327,23 @@ function signInGoogle() {
 function docs(section) {
   return (room.documents || []).filter(function (doc) { return doc.section === section; });
 }
-function layer(person) {
-  var names = { director: "Director", board: "Board", member: "Member", jn: "Junto Nova", admin: "Junto Nova" };
-  var base = names[person.role] || person.role;
-  return person.billing && person.role !== "jn" && person.role !== "admin" ? base + " · Billing" : base;
-}
 function isAdmin() { return Boolean(room && room.person && room.person.role === "admin"); }
+var SECTION_TABS = ["ideas", "proposals", "research", "billing"];
+function canOpenTab(id) {
+  if (id === "home") return true;
+  if (!room || !room.person) return false;
+  if (room.staff) return true;
+  var granted = room.person.sections;
+  if (!granted) {
+    if (id === "admin") return false;
+    if (id === "billing") return Boolean(room.person.billing);
+    return id === "ideas" || id === "proposals" || id === "research";
+  }
+  if (id === "admin") return Boolean(room.person.clientAdmin);
+  return granted.indexOf(id) !== -1;
+}
 function sections() {
-  var ids = ["home", "ideas", "proposals", "research", "billing"];
-  if (room && room.staff) ids.push("admin");
-  return ids;
+  return ["home", "ideas", "proposals", "research", "billing", "admin"].filter(canOpenTab);
 }
 function sectionLabel(id) { return id[0].toUpperCase() + id.slice(1); }
 function nav() {
@@ -597,7 +604,22 @@ function ideaForm() {
   var impact = editing ? editing.item.impact : null;
   var kind = editing ? "edit-idea" : (room.staff ? "add-idea" : "submit-idea");
   var idAttr = editing ? ' data-id="' + esc(editing.item.id) + '"' : "";
-  return '<form class="form card idea-form" data-form="' + kind + '"' + idAttr + '><label>Issue<select id="s-issue" required>' + options + '</select></label><label>Lens<select id="s-lens" required>' + lensOptions + '</select></label><label>Title<input id="s-title" required maxlength="200" value="' + title + '"></label><label>Text<textarea id="s-text" rows="3">' + text + "</textarea></label>" + scaleField("effort", "Effort", ease, true) + scaleField("impact", "Impact", impact, true) + '<div class="form-actions"><button class="btn" type="submit">Save</button><button class="btn ghost" type="button" data-act="cancel-new">Cancel</button></div></form>';
+  var staffBits = "";
+  if (room.staff) {
+    var isPublic = editing && (editing.item.publicState === "published" || editing.item.publicState === "queued");
+    var selected = {};
+    if (editing) {
+      (room.assignments || []).forEach(function (row) {
+        if ((row.itemIds || []).indexOf(editing.item.id) !== -1) selected[row.orgId] = true;
+      });
+    }
+    var boxes = Object.keys(room.orgs || {}).map(function (orgId) {
+      return '<label class="check tap"><input type="checkbox" data-org="' + esc(orgId) + '"' + (selected[orgId] ? " checked" : "") + "><span>" + esc(room.orgs[orgId]) + "</span></label>";
+    }).join("");
+    var clients = boxes ? '<div class="clients"><div class="kicker">Clients</div><div class="checks">' + boxes + "</div></div>" : "";
+    staffBits = '<label class="switch"><input type="checkbox" id="s-public"' + (isPublic ? " checked" : "") + "><span>Public</span></label>" + clients;
+  }
+  return '<form class="form card idea-form" data-form="' + kind + '"' + idAttr + '><label>Issue<select id="s-issue" required>' + options + '</select></label><label>Lens<select id="s-lens" required>' + lensOptions + '</select></label><label>Title<input id="s-title" required maxlength="200" value="' + title + '"></label><label>Text<textarea id="s-text" rows="3">' + text + "</textarea></label>" + scaleField("effort", "Effort", ease, true) + scaleField("impact", "Impact", impact, true) + staffBits + '<div class="form-actions"><button class="btn" type="submit">Save</button><button class="btn ghost" type="button" data-act="cancel-new">Cancel</button></div></form>';
 }
 function researchHtml(text) {
   var parts = String(text).split(/(https:\/\/\S+)/i);
@@ -875,15 +897,8 @@ function safeB64(s) { return String(s || "").replace(/[^A-Za-z0-9+\/=]/g, ""); }
 function sectionClosed() {
   if (!room || !room.person) return denied;
   if (denied) return true;
-  if (view === "admin" && !room.staff) return true;
-  if (view === "billing" && !(room.person.billing || room.staff)) return true;
-  return false;
-}
-function countWord(key) {
-  var counts = room.counts || {};
-  if (key === "billing" && counts.billing == null) return "None";
-  var n = counts[key];
-  return n == null ? 0 : n;
+  if (view === "home") return false;
+  return !canOpenTab(view);
 }
 function page() {
   if (!token && emailStep) {
@@ -906,12 +921,7 @@ function page() {
   if (sectionClosed()) {
     main = '<h1 class="display">You can\'t open that.</h1>';
   } else if (view === "home") {
-    main = '<div class="kicker">Workspace</div><h1 class="display">' + esc(org) + '</h1><div class="grid">' +
-      card("Ideas", countWord("ideas"), "ideas") +
-      card("Proposals", countWord("proposals"), "proposals") +
-      card("Research", countWord("research"), "research") +
-      card("Billing", countWord("billing"), "billing") +
-      (room.staff ? card("Admin", countWord("admin"), "admin") : "") + "</div>";
+    main = '<div class="kicker">Workspace</div><h1 class="display">' + esc(org) + '</h1><div class="grid">' + homeCards() + "</div>";
   } else if (view === "ideas") {
     main = ideasPage();
   } else if (view === "admin") {
@@ -933,22 +943,50 @@ function page() {
 function card(label, n, id) {
   return '<a class="card home-card" href="' + pathFor(id) + '" data-act="view" data-view="' + id + '"><div class="muted">' + label + '</div><div class="stat">' + esc(n) + '</div><span class="btn ghost">Open</span></a>';
 }
+function homeCards() {
+  return ["ideas", "proposals", "research", "billing", "admin"].filter(canOpenTab).map(function (id) {
+    var n = (room.counts || {})[id];
+    return card(sectionLabel(id), n == null ? "0" : String(n), id);
+  }).join("");
+}
 function personForm() {
   // Only an admin can grant staff (the Worker enforces it; the page just doesn't offer it).
   var admin = isAdmin();
-  return '<form class="form" data-form="person"><div class="row2"><label>Name<input id="c-name" required></label><label>Email<input id="c-email" type="email" required></label></div><label>Access<select id="c-role"><option value="director">Director</option><option value="board">Board</option><option value="member">Member</option>' + (admin ? '<option value="jn">Junto Nova staff</option>' : "") + '</select></label><label>Organization<select id="c-org">' + orgOptions(false) + '</select></label><label>New organization name<input id="c-org-name" placeholder="Only if you chose New organization"></label><label class="check"><input id="c-bill" type="checkbox"> Billing</label><button class="btn" type="submit">Give access</button></form>';
+  return '<form class="form" data-form="person"><div class="row2"><label>Name<input id="c-name" required></label><label>Email<input id="c-email" type="email" required></label></div><label>Role<select id="c-role"><option value="director">Director</option><option value="board">Board</option><option value="member">Member</option>' + (admin ? '<option value="jn">Junto Nova staff</option>' : "") + '</select></label><label>Organization<select id="c-org">' + orgOptions(false) + '</select></label><label>New organization name<input id="c-org-name" placeholder="Only if you chose New organization"></label><label class="check"><input id="c-bill" type="checkbox"> Billing</label><button class="btn" type="submit">Give access</button></form>';
+}
+function accessEditedLine(person) {
+  if (!person.accessEditedBy || !person.accessEditedAt) return "";
+  return '<p class="access-edited">Last edited by ' + esc(person.accessEditedBy) + ", " + esc(dateWord(person.accessEditedAt)) + "</p>";
+}
+function grantedSections(person) {
+  if (person.sections) return person.sections;
+  var granted = ["ideas", "proposals", "research"];
+  if (person.billing) granted.push("billing");
+  return granted;
+}
+function accessForm(person) {
+  var boxes = [["ideas", "Ideas"], ["proposals", "Proposals"], ["research", "Research"], ["billing", "Billing"]].map(function (pair) {
+    var on = grantedSections(person).indexOf(pair[0]) !== -1;
+    return '<label class="check tap"><input type="checkbox" value="' + pair[0] + '"' + (on ? " checked" : "") + "><span>" + pair[1] + "</span></label>";
+  }).join("");
+  return '<form class="form access-form" data-form="section-access" data-id="' + esc(person.id) + '"><div class="checks">' + boxes + "</div>" + accessEditedLine(person) + '<div class="form-actions"><button class="btn" type="submit">Save</button><button class="btn ghost" type="button" data-act="cancel-access">Cancel</button></div></form>';
 }
 function admin() {
-  if (!room.staff) return '<h1 class="display">You can\'t open that.</h1>';
+  if (!canOpenTab("admin")) return '<h1 class="display">You can\'t open that.</h1>';
   var adminRole = isAdmin();
   var headers = ["Name", "Organization", "Access", "Added"];
   var rows = (room.directory || []).map(function (person) {
     var staffRow = person.role === "jn" || person.role === "admin";
-    var action = staffRow && !adminRole ? "" : '<button type="button" class="btn ghost" data-act="remove-person" data-id="' + esc(person.id) + '">Remove</button>' + (emailEnabled ? ' <button type="button" class="btn ghost" data-act="reset-2fa" data-id="' + esc(person.id) + '">Reset app</button>' : "");
+    var action = "";
+    if (room.staff && !(staffRow && !adminRole)) {
+      action = '<button type="button" class="btn ghost" data-act="remove-person" data-id="' + esc(person.id) + '">Remove</button>' + (emailEnabled ? ' <button type="button" class="btn ghost" data-act="reset-2fa" data-id="' + esc(person.id) + '">Reset app</button>' : "");
+    }
     var name = esc(person.name) + '<div class="file-meta">' + esc(person.email) + "</div>" + action;
-    return [name, esc(person.orgId ? (room.orgs || {})[person.orgId] : "None"), esc(layer(person)), esc(dateWord(person.createdAt))];
+    var access = staffRow ? "<p>Every section</p>" : accessForm(person);
+    return [name, esc(person.orgId ? (room.orgs || {})[person.orgId] : "None"), access, esc(dateWord(person.createdAt))];
   });
-  return '<div class="kicker">Junto Nova</div><h1 class="display">Admin</h1>' + addNewButton() + (addingNew ? personForm() : "") + dataGrid(headers, rows);
+  var give = room.staff ? addNewButton() + (addingNew ? personForm() : "") : "";
+  return '<div class="kicker">Junto Nova</div><h1 class="display">Admin</h1>' + give + dataGrid(headers, rows);
 }
 /* Editors (inline rename and the full edit form) keep what was typed. Any re-render while one is
    open carries the typed values over, and nothing else closes an editor that has unsaved text.
@@ -999,6 +1037,15 @@ function render() {
   paintIssueGrid();
   if (!token) initGoogle();
   else syncOrgWrap();
+}
+async function saveSectionAccess(form) {
+  var sections = [];
+  form.querySelectorAll("input[type=checkbox]").forEach(function (box) {
+    if (box.checked && SECTION_TABS.indexOf(box.value) !== -1) sections.push(box.value);
+  });
+  var data = await api({ action: "setSectionAccess", id: form.getAttribute("data-id"), sections: sections });
+  if (!await takeRoom(data)) return;
+  render();
 }
 async function savePerson() {
   var data = await api({
@@ -1218,6 +1265,15 @@ function grantIds(orgId, issueId) {
   });
   return ids;
 }
+function ideaStaffExtras(form) {
+  var pub = form.querySelector("#s-public");
+  if (!pub) return null;
+  var orgIds = [];
+  form.querySelectorAll("input[data-org]").forEach(function (box) {
+    if (box.checked) orgIds.push(box.getAttribute("data-org"));
+  });
+  return { public: pub.checked, orgIds: orgIds };
+}
 function ideaFields(form) {
   var issueId = field("s-issue");
   if (!issueId) return "Choose an issue.";
@@ -1238,11 +1294,12 @@ function ideaFields(form) {
 async function addStaffIdea(form) {
   var fields = ideaFields(form);
   if (typeof fields === "string") { formAlert(form, fields); return; }
+  var extra = ideaStaffExtras(form) || { public: false, orgIds: [] };
   var data = await api({
     action: "saveItem",
     issueId: fields.issueId,
     type: "idea",
-    status: "untested",
+    status: extra.public ? "vetted" : "untested",
     lens: fields.lens,
     title: fields.title,
     text: fields.text,
@@ -1252,6 +1309,8 @@ async function addStaffIdea(form) {
     impact: fields.impact,
     scoreScale: fields.scoreScale || undefined,
     sourceUrls: [],
+    public: extra.public,
+    orgIds: extra.orgIds,
   });
   if (!await takeRoom(data)) return;
   addingItem = false;
@@ -1315,11 +1374,6 @@ async function saveEditedIdea(form) {
   var id = (form && form.getAttribute("data-id")) || editingIdea;
   var fields = ideaFields(form);
   if (typeof fields === "string") { formAlert(form, fields); return; }
-  var prev = findIdea(id);
-  if (prev && prev.item.publicState === "published" && (fields.title !== (prev.item.title || "") || fields.text !== (prev.item.body || ""))) {
-    var queued = await api({ action: "setItemPublic", id: id, on: true });
-    if (!await takeRoom(queued)) return;
-  }
   var payload = {
     issueId: fields.issueId,
     lens: fields.lens,
@@ -1329,6 +1383,11 @@ async function saveEditedIdea(form) {
     impact: fields.impact,
   };
   if (fields.scoreScale) payload.scoreScale = fields.scoreScale;
+  var extra = ideaStaffExtras(form);
+  if (extra) {
+    payload.public = extra.public;
+    payload.orgIds = extra.orgIds;
+  }
   var data = await patchIdea(id, payload);
   if (!await takeRoom(data)) return;
   addingNew = false;
@@ -1419,6 +1478,10 @@ document.addEventListener("click", function (event) {
     render();
   }
   else if (act === "cancel-new") { addingNew = false; editingIdea = ""; render(); }
+  else if (act === "cancel-access") {
+    var accessFormEl = target.closest("form");
+    if (accessFormEl) accessFormEl.reset();
+  }
   else if (act === "edit-idea") {
     if (!canEditIdeas()) return;
     editingIdea = target.getAttribute("data-id") || "";
@@ -1509,6 +1572,7 @@ document.addEventListener("submit", function (event) {
   event.preventDefault();
   if (kind === "email-start" || kind === "email-code" || kind === "totp-enroll" || kind === "totp") { emailFlow(kind, form); return; }
   if (kind === "person") savePerson().catch(fail);
+  else if (kind === "section-access") saveSectionAccess(form).catch(fail);
   else if (kind === "doc") saveDoc(form.getAttribute("data-section")).catch(fail);
   else if (kind === "issue") saveIssueName().catch(fail);
   else if (kind === "item") saveItemForm(form).catch(fail);
@@ -1606,14 +1670,25 @@ function previewRoom(kind) {
   ];
   housing.forEach(function (item) { if (!item.createdAt) item.createdAt = "2026-03-01T12:00:00.000Z"; });
   var staff = kind === "staff";
+  var member = kind === "member";
   var issues = staff
     ? [{ id: "issue-energy", slug: "energy", name: "Energy", notes: "", drive: "", items: energy }, { id: "issue-housing", slug: "housing", name: "Housing", notes: "", drive: "", items: housing }]
     : [{ id: "issue-energy", slug: "energy", name: "Energy", items: energy.slice(0, 2).map(function (item) { return Object.assign({}, item, { own: false }); }) }];
+  var clientSections = member ? ["ideas"] : ["ideas", "proposals", "research"];
+  var directory = [
+    { id: "ada", name: "Ada Client", email: "ada@example.test", role: "director", billing: false, orgId: "orgA", createdAt: "2026-01-15T12:00:00.000Z", sections: ["ideas", "proposals", "research"], accessEditedBy: "Staff One", accessEditedAt: "2026-03-02T12:00:00.000Z" },
+    { id: "member-two", name: "Member Two", email: "member@example.test", role: "member", billing: true, orgId: "orgA", createdAt: "2026-02-01T12:00:00.000Z", sections: ["ideas", "billing"], accessEditedBy: null, accessEditedAt: null },
+  ];
+  if (staff) directory.push({ id: "staff", name: "Staff One", email: "staff@example.test", role: "admin", billing: false, orgId: null, createdAt: "2026-01-01T12:00:00.000Z", sections: ["ideas", "proposals", "research", "billing"], accessEditedBy: null, accessEditedAt: null });
   return {
     access: "ok",
-    email: staff ? "staff@example.test" : "ada@example.test",
+    email: staff ? "staff@example.test" : member ? "member@example.test" : "ada@example.test",
     staff: staff,
-    person: { id: staff ? "staff" : "ada", name: staff ? "Staff One" : "Ada Client", email: staff ? "staff@example.test" : "ada@example.test", role: staff ? "admin" : "director", billing: false, orgId: staff ? null : "orgA", orgName: staff ? "" : "Example Org A" },
+    person: staff
+      ? { id: "staff", name: "Staff One", email: "staff@example.test", role: "admin", billing: false, clientAdmin: false, sections: ["ideas", "proposals", "research", "billing"], orgId: null, orgName: "" }
+      : member
+        ? { id: "member-two", name: "Member Two", email: "member@example.test", role: "member", billing: true, clientAdmin: false, sections: ["ideas"], orgId: "orgA", orgName: "Example Org A" }
+        : { id: "ada", name: "Ada Client", email: "ada@example.test", role: "director", billing: false, clientAdmin: true, sections: clientSections, orgId: "orgA", orgName: "Example Org A" },
     orgs: staff ? { orgA: "Example Org A", orgB: "Contoso" } : { orgA: "Example Org A" },
     disclosures: { orgA: { setting: "no", label: "No", changedAt: null } },
     documents: [
@@ -1622,7 +1697,7 @@ function previewRoom(kind) {
     ].concat(staff ? [{ id: "doc-billing", section: "billing", title: "March invoice", visibility: "billing", orgId: "orgA", createdAt: "2026-03-04T12:00:00.000Z", body: "Invoice.", hasFile: false }] : []),
     issues: issues,
     assignments: staff ? [{ orgId: "orgA", issueId: "issue-energy", itemIds: ["E1", "E2"] }] : undefined,
-    directory: staff ? [{ id: "ada", name: "Ada Client", email: "ada@example.test", role: "director", billing: false, orgId: "orgA", createdAt: "2026-01-15T12:00:00.000Z" }] : undefined,
+    directory: staff || !member ? directory.filter(function (person) { return staff || person.orgId === "orgA"; }) : undefined,
   };
 }
 function previewExtra() {
@@ -1652,12 +1727,12 @@ function previewCounts() {
     return (room.documents || []).filter(function (doc) { return doc.section === section; }).length;
   };
   room.counts = {
-    ideas: ideas,
-    proposals: n("proposals"),
-    research: n("research"),
-    billing: room.person.billing || room.staff ? n("billing") : null,
+    ideas: canOpenTab("ideas") ? ideas : null,
+    proposals: canOpenTab("proposals") ? n("proposals") : null,
+    research: canOpenTab("research") ? n("research") : null,
+    billing: canOpenTab("billing") ? n("billing") : null,
   };
-  if (room.staff) room.counts.admin = (room.directory || []).length;
+  if (canOpenTab("admin")) room.counts.admin = (room.directory || []).length;
 }
 function previewApply(kind) {
   var extra = previewExtra();
@@ -1727,8 +1802,34 @@ function previewPatchIdea(id, body) {
     dest.items = dest.items || [];
     dest.items.push(found);
   }
+  previewAudience(found, dest.id, body);
   previewStore();
   return room;
+}
+function previewAudience(item, issueId, body) {
+  if (!body) return;
+  if (Object.prototype.hasOwnProperty.call(body, "public")) {
+    if (body.public) {
+      if (item.publicState !== "published") item.publicState = "queued";
+    } else item.publicState = "private";
+  }
+  if (!Array.isArray(body.orgIds)) return;
+  var wanted = {};
+  body.orgIds.forEach(function (orgId) { wanted[orgId] = true; });
+  var next = [];
+  var seen = {};
+  (room.assignments || []).forEach(function (row) {
+    var ids = (row.itemIds || []).filter(function (id) { return id !== item.id; });
+    if (row.issueId === issueId && wanted[row.orgId]) {
+      ids.push(item.id);
+      seen[row.orgId] = true;
+    }
+    if (ids.length) next.push({ orgId: row.orgId, issueId: row.issueId, itemIds: ids });
+  });
+  Object.keys(wanted).forEach(function (orgId) {
+    if (!seen[orgId]) next.push({ orgId: orgId, issueId: issueId, itemIds: [item.id] });
+  });
+  room.assignments = next;
 }
 function previewMutate(body) {
   var action = body && body.action;
@@ -1772,6 +1873,7 @@ function previewMutate(body) {
               return { url: url, label: label };
             });
           }
+          previewAudience(item, item.issueId, body);
         });
       });
     } else {
@@ -1803,6 +1905,25 @@ function previewMutate(body) {
       (room.issues || []).forEach(function (issue) {
         if (issue.id === body.issueId) issue.items.push(created);
       });
+      previewAudience(created, body.issueId, body);
+    }
+    previewStore();
+    return room;
+  }
+  if (action === "setSectionAccess") {
+    if (!room.staff && !(room.person && room.person.clientAdmin)) return { error: "You can't open that." };
+    var edited = null;
+    (room.directory || []).forEach(function (row) { if (row.id === body.id) edited = row; });
+    if (!edited) return { error: "That isn't available." };
+    if (edited.role === "jn" || edited.role === "admin") return { error: "Staff already have every section." };
+    var allowed = { ideas: true, proposals: true, research: true, billing: true };
+    edited.sections = (body.sections || []).filter(function (id) { return allowed[id]; });
+    edited.billing = edited.sections.indexOf("billing") !== -1;
+    edited.accessEditedBy = room.person.name;
+    edited.accessEditedAt = "2026-10-14T12:00:00.000Z";
+    if (room.person.id === edited.id) {
+      room.person.sections = edited.sections.slice();
+      room.person.billing = edited.billing;
     }
     previewStore();
     return room;
@@ -1934,7 +2055,7 @@ function boot() {
     try { history.replaceState({ view: "home" }, "", "/portal" + location.search); } catch (e) {}
   }
   var preview = previewKind();
-  if (preview === "staff" || preview === "client") {
+  if (preview === "staff" || preview === "client" || preview === "member") {
     token = "preview";
     room = previewRoom(preview);
     previewApply(preview);
