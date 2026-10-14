@@ -126,7 +126,7 @@ test("the issues page reads the live feed and does not embed a snapshot", () => 
   assert.match(portal, /data-form="remove-issue"/);
   assert.match(portal, /Type the issue name to confirm/);
   assert.match(portal, />Delete this issue</);
-  assert.match(portal, /Move or delete them first/);
+  assert.match(portal, /Move or delete these first/);
   assert.match(portal, /data-form="remove-idea"/);
   assert.match(portal, />Delete this idea</);
   assert.match(portal, /Type the idea title to confirm/);
@@ -153,5 +153,5 @@ test("the issues page reads the live feed and does not embed a snapshot", () => 
   assert.match(portal, /loadIdeas/);
   assert.match(portal, /loadDocuments/);
   assert.match(portal, /loadAdmin/);
-  assert.match(portal, /You can\\'t open that\./);
+  assert.match(portal, /You don\\'t have access to this page\./);
 });
