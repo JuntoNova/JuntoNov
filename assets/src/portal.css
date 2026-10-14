@@ -403,10 +403,9 @@ h1{font-size:1.7rem;margin:0 0 .5rem;overflow-wrap:anywhere}
 .idea-form .checks{grid-template-columns:1fr}
 .idea-form .form-actions{margin-top:.25rem}
 .idea-form .form-actions .btn{min-height:44px}
-.btn.danger{background:#9f1239;border-color:#9f1239;color:#fff}
+.btn.danger{background:transparent;border-color:#9f1239;color:#9f1239;width:auto;justify-self:start}
 .btn.danger:disabled{opacity:.45;cursor:default}
 .idea-delete{margin-top:1.25rem;padding-top:1rem;border-top:1px solid var(--border)}
-.danger-zone .btn.danger,.idea-delete .btn.danger{width:100%;min-height:44px}
 .evidence-block{display:grid;gap:.45rem;margin:.35rem 0 .15rem}
 .evidence-block textarea{min-height:4.5rem}
 .source-row{display:grid;gap:.35rem}
