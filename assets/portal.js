@@ -563,6 +563,22 @@ function scaleField(group, label, stored, plain) {
   var caption = plain ? '<span class="field-label">' + esc(label) + "</span>" : '<span class="kicker">' + esc(label) + "</span>";
   return '<div class="field">' + caption + '<div class="scale" role="group" aria-label="' + esc(label) + '" data-scale-group="' + esc(group) + '" data-stored="' + esc(storedAttr) + '">' + buttons + "</div>" + note + "</div>";
 }
+/* A link only for staff, and only when the url is https. Everyone else gets the label as text.
+   Non-staff room data is labels only, so a url here is not shown. */
+function sourceHtml(source) {
+  var label = "";
+  var url = "";
+  if (typeof source === "string") url = source;
+  else if (source) {
+    label = source.label || "";
+    url = source.url || "";
+  }
+  if (room.staff && typeof url === "string" && url.indexOf("https://") === 0) {
+    return '<a href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">' + esc(label || url) + "</a>";
+  }
+  var text = room.staff ? (label || url) : label;
+  return text ? esc(text) : "";
+}
 function evidenceBlock(axis, item) {
   var summary = "";
   var sources = [];
@@ -570,8 +586,16 @@ function evidenceBlock(axis, item) {
     summary = axis === "ease" ? (item.easeEvidence || "") : (item.impactEvidence || "");
     sources = (axis === "ease" ? item.easeSources : item.impactSources) || [];
   }
+  var rows;
+  if (!room.staff && item) {
+    rows = sources.map(function (source) {
+      var html = sourceHtml(source);
+      return html ? '<div class="source-row">' + html + "</div>" : "";
+    }).join("");
+    return '<div class="evidence-block" data-evidence="' + axis + '"><label>Basis<textarea data-evidence-summary="' + axis + '" rows="2" maxlength="500" placeholder="Short basis for this score">' + esc(summary) + "</textarea></label>" + rows + "</div>";
+  }
   if (!sources.length) sources = [{ label: "", url: "" }];
-  var rows = sources.map(function (source) {
+  rows = sources.map(function (source) {
     return '<div class="source-row"><input data-source-label="' + axis + '" placeholder="Label" maxlength="120" value="' + esc(source.label || "") + '"><input data-source-url="' + axis + '" type="url" inputmode="url" placeholder="https://" maxlength="500" value="' + esc(source.url || "") + '"></div>';
   }).join("");
   return '<div class="evidence-block" data-evidence="' + axis + '"><label>Basis<textarea data-evidence-summary="' + axis + '" rows="2" maxlength="500" placeholder="Short basis for this score">' + esc(summary) + "</textarea></label>" + rows + '<button type="button" class="link-btn" data-act="add-source" data-axis="' + axis + '">Add a source</button></div>';
@@ -653,10 +677,8 @@ function researchList(item) {
     if (text) rows.push(researchHtml(text));
   });
   (item.sourceUrls || []).forEach(function (source) {
-    var url = source && source.url ? source.url : "";
-    if (!/^https:\/\/\S+$/i.test(url)) return;
-    var label = source.label || url;
-    rows.push('<a href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">' + esc(label) + "</a>");
+    var html = sourceHtml(source);
+    if (html) rows.push(html);
   });
   if (!rows.length) return "";
   return '<div class="research"><div class="kicker">Research</div><ul>' + rows.map(function (row) {
@@ -796,15 +818,13 @@ function whyNote(item, axis) {
   if (!n) return "";
   var summary = axis === "ease" ? (item.easeEvidence || "") : (item.impactEvidence || "");
   var sources = (axis === "ease" ? item.easeSources : item.impactSources) || [];
-  if (!summary && !sources.length) return '<p class="why-empty">No evidence yet</p>';
+  var items = sources.map(function (source) {
+    var html = sourceHtml(source);
+    return html ? "<li>" + html + "</li>" : "";
+  }).join("");
+  if (!summary && !items) return '<p class="why-empty">No evidence yet</p>';
   var body = summary ? "<p>" + esc(summary) + "</p>" : "";
-  if (sources.length) {
-    body += "<ul>" + sources.map(function (source) {
-      var url = source && source.url ? source.url : "";
-      if (!/^https:\/\//i.test(url)) return "";
-      return '<li><a href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">' + esc(source.label || url) + "</a></li>";
-    }).join("") + "</ul>";
-  }
+  if (items) body += "<ul>" + items + "</ul>";
   return '<details class="why"><summary>Why ' + esc(n) + "?</summary>" + body + "</details>";
 }
 function scoreCell(item, axis) {
@@ -1452,10 +1472,13 @@ async function saveEditedIdea(form) {
     ease: fields.ease,
     impact: fields.impact,
     easeEvidence: fields.easeEvidence,
-    easeSources: fields.easeSources,
     impactEvidence: fields.impactEvidence,
-    impactSources: fields.impactSources,
   };
+  /* Non-staff edits see labels only. Sending easeSources or impactSources would replace the stored links. */
+  if (room.staff) {
+    payload.easeSources = fields.easeSources;
+    payload.impactSources = fields.impactSources;
+  }
   if (fields.scoreScale) payload.scoreScale = fields.scoreScale;
   var extra = ideaStaffExtras(form);
   if (extra) {
