@@ -11,3 +11,6 @@
 /organization.html /organization 301
 /govern.html /govern 301
 /costs/social-security.html /costs/social-security 301
+# Proxy section URLs onto /portal. A rewrite to portal.html is then redirected
+# back to /portal by the default html_handling, which drops the section path.
+/portal/* /portal 200
