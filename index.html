@@ -3,26 +3,39 @@
 <head>
 <meta charset="UTF-8">
 <style>.jn-skip{position:absolute;left:-9999px;top:0;z-index:1000;background:#1A1A1A;color:#fff;padding:.75rem 1rem;border-radius:.5rem;font:500 .875rem/1 Inter,system-ui,sans-serif;text-decoration:none}
-.jn-skip:focus{left:.75rem;top:.75rem;outline:2px solid #C45C26;outline-offset:2px}</style>
+.jn-skip:focus{left:.75rem;top:.75rem;outline:2px solid #C45C26;outline-offset:2px}.trend-box{position:relative;height:240px;min-height:240px}@media(min-width:768px){.trend-box{height:360px}}
+.trend-key{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:12px;font-size:13px;color:var(--muted)}.trend-key span{display:inline-flex;align-items:center;gap:6px}.trend-key i{display:inline-block;width:18px;height:0;border-top:3px solid var(--charcoal)}.trend-key .k-flat{border-top:2px dashed #B4AEA4}.trend-key .k-plan{border-top-color:#C45C26}
+</style>
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>:focus-visible{outline:2px solid #1A1A1A;outline-offset:2px}
 html input::placeholder,html textarea::placeholder{color:#64748B;opacity:1}</style>
 <title>Junto Nova - A stake in the dream</title>
-<link rel="icon" href="/favicon.ico" sizes="any">
-<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
-<link rel="apple-touch-icon" href="/apple-touch-icon.png">
-<link rel="manifest" href="/site.webmanifest">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
 <meta name="theme-color" content="#1A1A1A">
-<meta name="description" content="Junto Nova makes it possible for every American family to buy and own a genuine stake in the dream by driving down the costs of housing, transportation, education, energy, healthcare, and taxes.">
-<script src="https://cdn.tailwindcss.com"></script>
+<meta name="description" content="Junto Nova makes buying and owning a genuine stake in the dream possible for every American family by driving down the costs of housing, transportation, education, energy, healthcare, and taxes.">
+<script src="https://cdn.tailwindcss.com/3.4.17"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@500;600;700&display=swap');
 :root{--charcoal:#1A1A1A;--ember:#C45C26;--muted:#64748B;--border:#E2E8F0;--surface:#F8FAFC}
 body{font-family:Inter,system-ui,sans-serif;color:var(--charcoal);background:#fff}
 .display{font-family:'Playfair Display',Georgia,serif;font-weight:700;letter-spacing:-0.02em}
+.mf-pills{display:inline-flex;gap:4px;padding:4px;border:1px solid var(--border);border-radius:9999px;background:var(--surface);margin-bottom:2rem;max-width:100%}
+.mf-pill{border:0;background:transparent;padding:.6rem 1.1rem;border-radius:9999px;font:500 .9rem/1.2 Inter,system-ui,sans-serif;color:var(--muted);cursor:pointer;white-space:nowrap}
+.mf-pill.on{background:var(--charcoal);color:#fff}
+@media (max-width:420px){.mf-pill{padding:.55rem .8rem;font-size:.82rem}}
+.own-tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.75rem}.pay-tiles{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:.6rem}.pay-tile{padding:.7rem .85rem}.pay-tile .own-k{font-size:.7rem;line-height:1.25}.pay-tile .own-v{font-size:1.05rem}.pay-tile .own-s{font-size:.72rem}
+@media (max-width:640px){.own-tiles{grid-template-columns:1fr}.pay-tiles{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.own-tile{text-align:left;border:1px solid var(--border);border-radius:1rem;padding:1rem 1.1rem;background:#fff;cursor:pointer;display:flex;flex-direction:column;gap:.2rem}
+.own-tile:hover{border-color:#cbd5e1}.own-tile.on{border-color:var(--charcoal);box-shadow:inset 0 0 0 1px var(--charcoal)}
+.own-k{font-size:.8rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.own-v{font-family:'Playfair Display',Georgia,serif;font-weight:700;font-size:1.6rem;color:var(--charcoal)}
+.own-s{font-size:.8rem;color:var(--muted)}
 .tab-content{display:none}.tab-content.active{display:block}
 #mobile-menu{display:none}#mobile-menu.open{display:block}
 .btn-primary{background:var(--charcoal);color:#fff;border:1px solid var(--charcoal)}.btn-primary:hover{background:#000}
@@ -30,9 +43,6 @@ body{font-family:Inter,system-ui,sans-serif;color:var(--charcoal);background:#ff
 .btn-outline{background:transparent;color:var(--charcoal);border:1px solid var(--border)}.btn-outline:hover{background:var(--surface)}
 .service-card{border:1px solid var(--border);border-radius:1rem;padding:1.75rem 1.5rem;background:#fff}a.service-card{cursor:pointer}a.service-card:hover{border-color:#cbd5e1}
 .service-num{font-family:'Playfair Display',Georgia,serif;font-weight:700;font-size:1.35rem;letter-spacing:.04em;color:var(--ember);margin-bottom:.6rem}
-.debt-card{background:var(--charcoal);color:#fff;border-radius:1.25rem;padding:2.75rem 2.25rem;max-width:32rem;position:relative;overflow:hidden}
-.debt-card::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 20% 0%,rgba(196,92,38,.18),transparent 55%);pointer-events:none}
-.debt-card>*{position:relative}
 .faq-item{border-bottom:1px solid var(--border)}.faq-item:first-child{border-top:1px solid var(--border)}
 .faq-q{width:100%;display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:1.25rem 0;text-align:left;background:none;border:none;cursor:pointer;font-family:'Playfair Display',Georgia,serif;font-weight:600;font-size:1.05rem;color:var(--charcoal)}
 .faq-q:hover{color:var(--ember)}
@@ -52,7 +62,7 @@ body{font-family:Inter,system-ui,sans-serif;color:var(--charcoal);background:#ff
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Junto Nova">
 <meta property="og:title" content="Junto Nova - A stake in the dream">
-<meta property="og:description" content="Junto Nova makes it possible for every American family to buy and own a genuine stake in the dream by driving down the costs of housing, transportation, education, energy, healthcare, and taxes.">
+<meta property="og:description" content="Junto Nova makes buying and owning a genuine stake in the dream possible for every American family by driving down the costs of housing, transportation, education, energy, healthcare, and taxes.">
 <meta property="og:url" content="https://juntonova.com/">
 <meta property="og:image" content="https://juntonova.com/og-default.png">
 <meta property="og:image:width" content="1200">
@@ -60,29 +70,28 @@ body{font-family:Inter,system-ui,sans-serif;color:var(--charcoal);background:#ff
 <meta property="og:image:alt" content="Junto Nova. A stake in the dream.">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Junto Nova - A stake in the dream">
-<meta name="twitter:description" content="Junto Nova makes it possible for every American family to buy and own a genuine stake in the dream by driving down the costs of housing, transportation, education, energy, healthcare, and taxes.">
+<meta name="twitter:description" content="Junto Nova makes buying and owning a genuine stake in the dream possible for every American family by driving down the costs of housing, transportation, education, energy, healthcare, and taxes.">
 <meta name="twitter:image" content="https://juntonova.com/og-default.png">
-<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://juntonova.com/#organization","name":"Junto Nova","legalName":"Junto Nova LLC","url":"https://juntonova.com/","logo":"https://juntonova.com/icon-512.png","description":"Junto Nova makes it possible for every American family to buy and own a genuine stake in the dream by driving down the costs of housing, transportation, education, energy, healthcare, and taxes.","foundingDate":"2026","address":{"@type":"PostalAddress","addressLocality":"Dallas","addressRegion":"TX"},"sameAs":["https://www.linkedin.com/company/juntonova/","https://x.com/JuntoNov"]},{"@type":"WebSite","@id":"https://juntonova.com/#website","name":"Junto Nova","url":"https://juntonova.com/","publisher":{"@id":"https://juntonova.com/#organization"}}]}</script>
-<link rel="stylesheet" href="/jn-polish.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://juntonova.com/#organization","name":"Junto Nova","legalName":"Junto Nova LLC","url":"https://juntonova.com/","logo":"https://juntonova.com/icon-512.png","description":"Junto Nova makes buying and owning a genuine stake in the dream possible for every American family by driving down the costs of housing, transportation, education, energy, healthcare, and taxes.","foundingDate":"2026","address":{"@type":"PostalAddress","addressLocality":"Dallas","addressRegion":"TX"},"sameAs":["https://www.linkedin.com/company/juntonova/","https://x.com/JuntoNov"]},{"@type":"WebSite","@id":"https://juntonova.com/#website","name":"Junto Nova","url":"https://juntonova.com/","publisher":{"@id":"https://juntonova.com/#organization"}}]}</script>
+<link rel="stylesheet" href="jn-polish.css?v=20261117b">
 </head>
 <body>
 <a class="jn-skip" href="#main">Skip to main content</a>
 <header class="jn-header">
 <div class="jn-header__in">
-<a class="jn-brand" href="/"><img src="https://juntonova.com/jn-header.png" alt="Junto Nova" width="40" height="46"><span>JUNTO NOVA</span></a>
+<a class="jn-brand" href="#about"><img src="jn-header.png" alt="Junto Nova" width="40" height="46"><span>JUNTO NOVA</span></a>
 <button type="button" id="jn-menu-btn" class="jn-menu-btn" aria-expanded="false" aria-controls="jn-menu" aria-label="Open menu">
 <svg class="jn-bars" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
 <svg class="jn-x" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
 </button>
 </div>
 <nav id="jn-menu" class="jn-menu" aria-label="Primary" hidden>
-<a href="/#about">About Us</a>
-<a href="/#costs">Cost Drivers</a>
-<a href="/#share">Your Share</a>
-<a href="/issues">Issues</a>
+<a href="#about">About Us</a>
+<a href="#costs">The Bottom Line</a>
+<a href="issues.html">Issues</a>
 <a href="/ventures">Ventures</a>
-<a href="/portal">Client login</a>
-<a href="/project">Let's work together</a>
+<a href="https://juntonova.com/portal">Client login</a>
+<a href="project.html">Let's work together</a>
 </nav>
 </header>
 <script>
@@ -112,87 +121,136 @@ mark();window.addEventListener('hashchange',mark);
 <h1 class="display text-4xl md:text-5xl tracking-tight leading-tight mb-6" style="color:var(--charcoal)">The American Dream works best when every citizen owns a real stake in the country's future.</h1>
 <div class="text-lg leading-relaxed space-y-5" style="color:var(--muted)">
 <p>When household costs stay too high, ownership slips out of reach. People stop building and start renting just to survive. And when Americans cannot own their future, they begin to lose their connection to America, to its key institutions, and ultimately to themselves.</p>
-<p>Junto Nova reveals what keeps those costs high and does the work that lowers prices. You can hire Junto Nova and keep your work proprietary. If you let the key insights and lessons be publicly released, no one else will need to pay to learn the same lessons later.</p>
-<p>Publicly available research and insights make the whole market smarter and more cost-effective, and raise the odds of a future every American can own.</p>
+<p>The way back is more money in a family's pocket: lower bills, bigger paychecks, and savings that grow. If a policy doesn't help the family budget, it doesn't count.</p>
+<p>Some rules raise your bills and shrink your paycheck. We show you how much, then work to change them so families keep more and own more.</p>
 </div></div></section>
 <section class="max-w-5xl mx-auto px-6 pt-10 pb-4"><div class="jn-tabs flex flex-wrap items-center gap-3">
 <button id="btn-about" onclick="showTab('about')" class="nav-btn px-5 py-2.5 rounded-xl text-sm font-medium transition btn-primary">About Us</button>
-<button id="btn-costs" onclick="showTab('costs')" class="nav-btn px-5 py-2.5 rounded-xl text-sm font-medium transition btn-outline">Cost Drivers</button>
-<button id="btn-share" onclick="showTab('share')" class="nav-btn px-5 py-2.5 rounded-xl text-sm font-medium transition btn-outline">Your Share</button>
+<button id="btn-costs" onclick="showTab('costs')" class="nav-btn px-5 py-2.5 rounded-xl text-sm font-medium transition btn-outline">The Bottom Line</button>
 </div></section>
-<section id="content-share" class="tab-content max-w-5xl mx-auto px-6 py-12">
-<div class="mb-10 max-w-2xl"><h2 class="display text-3xl mb-4" style="color:var(--charcoal)">Your share of America</h2>
-<div class="space-y-4 leading-relaxed" style="color:var(--muted)">
-<p>We live in the richest country in history, at the best time in the world's history. Yet the average American household's share of just the federal debt is nearly negative $300,000. And a record 55% of Americans say their financial situation is getting worse.</p>
-<p>People can feel that pocketbook pain. It shows up as less ownership, less confidence, and less trust in the institutions that are supposed to make a stake possible.</p>
-</div></div>
-<div class="mb-10"><div class="debt-card"><div class="display text-5xl sm:text-6xl md:text-7xl tracking-tight leading-none" style="color:var(--ember)">-$297,000</div></div></div>
-<div class="text-xs space-y-1.5" style="color:var(--muted)">
-<div>Sources (last updated October 1, 2026):</div>
-<div>• <a href="https://fiscaldata.treasury.gov/datasets/debt-to-the-penny/debt-to-the-penny" target="_blank" rel="noopener" class="underline hover:opacity-80">U.S. Treasury Debt to the Penny</a> (total public debt outstanding)</div>
-<div>• Household figure derived from total debt ÷ number of U.S. households (Census / JEC estimates). Exact daily values move.</div>
-<div>• <a href="https://news.gallup.com/poll/708905/affordability-dominates-americans-financial-worries.aspx" target="_blank" rel="noopener" class="underline hover:opacity-80">Gallup</a>, April 2026: record 55% say their financial situation is getting worse (highest since tracking began in 2001).</div>
-</div>
-<div class="mt-10 flex flex-wrap gap-3">
-<a href="project.html" class="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl font-medium btn-primary">Let's fix this together</a>
-<a href="issues.html" class="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl font-medium btn-outline">Learn more</a>
-</div>
-</section>
 <section id="content-costs" class="tab-content max-w-5xl mx-auto px-6 py-12">
-<div class="mb-10 max-w-2xl">
-<h2 class="display text-3xl mb-4" style="color:var(--charcoal)">Cost drivers</h2>
-<div class="space-y-4 leading-relaxed" style="color:var(--muted)">
-<p>Americans feel the impact of costs in daily life: rent, a mortgage, utilities, the doctor's bill, tuition, the tank of gas, the grocery run.</p>
-<p>For Americans to feel the practical benefits of a future they can own, our work starts where they feel the most pain. We identify the biggest cost drivers American households face, then drive the changes that actually lower them.</p>
+<div class="mf-pills" role="tablist" aria-label="Choose a view">
+<button type="button" role="tab" id="pill-pay" class="mf-pill on" aria-selected="true" onclick="showMoney('pay')">What you pay</button>
+<button type="button" role="tab" id="pill-own" class="mf-pill" aria-selected="false" onclick="showMoney('own')">What you earn and own</button>
 </div>
+
+<div id="money-pay">
+<div class="mb-10 max-w-2xl">
+<h2 class="display text-3xl mb-4" style="color:var(--charcoal)">The Bottom Line</h2>
+<div class="space-y-4 leading-relaxed" style="color:var(--muted)">
+<p>Bills too high. Paychecks too small. We go after the rules behind both.</p>
+</div>
+</div>
+<div class="pay-tiles mb-8" role="list">
+<button type="button" class="own-tile pay-tile on" data-cat="Housing" onclick="selectCategory(this.dataset.cat)" role="listitem"><span class="own-k">Housing</span><span class="own-v">$27,225</span><span class="own-s">20.9% of 2025 outflows</span></button>
+<button type="button" class="own-tile pay-tile" data-cat="Personal taxes" onclick="selectCategory(this.dataset.cat)" role="listitem"><span class="own-k">Personal taxes</span><span class="own-v">$22,244<span style="font-family:Inter,system-ui,sans-serif;font-size:.6em;font-weight:400;color:var(--muted);margin-left:.25em">est.</span></span><span class="own-s">17.0% of 2025 outflows</span></button>
+<button type="button" class="own-tile pay-tile" data-cat="Transportation" onclick="selectCategory(this.dataset.cat)" role="listitem"><span class="own-k">Transportation</span><span class="own-v">$18,641</span><span class="own-s">14.3% of 2025 outflows</span></button>
+<button type="button" class="own-tile pay-tile" data-cat="Social Security and retirement" onclick="selectCategory(this.dataset.cat)" role="listitem"><span class="own-k">Social Security and retirement</span><span class="own-v">$15,491</span><span class="own-s">11.9% of 2025 outflows</span></button>
+<button type="button" class="own-tile pay-tile" data-cat="Food" onclick="selectCategory(this.dataset.cat)" role="listitem"><span class="own-k">Food</span><span class="own-v">$15,051</span><span class="own-s">11.5% of 2025 outflows</span></button>
+<button type="button" class="own-tile pay-tile" data-cat="Healthcare" onclick="selectCategory(this.dataset.cat)" role="listitem"><span class="own-k">Healthcare</span><span class="own-v">$7,284</span><span class="own-s">5.6% of 2025 outflows</span></button>
+<button type="button" class="own-tile pay-tile" data-cat="Utilities" onclick="selectCategory(this.dataset.cat)" role="listitem"><span class="own-k">Utilities</span><span class="own-v">$6,262</span><span class="own-s">4.8% of 2025 outflows</span></button>
+<button type="button" class="own-tile pay-tile" data-cat="Childcare and education" onclick="selectCategory(this.dataset.cat)" role="listitem"><span class="own-k">Childcare and education</span><span class="own-v">$4,607</span><span class="own-s">3.5% of 2025 outflows</span></button>
+<button type="button" class="own-tile pay-tile" data-cat="Other" onclick="selectCategory(this.dataset.cat)" role="listitem"><span class="own-k">Other</span><span class="own-v">$13,672</span><span class="own-s">10.5% of 2025 outflows, including entertainment</span></button>
+</div>
+<div class="border rounded-2xl p-6 mb-8" style="border-color:var(--border);background:var(--surface)">
+<div class="mb-4">
+<div class="font-medium" style="color:var(--charcoal)" id="trendTitle">Housing average annual spending, 2010 to 2050</div>
+<div class="text-sm" style="color:var(--muted)" id="trendSubtitle">Constant 2025 dollars, CPI-U</div>
+</div>
+<div class="trend-box"><canvas id="lineChart"></canvas></div>
+<div class="trend-key" aria-hidden="true"><span><i class="k-act"></i>Actual</span><span><i class="k-flat"></i>If nothing changes</span><span><i class="k-plan"></i>Our plan</span></div>
+<p class="text-xs mt-3" style="color:var(--muted)" id="trendNote">If nothing changes: the 2004 to 2024 pace of housing spending, 0.7% a year after inflation ($23,511 to $27,211); rents rose about 1% a year faster than prices.</p>
+</div>
+<div class="grid gap-8 mb-4 max-w-xl mx-auto">
+<div class="border rounded-2xl p-6" style="border-color:var(--border);background:var(--surface)">
+<div class="flex justify-between items-center mb-1 gap-3">
+<div class="font-medium" style="color:var(--charcoal)">Family of four outflows, 2025</div>
+<div class="text-xs text-right" style="color:var(--muted)">About $130,000 a year, including personal taxes</div>
+</div>
+<p class="pie-hint mb-3">Tap a slice to see that cost over time above</p>
+<canvas id="pieToday" height="240"></canvas>
+</div>
+</div>
+<div id="slice-door" class="text-center mt-6" style="display:none">
+<a href="/costs/social-security" class="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl font-medium btn-primary">See what drives this cost</a>
+</div>
+<div class="text-xs mt-8 space-y-1.5" style="color:var(--muted)">
+<div>Sources (last updated November 17, 2026):</div>
+<div>• <a href="https://www.bls.gov/cex/" target="_blank" rel="noopener" class="underline hover:opacity-80">BLS Consumer Expenditure Survey</a>, 2025, four-person consumer units. Average annual expenditures $108,233 plus personal taxes of $22,244. BLS stopped publishing personal taxes after 2023, when the tax model behind them was not updated for 2024, so 2025 personal taxes are the 2023 share of income before taxes (13.5%) times 2025 income of $164,387. Child care (the BLS personal services line, $1,742 in 2025) counts in Childcare and education, not Housing. Payroll tax is inside Social Security and retirement. Property tax is inside Housing. BLS missed October and November 2025 interviews during the federal shutdown and weighted the rest of the year to cover them. Earlier years are converted to 2025 dollars with the CPI-U annual average.</div>
+<div>• If nothing changes uses official outlooks where they exist (EIA Annual Energy Outlook and Short Term Energy Outlook 2026 for utilities, CMS health spending projections 2025 to 2034, the 2026 Social Security Trustees Report) and the 2004 to 2024 pace of spending otherwise. Our plan for utilities uses the savings from the utility ideas on our grid. What a family earns and pays sets the income line next to all of these costs. In the projections, child care is held at its 2025 level and moved from Housing to Childcare and education.</div>
+</div>
+</div>
+
+<div id="money-own" hidden>
+<div class="mb-10 max-w-2xl">
+<h2 class="display text-3xl mb-4" style="color:var(--charcoal)">Earning and owning</h2>
+<div class="space-y-4 leading-relaxed" style="color:var(--muted)">
+<p>Families get ahead two ways: paying less, and earning and owning more. Here is where the typical family stands on earning and owning.</p>
+<p>On these charts, up is the goal.</p>
+</div>
+</div>
+<div class="own-tiles mb-8" role="list">
+<button type="button" class="own-tile on" data-key="wages" onclick="selectOwn('wages')" role="listitem"><span class="own-k">Wages</span><span class="own-v">$156,978</span><span class="own-s">pay from jobs and family businesses, part of $164,000 income, family of four, 2025</span></button>
+<button type="button" class="own-tile" data-key="ownincome" onclick="selectOwn('ownincome')" role="listitem"><span class="own-k">Income from what you own</span><span class="own-v">$1,595</span><span class="own-s">interest, dividends and rent, part of $164,000 income, family of four, 2025</span></button>
+<button type="button" class="own-tile" data-key="networth" onclick="selectOwn('networth')" role="listitem"><span class="own-k">Owning something</span><span class="own-v">$215,900</span><span class="own-s">typical family's net worth, 2025</span></button>
+</div>
+<div class="border rounded-2xl p-6 mb-8" style="border-color:var(--border);background:var(--surface)">
+<div class="mb-4">
+<div class="font-medium" style="color:var(--charcoal)" id="ownTitle">Wages, family of four, 1984 to 2050</div>
+<div class="text-sm" style="color:var(--muted)" id="ownSubtitle">Constant 2025 dollars, CPI-U</div>
+</div>
+<div class="trend-box"><canvas id="ownLine"></canvas></div>
+<div class="trend-key" aria-hidden="true"><span><i class="k-act"></i>Actual</span><span><i class="k-flat"></i>If nothing changes</span><span><i class="k-plan"></i>Our plan</span></div>
+<p class="text-xs mt-3" style="color:var(--muted)" id="ownNote">If nothing changes: the pace since 1984, about $1,800 more a year after inflation (a 1.2% a year trend line). Our plan: the pace of 2014 to 2024, 2.7% a year.</p>
 </div>
 <div class="grid md:grid-cols-2 gap-8 mb-4">
 <div class="border rounded-2xl p-6" style="border-color:var(--border);background:var(--surface)">
-<div class="flex justify-between items-center mb-1">
-<div class="font-medium" style="color:var(--charcoal)">Family of four outflows, 2023</div>
-<div class="text-xs" style="color:var(--muted)">About $126,000 / year, including personal taxes</div>
+<div class="flex justify-between items-center mb-1 gap-3">
+<div class="font-medium" style="color:var(--charcoal)">Family of four income, 2025</div>
+<div class="text-xs text-right" style="color:var(--muted)">About $164,000 a year, before taxes</div>
 </div>
-<p class="pie-hint mb-3">Click a slice to project that cost through 2050</p>
-<canvas id="pieToday" height="240"></canvas>
+<p class="pie-hint mb-3">Almost all of a family's income is a paycheck. Owning barely pays yet.</p>
+<canvas id="pieIncome" height="240"></canvas>
 </div>
 <div class="border rounded-2xl p-6" style="border-color:var(--border);background:var(--surface)">
-<div class="flex justify-between items-center mb-1">
-<div class="font-medium" style="color:var(--charcoal)">Projected household share, 2050</div>
-<div class="text-xs" style="color:var(--ember)">Illustrative sketch</div>
+<div class="flex justify-between items-center mb-1 gap-3">
+<div class="font-medium" style="color:var(--charcoal)">Share of families that own</div>
+<div class="text-xs" style="color:var(--muted)">2025</div>
 </div>
-<canvas id="pie2050" height="240"></canvas>
-</div>
-</div>
-<div class="border rounded-2xl p-6 mb-10" style="border-color:var(--border);background:var(--surface)">
-<div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-4">
-<div>
-<div class="font-medium" style="color:var(--charcoal)" id="trendTitle">Housing average annual spending, 2010–2050</div>
-<div class="text-sm" style="color:var(--muted)" id="trendSubtitle">Constant 2023 dollars, CPI-U</div>
+<p class="pie-hint mb-3">About two in three own their home. Each bar shows what the typical owner holds: home and business equity after debt, stocks in any account.</p>
+<canvas id="ownBars" height="240"></canvas>
 </div>
 </div>
-<canvas id="lineChart" height="120"></canvas>
-<p class="text-xs mt-3" style="color:var(--muted)" id="trendNote">likely path vs goal of lower household costs. 2023 dollars. Not CEX. Not a forecast. High is not “what we want.”</p>
+<div class="border rounded-2xl p-6 mb-4" style="border-color:var(--border);background:var(--surface)">
+<div class="flex justify-between items-center mb-1 gap-3">
+<div class="font-medium" style="color:var(--charcoal)">What a family of four earns and pays</div>
+<div class="text-xs text-right" style="color:var(--muted)">All $164,000 of income before taxes, next to every bill and tax</div>
 </div>
-<div id="slice-door" class="text-center mt-6" style="display:none">
-<a href="/costs/social-security.html" class="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl font-medium btn-primary">Open the diagnosis</a>
+<p class="pie-hint mb-3" id="keptHint">A year, in 2025 dollars</p>
+<canvas id="keptBars" height="260"></canvas>
+<div class="mt-3 space-y-1 text-sm leading-relaxed" id="keptWords" style="color:var(--charcoal)"></div>
 </div>
 <div class="text-xs mt-8 space-y-1.5" style="color:var(--muted)">
-<div>Sources (last updated October 1, 2026):</div>
-<div>• <a href="https://www.bls.gov/cex/" target="_blank" rel="noopener" class="underline hover:opacity-80">BLS Consumer Expenditure Survey</a>, 2023, four-person consumer units. Average annual expenditures $105,683 plus personal taxes $19,846 (federal, state, and local income taxes, plus other personal taxes). Payroll is already inside Social Security and retirement. Life insurance is inside Other. Property tax is already inside housing. Utilities, including water and phone, are their own slice.</div>
-<div>• Illustrative current path if household outflows fill Social Security insolvency and the tax share keeps rising. Mix shift, not 2023 inflated. Not CEX. Not a forecast. Not current-law SSA (that path cuts benefits after 2034).</div>
+<div>Sources (last updated November 17, 2026):</div>
+<div>• <a href="https://www.bls.gov/cex/" target="_blank" rel="noopener" class="underline hover:opacity-80">BLS Consumer Expenditure Survey</a>, four-person consumer units, 1984 to 2025: income before taxes, wages and salaries, and self-employment income, as published on FRED through 2024 and by BLS for 2025. Wages here include self-employment income, since most families feel self-employment income as pay. Income from what you own is the survey's interest, dividends, rental and other property income ($1,595 in 2025). Benefits and pensions is the rest: Social Security, pensions, public assistance and other income ($5,814), averaged over every four-person household. 2016 runs high in wages and falls back in 2017; 2016 is shown as published.</div>
+<div>• <a href="https://www.federalreserve.gov/econres/scfindex.htm" target="_blank" rel="noopener" class="underline hover:opacity-80">Federal Reserve Survey of Consumer Finances</a>, all families: median net worth for every survey from 1989 to 2025 (published in 2025 dollars), and the shares that own a home (65.6%), stocks directly, in a fund or in a retirement account (56%) and a business (15.4%) in 2025, and what the typical owner holds (the median, in 2025 dollars): home equity of $230,000 after the mortgage, stocks of $77,400 and business equity of $75,400 after debt. Net worth includes home equity and retirement accounts.</div>
+<div>• Every amount is in 2025 dollars using the CPI-U annual average. If nothing changes continues each line's long run trend after inflation: wages 1.2% a year from 1984 to 2025, income from what you own 0.5% a year from 1984 to 2025, net worth 1.2% a year from 1989 to 2025. Our plan uses the fastest recent stretch in the same data: wages 2.7% a year (2014 to 2024, the best ten years), income from what you own 5.5% a year (2012 to 2022), net worth 5.7% a year (2016 to 2025). What a family earns and pays sets all income before taxes ($164,000 in 2025: wages, income from what you own, and benefits and pensions) next to every cost on The Bottom Line. Benefits and pensions stay at the 2025 level, $5,814, on both 2050 lines.</div>
 </div>
-<div class="mt-10 flex flex-wrap gap-3">
-<a href="project.html" class="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl font-medium btn-primary">Let's fix this together</a>
-<a href="issues.html" class="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl font-medium btn-outline">Learn more</a>
+</div>
+
+<h2 class="display text-3xl mt-10 mb-4" style="color:var(--charcoal);font-weight:500">Lower bills.<br class="sm:hidden"> Bigger paychecks.<br class="sm:hidden"> More of what you own.</h2>
+<div class="flex flex-wrap gap-3">
+<a href="project.html" class="inline-flex w-full sm:w-auto justify-center items-center gap-2 px-7 py-3.5 rounded-xl font-medium btn-primary">Let's fix this together</a>
+<a href="issues.html" class="inline-flex w-full sm:w-auto justify-center items-center gap-2 px-7 py-3.5 rounded-xl font-medium btn-outline">Explore the issues</a>
 </div>
 </section>
 <section id="content-about" class="tab-content active max-w-5xl mx-auto px-6 py-12">
 <div class="max-w-2xl"><h2 class="display text-3xl mb-8" style="color:var(--charcoal)">About us</h2>
 <div class="faq-item"><button type="button" class="faq-q" onclick="toggleFaq(this)"><span>What's the weird name all about?</span><span class="faq-icon">+</span></button>
 <div class="faq-a">
-<p class="mb-3">In 1727, a young Benjamin Franklin gathered about a dozen tradesmen and artisans in Philadelphia into a club for mutual improvement. They called it the <strong style="color:var(--charcoal)">Junto</strong>. It was also known as the Leather Apron Club, a name for people who worked with their hands. Its members were mostly tradesmen and artisans: printers, surveyors, a joiner, clerks. More than a debating society. A working group that asked hard questions, shared knowledge, and then built things.</p>
+<p class="mb-3">In 1727, a young Benjamin Franklin gathered about a dozen tradesmen and artisans in Philadelphia into a club for mutual improvement. They called it the <strong style="color:var(--charcoal)">Junto</strong>, also known as the Leather Apron Club, a name for people who worked with their hands. Its members were mostly tradesmen and artisans: printers, surveyors, a joiner, clerks. More than a debating society. A working group that asked hard questions, shared knowledge, and then built things.</p>
 <p class="mb-3">Out of that circle came America's first successful lending library, a volunteer fire company, and an academy that became the University of Pennsylvania. Franklin went on to help found a hospital with Dr. Thomas Bond and a fire insurance company with his fellow volunteer firefighters. They did not wait for permission. They put on the apron and got to work.</p>
-<p class="mb-3">That is exactly the kind of American effort we still need. Not just thinkers. People willing to dig into the barriers that keep costs high, build the organizations and deals that lower those costs, and stay long enough for the proof to stick.</p>
+<p class="mb-3">That is exactly the kind of American effort we still need. Not just thinkers. People willing to dig into the rules that keep bills high and paychecks small, build the organizations and deals that fix both, and stay long enough for the proof to stick.</p>
 <p><strong style="color:var(--charcoal)">Nova</strong> is Latin for new. <strong style="color:var(--charcoal)">Junto Nova</strong> is a new Junto: practical people, focused on ownership and lower costs, ready to put on the leather apron.</p>
 </div></div>
 <div class="faq-item"><button type="button" class="faq-q" onclick="toggleFaq(this)"><span>Who do you work with?</span><span class="faq-icon">+</span></button>
@@ -206,9 +264,9 @@ mark();window.addEventListener('hashchange',mark);
 <div class="faq-item"><button type="button" class="faq-q" onclick="toggleFaq(this)"><span>Why should I hire you?</span><span class="faq-icon">+</span></button>
 <div class="faq-a">
 <ul class="clean-list">
-<li><strong>Think Differently</strong><span>We think in non-consensus terms.</span></li>
-<li><strong>Work Differently</strong><span>We operate wildly differently.</span></li>
-<li><strong>Proven</strong><span>We have a proven track record of performance.</span></li>
+<li><strong>A dollar figure on every issue</strong><span>We show what a typical family pays now and what each change would save or earn them, with the math behind every number.</span></li>
+<li><strong>Actions ranked</strong><span>We rank every action by the money at stake and the odds the change happens, so your effort goes where both are high.</span></li>
+<li><strong>Bills and paychecks, not policy</strong><span>We help you talk to people about their bills, their pay and what they own.</span></li>
 </ul>
 </div></div>
 <div class="faq-item" id="faq-hire"><button type="button" class="faq-q" onclick="toggleFaq(this)"><span>What would I hire you to do?</span><span class="faq-icon">+</span></button>
@@ -218,7 +276,7 @@ mark();window.addEventListener('hashchange',mark);
 <li><strong>Strategy</strong><span>An investable plan with numbers and next steps you can act on right away.</span></li>
 <li><strong>Fundraising</strong><span>The plan, the process and the content for a raise, plus help running the raise.</span></li>
 <li><strong>Start ups and campaigns</strong><span>We help stand up new businesses and run targeted campaigns.</span></li>
-<li><strong>Governance</strong><span>Governance structures for an organization as it grows.</span></li>
+<li><strong>Governance</strong><span>Governance that grows with the organization.</span></li>
 </ul>
 </div></div>
 <div class="faq-item"><button type="button" class="faq-q" onclick="toggleFaq(this)"><span>Who are you?</span><span class="faq-icon">+</span></button>
@@ -233,11 +291,11 @@ mark();window.addEventListener('hashchange',mark);
 <a href="mailto:info@juntonova.com" aria-label="Email"><i class="fa-solid fa-envelope"></i></a>
 <a href="https://x.com/JuntoNov" target="_blank" rel="noopener" aria-label="X"><i class="fa-brands fa-x-twitter"></i></a>
 <a href="https://juntonova.substack.com" target="_blank" rel="noopener" aria-label="Substack"><i class="fa-solid fa-bookmark"></i></a>
-<a href="ventures.html">Ventures</a>
+<a href="/ventures">Ventures</a>
 <a href="involved.html">Get Involved</a>
-<a href="privacy.html">Privacy</a>
+<a href="/privacy">Privacy</a>
 <span>© 2026</span>
 </div></div></footer>
-<script src="home.js"></script>
+<script src="home.js?v=20261117g"></script>
 </body>
 </html>

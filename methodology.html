@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="canonical" href="https://juntonova.com/methodology">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Methodology · Junto Nova</title>
+<meta name="description" content="How Junto Nova places every action on the issues grid: money at stake for families, and how likely the change is to happen.">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#1A1A1A">
+<script src="https://cdn.tailwindcss.com/3.4.17"></script>
+<link rel="stylesheet" href="jn-polish.css?v=20261117b">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@600;700&display=swap');
+:root{--charcoal:#1A1A1A;--ember:#C45C26;--muted:#64748B;--border:#E2E8F0;--surface:#F8FAFC;--paper:#F0E6D3}
+body{font-family:Inter,system-ui,sans-serif;color:var(--charcoal);background:#fff}
+.display{font-family:'Playfair Display',Georgia,serif;font-weight:700;letter-spacing:-0.02em}
+.jn-skip{position:absolute;left:-9999px;top:0;z-index:1000;background:#1A1A1A;color:#fff;padding:.75rem 1rem;border-radius:.5rem;font:500 .875rem/1 Inter,system-ui,sans-serif;text-decoration:none}
+.jn-skip:focus{left:.75rem;top:.75rem}
+:focus-visible{outline:2px solid #1A1A1A;outline-offset:2px}
+select.ctl{height:2.75rem;padding:0 2.25rem 0 .9rem;width:100%;appearance:none;-webkit-appearance:none;border:1px solid #8091A7;border-radius:.75rem;background:#fff;font-weight:500;font-size:1rem}
+.ctl-wrap{position:relative;display:block}
+.ctl-wrap svg{pointer-events:none;position:absolute;top:50%;right:.75rem;width:1rem;height:1rem;transform:translateY(-50%);color:var(--muted)}
+.lens-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.5rem}
+.lens-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.15rem;min-width:0;border:1px solid var(--border);border-radius:.75rem;padding:.5rem .6rem;font-size:.875rem;font-weight:500;background:#fff;color:var(--muted);text-align:center}
+.lens-top{display:inline-flex;align-items:center;gap:.45rem}
+.lens-btn[aria-pressed="true"]{background:var(--charcoal);color:#fff;border-color:var(--charcoal)}
+.shape{display:inline-block;width:12px;height:12px;border:2px solid currentColor;border-radius:50%;flex:none}
+.shape.circle{border-radius:50%}
+.dot{position:absolute;width:28px;height:28px;transform:translate(-50%,50%);display:flex;align-items:center;justify-content:center;background:none;border:0;padding:0;cursor:pointer}
+.dot .mk{display:block;width:14px;height:14px;border:2px solid var(--charcoal);border-radius:50%;background:#fff}
+.dot.practical .mk{border-radius:50%}
+.dot.on .mk{background:var(--ember);border-color:var(--ember)}
+.chip-lbl{position:absolute;top:50%;transform:translateY(-50%);white-space:nowrap;max-width:13rem;overflow:hidden;text-overflow:ellipsis;font-size:12px;line-height:1.3;background:rgba(255,255,255,.95);padding:1px 6px;border-radius:6px;pointer-events:none}
+.pill{display:inline-flex;align-items:center;gap:.35rem;border-radius:999px;padding:.25rem .7rem;font-size:.75rem;background:var(--surface);color:var(--muted)}
+.pill b{color:var(--charcoal);font-weight:600}
+.flag{background:#FBEFE7;color:#8A3D14}
+.lens-q{font-weight:400;opacity:.75;font-size:.8em;line-height:1.3}
+@media (max-width:639px){.lens-q{display:none}}
+.ok{background:#E7F0EA;color:#1F5133}
+.tbl tr.warn td{color:#8A3D14}
+.basis{margin-top:.6rem;border-left:3px solid var(--border);padding:.15rem 0 .15rem .7rem;font-size:.8125rem;line-height:1.5}
+.basis.est{border-color:#C45C26}
+.basis b{font-weight:600}
+.tag{display:inline-block;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;border-radius:4px;padding:0 .3rem;margin-left:.35rem;vertical-align:1px}
+.tbl{width:100%;font-size:.8125rem;border-collapse:collapse;margin-top:.25rem}
+.tbl td{padding:.35rem 0;border-bottom:1px solid var(--border);vertical-align:top}
+.tbl td:last-child{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;padding-left:.75rem}
+.tbl tr.tot td{font-weight:600;border-bottom:0}
+.chain{display:grid;grid-template-columns:1fr;gap:.5rem}
+@media(min-width:768px){.chain{grid-template-columns:1fr auto 1fr auto 1fr;align-items:stretch}}
+.chain-card{border:1px solid var(--border);border-radius:.9rem;padding:.75rem .9rem;background:#fff;text-align:left;width:100%}
+.chain-card:hover{border-color:#8091A7}
+.chain-arrow{display:none;align-self:center;color:var(--muted)}
+@media(min-width:768px){.chain-arrow{display:block}}
+.ylab{position:absolute;left:.45rem;top:50%;transform:translateY(-50%) rotate(180deg);writing-mode:vertical-rl;font-size:11px;font-weight:500;color:var(--muted);white-space:nowrap;pointer-events:none;z-index:1}
+.quad{position:absolute;max-width:9.5rem;pointer-events:none;z-index:0}
+.rank li button{display:flex;width:100%;align-items:center;gap:.6rem;padding:.55rem .25rem;text-align:left;border-bottom:1px solid var(--border)}
+.rank .num{font-variant-numeric:tabular-nums;font-size:.75rem;color:var(--muted);white-space:nowrap}
+.acc{border-top:1px solid var(--border)}
+.acc-row{border-bottom:1px solid var(--border)}
+.acc-row summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:.9rem 0;font-weight:600;font-size:1.05rem;color:var(--charcoal)}
+.acc-row summary::-webkit-details-marker{display:none}
+.acc-plus{position:relative;flex:none;width:1.6rem;height:1.6rem;border-radius:999px;border:1px solid var(--border)}
+.acc-plus::before,.acc-plus::after{content:"";position:absolute;left:50%;top:50%;width:.7rem;height:2px;background:currentColor;transform:translate(-50%,-50%);transition:transform .2s}
+.acc-plus::after{transform:translate(-50%,-50%) rotate(90deg)}
+.acc-row[open] .acc-plus::after{transform:translate(-50%,-50%) rotate(0deg)}
+.acc-body{padding:0 0 1.1rem;color:#334155;line-height:1.6;min-width:0}
+.acc-corners{display:grid;grid-template-columns:1fr;gap:.4rem;margin-top:.6rem}
+@media(min-width:640px){.acc-corners{grid-template-columns:1fr 1fr}}
+.acc-corners div{border:1px solid var(--border);border-radius:.75rem;padding:.55rem .75rem;background:var(--surface)}
+.acc-corners dt{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.acc-corners dd{margin:0}
+details summary{cursor:pointer}
+@media (max-width:639px){.quad,.chip-lbl{display:none}}
+.chain.three{grid-template-columns:1fr}@media (min-width:768px){.chain.three{grid-template-columns:repeat(3,minmax(0,1fr))}}.ready-bar{height:6px;border-radius:999px;background:var(--border);overflow:hidden;margin-top:.5rem}.ready-bar>span{display:block;height:100%;background:var(--charcoal)}.ready-tbl td{padding:.3rem 0}
+.ex-rows{display:grid;gap:.4rem}.ex-rows>div{display:grid;grid-template-columns:7.5rem minmax(0,1fr);gap:.75rem;align-items:baseline;border-top:1px solid var(--border);padding-top:.4rem}.ex-rows dt{display:flex;align-items:center;gap:.45rem;font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}.ex-rows dd{margin:0;font-size:.95rem;color:var(--charcoal)}
+.facts{margin-top:.5rem;display:grid;gap:.5rem;font-size:.9rem;line-height:1.55;color:#334155}
+.facts li{padding-left:.9rem;position:relative}.facts li::before{content:"";position:absolute;left:0;top:.6em;width:5px;height:5px;border-radius:50%;background:#94A3B8}
+.facts b{color:var(--charcoal);font-weight:600}
+.srcs{margin-top:.6rem;display:grid;gap:.3rem;font-size:.78rem;line-height:1.45;color:var(--muted)}
+.srcs li{display:grid;grid-template-columns:3rem minmax(0,1fr);gap:.5rem}.srcs .yr{font-variant-numeric:tabular-nums;font-weight:600}
+.conf{display:flex;align-items:baseline;gap:.75rem;flex-wrap:wrap;margin-top:.4rem}.conf b{font-family:'Playfair Display',Georgia,serif;font-size:1.6rem}
+.conf.High b{color:#1F5133}.conf.Medium b{color:#8A5A14}.conf.Low b{color:#8A3D14}
+.ask{margin-top:1.5rem;border-radius:1rem;background:var(--charcoal);color:#F0E6D3;padding:1.1rem 1.2rem}
+.ask h3{font-family:'Playfair Display',Georgia,serif;font-size:1.25rem;color:#fff}
+.ask ul{margin-top:.5rem;display:grid;gap:.35rem;padding-left:1.1rem;list-style:disc;font-size:.9rem;line-height:1.5}
+.ask a{display:inline-flex;margin-top:.9rem;border-radius:.75rem;background:var(--ember);color:#fff;font-weight:600;font-size:.875rem;padding:.6rem 1.1rem}
+.links{display:grid;gap:.5rem;margin-top:.5rem}@media(min-width:768px){.links{grid-template-columns:1fr 1fr}}
+.lk{display:flex;flex-direction:column;gap:.15rem;width:100%;text-align:left;border:1px solid var(--border);border-radius:.8rem;padding:.6rem .8rem;background:#fff;min-width:0}
+.lk:hover{border-color:#8091A7}.lk .k{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}.lk .t{font-size:.9rem;font-weight:500;color:var(--charcoal)}.lk .v{font-size:.75rem;color:var(--muted)}
+.ours{display:inline-block;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;border-radius:4px;padding:0 .3rem;background:#FBEFE7;color:#8A3D14;margin-left:.3rem}
+.prompt{border:1px dashed #94A3B8;border-radius:1rem;padding:1rem 1.1rem;color:var(--muted);font-size:.95rem;text-align:center}
+#main p,#main li,#main dd{max-width:none}
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+<a class="jn-skip" href="#main">Skip to main content</a>
+<header class="jn-header">
+<div class="jn-header__in">
+<a class="jn-brand" href="index.html#about"><img src="jn-header.png" alt="Junto Nova" width="40" height="46"><span>JUNTO NOVA</span></a>
+<button type="button" id="jn-menu-btn" class="jn-menu-btn" aria-expanded="false" aria-controls="jn-menu" aria-label="Open menu">
+<svg class="jn-bars" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+<svg class="jn-x" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+</button>
+</div>
+<nav id="jn-menu" class="jn-menu" aria-label="Primary" hidden>
+<a href="index.html#about">About Us</a>
+<a href="index.html#costs">The Bottom Line</a>
+<a href="issues.html">Issues</a>
+<a href="/ventures">Ventures</a>
+<a href="https://juntonova.com/portal">Client login</a>
+<a href="project.html">Let's work together</a>
+</nav>
+</header>
+<script>
+(function(){
+var b=document.getElementById('jn-menu-btn'),m=document.getElementById('jn-menu');
+function set(o,f){b.setAttribute('aria-expanded',o?'true':'false');b.setAttribute('aria-label',o?'Close menu':'Open menu');m.hidden=!o;if(!o&&f)b.focus()}
+function open(){return b.getAttribute('aria-expanded')==='true'}
+b.addEventListener('click',function(){set(!open(),false)});
+document.addEventListener('keydown',function(e){if(e.key==='Escape'&&open())set(false,true)});
+document.addEventListener('click',function(e){if(open()&&!m.contains(e.target)&&!b.contains(e.target))set(false,false)});
+})();
+</script>
+
+<main id="main" class="max-w-5xl mx-auto px-4 sm:px-6 pt-6 pb-16">
+<p class="text-sm"><a href="issues.html" class="underline" style="color:var(--muted)">&larr; Back to the issues grid</a></p>
+<h1 class="display mt-2 text-3xl sm:text-4xl">Methodology</h1>
+<p class="mt-3 text-base leading-relaxed" style="color:#334155;max-width:44rem">Every dot gets two scores: how much money families stand to gain, and how likely the change is to happen. Here is the math.</p>
+<div class="mt-6 rounded-2xl border p-5 md:p-6" style="border-color:var(--border);background:var(--surface)">
+<div class="mt-4 grid gap-6 text-sm leading-relaxed md:grid-cols-2" style="color:#334155">
+<div>
+<h3 class="display text-lg" style="color:var(--charcoal)">Up: money at stake for families (0 to 100)</h3>
+<p class="mt-1">What families would gain if the change happens: lower costs, higher income or more assets. For a value, money at stake comes from the rule the value supports. For a proposal or a practical change, three parts, added up:</p>
+<ul class="mt-2 list-disc space-y-1 pl-5">
+<li><b>Dollars, up to 50.</b> Money per affected household per year. $10 scores 5, $100 scores 20, $1,000 scores 35, $10,000 or more scores 50. Each tenfold rise adds 15 points, so big numbers don't drown out the rest.</li>
+<li><b>Reach, up to 30.</b> The share of households in that city, state or country that feel the change. Everyone is 30. One in ten is 3.</li>
+<li><b>Ownership, up to 20.</b> 20 if the change directly raises income or assets. 10 if the change mainly lowers the price of something you'll own, like a home. 0 if the change only lowers a bill.</li>
+</ul>
+<p class="mt-2">Each dot has one dollar figure, rounded to three digits, and the card shows how we got the figure: every input, where the input comes from, and the math.</p>
+<p class="mt-2">One-time costs are spread over 30 years for a home and about 10 years for fees and training. We never add figures that overlap.</p>
+</div>
+<div>
+<h3 class="display text-lg" style="color:var(--charcoal)">Right: how likely the change is to happen (0 to 100)</h3>
+<p class="mt-2"><b>Cultural: a value to stand for.</b> The share who agree in a public poll.</p>
+<p class="mt-2"><b>Structural: a rule to change.</b> Every proposal starts at 50, then moves by who has to act, hardest first: a constitutional amendment minus 45, an act of Congress minus 25, a federal agency rule minus 10, an executive order minus 5, a state legislature or a statewide ballot vote plus 5, a state agency rule plus 10, a local ballot vote plus 15, a city or county council plus 20. So, other things equal, a local change scores more likely than a state change, and a state change more likely than a federal one. Done somewhere already plus 15. Poll support of 55 percent or more plus 15, under 45 percent minus 15. Strong organized opposition minus 15, moderate minus 5. Extra hurdles like 60 Senate votes or a supermajority minus 10.</p>
+<p class="mt-2"><b>Practical: a change that moves the money now.</b> Set by where the rules already allow the change and whether people already make the change there.</p>
+</div>
+</div>
+</div>
+
+<div class="mt-6 rounded-2xl border p-5 md:p-6 text-sm leading-relaxed" style="border-color:var(--border);background:var(--surface);color:#334155">
+<h2 class="display text-lg" style="color:var(--charcoal)">Two confidence ratings</h2>
+<p class="mt-2"><b>Bottom line.</b> Rates the dollar evidence only. High when one source states the dollar figure. Medium when the math combines published numbers. Low when at least one input has no published number, or no figure exists. The card names that input. A value takes the rating of the action the value backs.</p>
+<p class="mt-2"><b>Likely to happen.</b> Rates the feasibility evidence only. For a value: High with an independent poll, Medium when an interested group paid for the poll or the poll asked a nearby question. For a proposal or a practical change: High when the change already happened somewhere and an independent poll measured support, Medium with one of those or with a precedent plus a sponsored poll, Low otherwise.</p>
+</div>
+</main>
+
+<footer class="jn-foot" style="border-top:1px solid #E2E8F0">
+<style>.jn-foot a{color:inherit;text-decoration:none}.jn-foot a:hover{opacity:.7}</style>
+<div style="max-width:64rem;margin:0 auto;padding:2rem 1.5rem;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:1rem;font-size:.875rem;color:#64748B">
+<div><div class="display" style="font-size:1.125rem;color:#1A1A1A">JUNTO NOVA</div><div style="font-size:.75rem;margin-top:.25rem">Junto Nova LLC · Dallas, TX</div></div>
+<div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:1.25rem">
+<a href="mailto:info@juntonova.com" aria-label="Email"><i class="fa-solid fa-envelope"></i></a>
+<a href="https://x.com/JuntoNov" target="_blank" rel="noopener" aria-label="X"><i class="fa-brands fa-x-twitter"></i></a>
+<a href="https://juntonova.substack.com" target="_blank" rel="noopener" aria-label="Substack"><i class="fa-solid fa-bookmark"></i></a>
+<a href="/ventures">Ventures</a>
+<a href="/involved">Get Involved</a>
+<a href="/privacy">Privacy</a>
+<span>© 2026</span>
+</div></div></footer>
+</body>
+</html>

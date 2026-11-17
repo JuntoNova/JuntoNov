@@ -15,7 +15,7 @@ html input::placeholder,html textarea::placeholder{color:#64748B;opacity:1}</sty
 <link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#1A1A1A">
 <meta name="description" content="You don't have to be a client to help. Tell Junto Nova how you can help drive down costs.">
-<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.tailwindcss.com/3.4.17"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@600;700&display=swap');
@@ -40,13 +40,13 @@ body{font-family:Inter,system-ui,sans-serif;color:var(--charcoal);background:#ff
 <meta name="twitter:title" content="Get involved · Junto Nova">
 <meta name="twitter:description" content="You don&#x27;t have to be a client to help. Tell Junto Nova how you can help drive down costs.">
 <meta name="twitter:image" content="https://juntonova.com/og-default.png">
-<link rel="stylesheet" href="/jn-polish.css">
+<link rel="stylesheet" href="/jn-polish.css?v=20261117b">
 </head>
 <body>
 <a class="jn-skip" href="#main">Skip to main content</a>
 <header class="jn-header">
 <div class="jn-header__in">
-<a class="jn-brand" href="/"><img src="https://juntonova.com/jn-header.png" alt="Junto Nova" width="40" height="46"><span>JUNTO NOVA</span></a>
+<a class="jn-brand" href="/"><img src="jn-header.png" alt="Junto Nova" width="40" height="46"><span>JUNTO NOVA</span></a>
 <button type="button" id="jn-menu-btn" class="jn-menu-btn" aria-expanded="false" aria-controls="jn-menu" aria-label="Open menu">
 <svg class="jn-bars" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
 <svg class="jn-x" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
@@ -54,11 +54,10 @@ body{font-family:Inter,system-ui,sans-serif;color:var(--charcoal);background:#ff
 </div>
 <nav id="jn-menu" class="jn-menu" aria-label="Primary" hidden>
 <a href="/#about">About Us</a>
-<a href="/#costs">Cost Drivers</a>
-<a href="/#share">Your Share</a>
+<a href="/#costs">The Bottom Line</a>
 <a href="/issues">Issues</a>
 <a href="/ventures">Ventures</a>
-<a href="/portal">Client login</a>
+<a href="https://juntonova.com/portal">Client login</a>
 <a href="/project">Let's work together</a>
 </nav>
 </header>
@@ -99,12 +98,19 @@ mark();window.addEventListener('hashchange',mark);
 <input type="text" id="inv-org" placeholder="Your firm or campaign" style="width:100%;border:1px solid #8091A7;border-radius:0.75rem;padding:0.75rem 1rem"></div>
 <div><label class="block text-sm font-medium mb-3" style="color:var(--charcoal)">Areas you know</label>
 <div class="space-y-1">
+<p class="text-xs font-semibold uppercase tracking-widest pt-2" style="color:var(--muted)">What you pay</p>
 <label class="flex gap-3 py-1"><input type="checkbox" name="area" value="Housing" style="accent-color:var(--charcoal)"><span class="text-sm" style="color:var(--muted)">Housing</span></label>
+<label class="flex gap-3 py-1"><input type="checkbox" name="area" value="Personal taxes" style="accent-color:var(--charcoal)"><span class="text-sm" style="color:var(--muted)">Personal taxes</span></label>
 <label class="flex gap-3 py-1"><input type="checkbox" name="area" value="Transportation" style="accent-color:var(--charcoal)"><span class="text-sm" style="color:var(--muted)">Transportation</span></label>
-<label class="flex gap-3 py-1"><input type="checkbox" name="area" value="Education" style="accent-color:var(--charcoal)"><span class="text-sm" style="color:var(--muted)">Education</span></label>
-<label class="flex gap-3 py-1"><input type="checkbox" name="area" value="Energy" style="accent-color:var(--charcoal)"><span class="text-sm" style="color:var(--muted)">Energy</span></label>
+<label class="flex gap-3 py-1"><input type="checkbox" name="area" value="Social Security and retirement" style="accent-color:var(--charcoal)"><span class="text-sm" style="color:var(--muted)">Social Security and retirement</span></label>
+<label class="flex gap-3 py-1"><input type="checkbox" name="area" value="Food" style="accent-color:var(--charcoal)"><span class="text-sm" style="color:var(--muted)">Food</span></label>
 <label class="flex gap-3 py-1"><input type="checkbox" name="area" value="Healthcare" style="accent-color:var(--charcoal)"><span class="text-sm" style="color:var(--muted)">Healthcare</span></label>
-<label class="flex gap-3 py-1"><input type="checkbox" name="area" value="Taxes" style="accent-color:var(--charcoal)"><span class="text-sm" style="color:var(--muted)">Taxes</span></label>
+<label class="flex gap-3 py-1"><input type="checkbox" name="area" value="Utilities" style="accent-color:var(--charcoal)"><span class="text-sm" style="color:var(--muted)">Utilities</span></label>
+<label class="flex gap-3 py-1"><input type="checkbox" name="area" value="Childcare and education" style="accent-color:var(--charcoal)"><span class="text-sm" style="color:var(--muted)">Childcare and education</span></label>
+<p class="text-xs font-semibold uppercase tracking-widest pt-2" style="color:var(--muted)">What you earn and own</p>
+<label class="flex gap-3 py-1"><input type="checkbox" name="area" value="Wages" style="accent-color:var(--charcoal)"><span class="text-sm" style="color:var(--muted)">Wages</span></label>
+<label class="flex gap-3 py-1"><input type="checkbox" name="area" value="Starting a business" style="accent-color:var(--charcoal)"><span class="text-sm" style="color:var(--muted)">Starting a business</span></label>
+<label class="flex gap-3 py-1"><input type="checkbox" name="area" value="Owning something" style="accent-color:var(--charcoal)"><span class="text-sm" style="color:var(--muted)">Owning something</span></label>
 </div></div>
 <div><label for="inv-help" class="block text-sm font-medium mb-2" style="color:var(--charcoal)">How you can help</label>
 <textarea id="inv-help" rows="3" required style="width:100%;border:1px solid #8091A7;border-radius:0.75rem;padding:0.75rem 1rem"></textarea></div>

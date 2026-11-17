@@ -59,8 +59,8 @@ header.jn-header *,header.jn-header *::before,header.jn-header *::after{box-sizi
 /* Header stays the compact sandwich at every width: wordmark plus the three-line button. Links live in the menu, not in an always-visible bar. */
 
 /* 7b. Focus ring on dark surfaces. PR #13 draws a #1A1A1A ring, which is not visible on a dark background. Inside dark containers the ring is warm paper #F0E6D3.
-   Dark containers today: .debt-card (index), the three dark ventures cards (inline background #141110 / #0E1A24 / #090A0C), the charcoal footer (section 10). For a new dark block add class="jn-dark". */
-.jn-dark :focus-visible,.debt-card :focus-visible,[style*="background:#141110"] :focus-visible,[style*="background:#0E1A24"] :focus-visible,[style*="background:#090A0C"] :focus-visible,body > footer :focus-visible{outline:2px solid var(--paper);outline-offset:2px}
+   Dark containers today: the three dark ventures cards (inline background #141110 / #0E1A24 / #090A0C), the charcoal footer (section 10). For a new dark block add class="jn-dark". */
+.jn-dark :focus-visible,[style*="background:#141110"] :focus-visible,[style*="background:#0E1A24"] :focus-visible,[style*="background:#090A0C"] :focus-visible,body > footer :focus-visible{outline:2px solid var(--paper);outline-offset:2px}
 
 /* 8. Motion: only when the visitor has not asked for less */
 @media (prefers-reduced-motion:no-preference){
